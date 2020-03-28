@@ -1,0 +1,2201 @@
+basePath: /
+definitions:
+  apiHelpers.Response:
+    properties:
+      code:
+        type: integer
+      data:
+        type: object
+      msg:
+        type: string
+    type: object
+  utils.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: status bad request
+        type: string
+    type: object
+  v1.AddressParams:
+    properties:
+      city_id:
+        type: integer
+      detail:
+        type: string
+      is_default:
+        type: boolean
+      phone:
+        type: string
+      province_id:
+        type: integer
+      region_id:
+        type: integer
+      user_id:
+        type: integer
+    required:
+    - city_id
+    - detail
+    - is_default
+    - phone
+    - province_id
+    - region_id
+    - user_id
+    type: object
+  v1.AdminUserParams:
+    properties:
+      confirm_password:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - confirm_password
+    - email
+    - password
+    type: object
+  v1.AppSettingParams:
+    properties:
+      api_key:
+        type: string
+      app_name:
+        type: string
+      app_secret:
+        type: string
+      mchid:
+        type: string
+      notify_url:
+        type: string
+      sevice_phone:
+        type: string
+    required:
+    - api_key
+    - app_name
+    - app_secret
+    - mchid
+    - notify_url
+    - sevice_phone
+    type: object
+  v1.CartItemIDParams:
+    properties:
+      item_id:
+        items:
+          type: integer
+        type: array
+    required:
+    - item_id
+    type: object
+  v1.CartItemParams:
+    properties:
+      goods_id:
+        type: integer
+      quantity:
+        type: integer
+    required:
+    - goods_id
+    - quantity
+    type: object
+  v1.CartItemQtyParams:
+    properties:
+      item_id:
+        type: integer
+      quantity:
+        type: integer
+    required:
+    - item_id
+    - quantity
+    type: object
+  v1.CategoryParams:
+    properties:
+      image:
+        type: string
+      name:
+        type: string
+      parent_id:
+        type: integer
+      position:
+        type: integer
+    required:
+    - name
+    type: object
+  v1.DeliveryOrderParams:
+    properties:
+      address_id:
+        type: integer
+      buyer_message:
+        type: string
+      express_id:
+        type: integer
+      item_ids:
+        items:
+          type: integer
+        type: array
+    required:
+    - address_id
+    - express_id
+    - item_ids
+    type: object
+  v1.DeliveryParams:
+    properties:
+      delivery_rules:
+        items:
+          $ref: '#/definitions/v1.DeliveryRuleParams'
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+      way:
+        description: 1 为按件计费 2 按重量计费
+        type: integer
+    required:
+    - delivery_rules
+    - name
+    - way
+    type: object
+  v1.DeliveryRuleParams:
+    properties:
+      _destroy:
+        type: boolean
+      additional:
+        description: 续件/续重
+        type: number
+      additional_fee:
+        description: 续件/续重
+        type: number
+      express_id:
+        type: integer
+      first:
+        description: 首件/首重
+        type: number
+      first_fee:
+        type: number
+      id:
+        type: integer
+      region:
+        description: 可配送区域(省id集)
+        type: string
+    type: object
+  v1.ExpressParams:
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+    type: object
+  v1.LoginParams:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  v1.OrderParams:
+    properties:
+      address_id:
+        type: integer
+      buyer_message:
+        type: string
+      express_id:
+        type: integer
+      item_ids:
+        items:
+          type: integer
+        type: array
+    required:
+    - address_id
+    - express_id
+    - item_ids
+    type: object
+  v1.PolicyRuleParams:
+    properties:
+      method:
+        type: string
+      path:
+        type: string
+      rolename:
+        type: string
+    type: object
+  v1.ProductParams:
+    type: object
+  v1.ProductQueryParams:
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      q[category_id]:
+        type: integer
+      q[name_cont]:
+        type: string
+      sort:
+        type: string
+      total:
+        type: integer
+    type: object
+  v1.PropertyNameParams:
+    type: object
+  v1.PropertyValueParams:
+    type: object
+  v1.QueryAdminUserParams:
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      q[created_at_gteq]:
+        type: string
+      q[created_at_lteq]:
+        type: string
+      q[email_cont]:
+        type: string
+      q[status_in]:
+        items:
+          type: integer
+        type: array
+      sort:
+        type: string
+      total:
+        type: integer
+    type: object
+  v1.QueryCategoryParams:
+    properties:
+      created_at_gteq:
+        type: string
+      created_at_lteq:
+        type: string
+      name:
+        type: string
+      page:
+        type: integer
+      per_page:
+        type: integer
+      sort:
+        type: string
+      total:
+        type: integer
+    type: object
+  v1.QueryDeliveryParams:
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      q[name_cont]:
+        type: string
+      sort:
+        type: string
+      total:
+        type: integer
+    type: object
+  v1.QueryExpressParams:
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      q[code_cont]:
+        type: string
+      q[name_cont]:
+        type: string
+      sort:
+        type: string
+      total:
+        type: integer
+    type: object
+  v1.QueryOrderParams:
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      q[created_at_gteq]:
+        type: string
+      q[created_at_lteq]:
+        type: string
+      q[order_no_cont]:
+        type: string
+      q[status_in]:
+        items:
+          type: integer
+        type: array
+      sort:
+        type: string
+      total:
+        type: integer
+    type: object
+  v1.QueryUserParams:
+    type: object
+  v1.UserInfo:
+    properties:
+      avatar:
+        type: string
+      username:
+        type: string
+    type: object
+  v1.WebPageParams:
+    type: object
+  v1.WxappPageParams:
+    type: object
+host: 127.0.0.1:8000
+info:
+  contact: {}
+  description: This is a sample server eshop server.
+  license: {}
+  title: Eshop API
+  version: "1.0"
+paths:
+  /admin_api/v1/admin_users:
+    get:
+      parameters:
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
+        name: q[email_cont]
+        type: string
+      - in: query
+        name: q[created_at_gteq]
+        type: string
+      - in: query
+        name: q[created_at_lteq]
+        type: string
+      - in: query
+        items:
+          type: integer
+        name: q[status_in]
+        type: array
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 管理员列表
+      tags:
+      - 后台管理员
+    post:
+      parameters:
+      - description: 邮箱密码
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.AdminUserParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加管理员
+      tags:
+      - 后台管理员
+  /admin_api/v1/app_setting:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 配置详情
+      tags:
+      - 后台配置管理
+    put:
+      parameters:
+      - description: app_setting params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.AppSettingParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新配置
+      tags:
+      - 后台配置管理
+  /admin_api/v1/cabin_rules:
+    delete:
+      parameters:
+      - description: 权限
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PolicyRuleParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除权限
+      tags:
+      - 后台角色权限
+    post:
+      parameters:
+      - description: 权限
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PolicyRuleParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加权限
+      tags:
+      - 后台角色权限
+  /admin_api/v1/categories:
+    get:
+      parameters:
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: created_at_gteq
+        type: string
+      - in: query
+        name: created_at_lteq
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 分类列表
+      tags:
+      - 后台分类管理
+    post:
+      parameters:
+      - description: query params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CategoryParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加分类
+      tags:
+      - 后台分类管理
+  /admin_api/v1/categories/{id}:
+    delete:
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除分类
+      tags:
+      - 后台分类管理
+    get:
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 分类详情
+      tags:
+      - 后台分类管理
+    put:
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: category params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CategoryParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新分类
+      tags:
+      - 后台分类管理
+  /admin_api/v1/deliveries:
+    get:
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
+        name: q[name_cont]
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 运费模板列表
+      tags:
+      - 后台运费模板管理
+    post:
+      parameters:
+      - description: query params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.DeliveryParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加运费模板
+      tags:
+      - 后台运费模板管理
+  /admin_api/v1/deliveries/{id}:
+    delete:
+      parameters:
+      - description: delivery id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除运费模板
+      tags:
+      - 后台运费模板管理
+    get:
+      parameters:
+      - description: delivery id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 运费模板详情
+      tags:
+      - 后台运费模板管理
+    put:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: delivery params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.DeliveryParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新运费模板
+      tags:
+      - 后台运费模板管理
+  /admin_api/v1/expresses:
+    get:
+      parameters:
+      - in: query
+        name: q[name_cont]
+        type: string
+      - in: query
+        name: q[code_cont]
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 快递列表
+      tags:
+      - 后台快递管理
+    post:
+      parameters:
+      - description: query params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ExpressParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加快递
+      tags:
+      - 后台快递管理
+  /admin_api/v1/expresses/{id}:
+    delete:
+      parameters:
+      - description: express id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除快递
+      tags:
+      - 后台快递管理
+    get:
+      parameters:
+      - description: express id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 快递详情
+      tags:
+      - 后台快递管理
+    put:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: express params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ExpressParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新快递
+      tags:
+      - 后台快递管理
+  /admin_api/v1/login:
+    post:
+      parameters:
+      - description: 邮箱密码
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.LoginParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 管理员登录
+      tags:
+      - 后台管理员
+  /admin_api/v1/orders:
+    get:
+      parameters:
+      - in: query
+        items:
+          type: integer
+        name: q[status_in]
+        type: array
+      - in: query
+        name: q[order_no_cont]
+        type: string
+      - in: query
+        name: q[created_at_gteq]
+        type: string
+      - in: query
+        name: q[created_at_lteq]
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取订单列表
+      tags:
+      - 后台订单管理
+  /admin_api/v1/orders/{id}:
+    get:
+      parameters:
+      - description: order id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取订单详情
+      tags:
+      - 后台订单管理
+  /admin_api/v1/orders/{id}/deliver:
+    post:
+      parameters:
+      - in: query
+        items:
+          type: integer
+        name: item_ids
+        required: true
+        type: array
+      - in: query
+        name: address_id
+        required: true
+        type: integer
+      - in: query
+        name: express_id
+        required: true
+        type: integer
+      - in: query
+        name: buyer_message
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 订单发货
+      tags:
+      - 后台订单管理
+  /admin_api/v1/products:
+    post:
+      parameters:
+      - description: query params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ProductParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加产品
+      tags:
+      - 后台产品管理
+  /admin_api/v1/products/{id}:
+    delete:
+      parameters:
+      - description: product id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除产品
+      tags:
+      - 后台产品管理
+    get:
+      parameters:
+      - description: product id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 产品详情
+      tags:
+      - 后台产品管理
+    put:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: product params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ProductParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新产品
+      tags:
+      - 后台产品管理
+  /admin_api/v1/property_names:
+    post:
+      parameters:
+      - description: query params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PropertyNameParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加规格名
+      tags:
+      - 后台规格名管理
+  /admin_api/v1/property_names/{id}:
+    delete:
+      parameters:
+      - description: property_name id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除规格名
+      tags:
+      - 后台规格名管理
+    get:
+      parameters:
+      - description: property_name id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 规格名详情
+      tags:
+      - 后台规格名管理
+    put:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: property_name params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PropertyNameParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新规格名
+      tags:
+      - 后台规格名管理
+  /admin_api/v1/property_values:
+    post:
+      parameters:
+      - description: query params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PropertyValueParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加规格值
+      tags:
+      - 后台规格值管理
+  /admin_api/v1/property_values/{id}:
+    delete:
+      parameters:
+      - description: property_value id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除规格值
+      tags:
+      - 后台规格值管理
+    get:
+      parameters:
+      - description: property_value id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 规格值详情
+      tags:
+      - 后台规格值管理
+    put:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: property_value params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PropertyValueParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新规格值
+      tags:
+      - 后台规格值管理
+  /admin_api/v1/users:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户列表
+      tags:
+      - 后台用户管理
+  /admin_api/v1/users/{id}:
+    get:
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户详情
+      tags:
+      - 后台用户管理
+  /admin_api/v1/web_pages:
+    post:
+      parameters:
+      - description: query params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.WebPageParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加webview
+      tags:
+      - 后台webview管理
+  /admin_api/v1/web_pages/{id}:
+    delete:
+      parameters:
+      - description: web_page id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除webview
+      tags:
+      - 后台webview管理
+    get:
+      parameters:
+      - description: web_page id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: webview详情
+      tags:
+      - 后台webview管理
+    put:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: web_page params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.WebPageParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新webview
+      tags:
+      - 后台webview管理
+  /admin_api/v1/wxapp_pages:
+    post:
+      parameters:
+      - description: query params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.WxappPageParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加WX页面
+      tags:
+      - 后台WX页面管理
+  /admin_api/v1/wxapp_pages/{id}:
+    delete:
+      parameters:
+      - description: web_page id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除WX页面
+      tags:
+      - 后台WX页面管理
+    get:
+      parameters:
+      - description: web_page id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: WX页面详情
+      tags:
+      - 后台WX页面管理
+    put:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: web_page params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.WxappPageParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新WX页面
+      tags:
+      - 后台WX页面管理
+  /app_api/v1/addresses:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户的收获地址
+      tags:
+      - 地址
+    post:
+      parameters:
+      - description: address params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.AddressParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 新增地址
+      tags:
+      - 地址
+  /app_api/v1/addresses/{id}:
+    delete:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除地址
+      tags:
+      - 地址
+    get:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 通过id获取地址
+      tags:
+      - 地址
+    put:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: address attributes
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.AddressParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 编辑地址
+      tags:
+      - 地址
+  /app_api/v1/batch_products:
+    get:
+      parameters:
+      - description: 产品ids, 以逗号分隔
+        in: query
+        items:
+          type: integer
+        name: ids
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 批量获取产品
+      tags:
+      - 产品
+  /app_api/v1/categories:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 获取分类列表
+      tags:
+      - 分类
+  /app_api/v1/cities:
+    get:
+      parameters:
+      - description: province id
+        in: query
+        name: province_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 根据省ID获取城市列表信息
+      tags:
+      - 地址
+  /app_api/v1/orders:
+    get:
+      parameters:
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        items:
+          type: integer
+        name: q[status_in]
+        type: array
+      - in: query
+        name: q[order_no_cont]
+        type: string
+      - in: query
+        name: q[created_at_gteq]
+        type: string
+      - in: query
+        name: q[created_at_lteq]
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取订单列表
+      tags:
+      - 订单
+    post:
+      parameters:
+      - description: 订单参数
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.OrderParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 创建订单
+      tags:
+      - 订单
+  /app_api/v1/orders/{id}:
+    delete:
+      parameters:
+      - description: 订单id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除订单
+      tags:
+      - 订单
+    get:
+      parameters:
+      - description: order id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取订单详情
+      tags:
+      - 订单
+  /app_api/v1/orders/pay_notify:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 订单支付结果通知
+      tags:
+      - 微信回调通知
+  /app_api/v1/orders/payment_params:
+    post:
+      parameters:
+      - description: 订单ID
+        in: query
+        name: order_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 请求支付参数
+      tags:
+      - 订单
+  /app_api/v1/orders/pre_check:
+    post:
+      parameters:
+      - description: 订单参数
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.OrderParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 下单预检查(待实现)
+      tags:
+      - 订单
+  /app_api/v1/orders/refund_notify:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 订单退款结果通知
+      tags:
+      - 微信回调通知
+  /app_api/v1/products:
+    get:
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
+        name: q[category_id]
+        type: integer
+      - in: query
+        name: q[name_cont]
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 获取产品列表
+      tags:
+      - 产品
+  /app_api/v1/products/{id}:
+    get:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 获取产品详情
+      tags:
+      - 产品
+  /app_api/v1/provinces:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 获取所有的省份信息
+      tags:
+      - 地址
+  /app_api/v1/regions:
+    get:
+      parameters:
+      - description: city id
+        in: query
+        name: city_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 根据市ID获取下级城市列表信息
+      tags:
+      - 地址
+  /app_api/v1/shopping_cart:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取购物车列表
+      tags:
+      - 购物车
+  /app_api/v1/shopping_cart/add:
+    post:
+      parameters:
+      - description: shopping_cart
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CartItemParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加商品到获取购物车
+      tags:
+      - 购物车
+  /app_api/v1/shopping_cart/check:
+    put:
+      parameters:
+      - description: items_ids
+        in: body
+        name: item_ids
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CartItemIDParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 勾选购物车项
+      tags:
+      - 购物车
+  /app_api/v1/shopping_cart/qty:
+    put:
+      parameters:
+      - description: 商品id与数量
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CartItemQtyParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新商品数量
+      tags:
+      - 购物车
+  /app_api/v1/shopping_cart/remove:
+    delete:
+      parameters:
+      - description: items_ids
+        in: body
+        name: item_ids
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CartItemIDParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除商品
+      tags:
+      - 购物车
+  /app_api/v1/shopping_cart/uncheck:
+    put:
+      parameters:
+      - description: items_ids
+        in: body
+        name: item_ids
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CartItemIDParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 取消购物车项
+      tags:
+      - 购物车
+  /app_api/v1/tags:
+    get:
+      parameters:
+      - description: Name
+        in: query
+        name: name
+        type: string
+      - description: State
+        in: query
+        name: state
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{"list": [{"id": 1}], "total": 6},"msg":"ok"}'
+          schema:
+            type: json
+      summary: 新增文章标签
+      tags:
+      - 标签
+    post:
+      parameters:
+      - description: Name
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: State
+        in: query
+        name: state
+        type: integer
+      - description: CreatedBy
+        in: query
+        name: created_by
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 新增文章标签
+      tags:
+      - 标签
+    put:
+      parameters:
+      - description: Name
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: State
+        in: query
+        name: state
+        type: integer
+      - description: modified_by
+        in: query
+        name: created_by
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 新增文章标签
+      tags:
+      - 标签
+  /app_api/v1/tags/{id}:
+    delete:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{"list": [{"id": 1}], "total": 6},"msg":"ok"}'
+          schema:
+            type: json
+      summary: 删除标签
+      tags:
+      - 标签
+    get:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 通过id获取标签
+      tags:
+      - 标签
+  /app_api/v1/user/auth:
+    get:
+      consumes:
+      - application/json
+      description: 用户获取token
+      parameters:
+      - description: wechat code
+        in: query
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: 用户通过微信的code获取auth token
+      tags:
+      - 用户
+  /app_api/v1/user/fake_token:
+    get:
+      consumes:
+      - application/json
+      description: 用户获取token
+      parameters:
+      - description: user id
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: 通过用户IDauth token
+      tags:
+      - 用户
+  /app_api/v1/user/verify:
+    post:
+      parameters:
+      - description: Token
+        in: query
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      security:
+      - ApiKeyAuth: []
+      summary: 用户解码token/仅限测试使用
+      tags:
+      - 用户
+  /app_api/v1/users/mine:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 通过当前登录用户信息
+      tags:
+      - 用户
+    put:
+      parameters:
+      - description: user info
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UserInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 编辑用户
+      tags:
+      - 用户
+  /app_api/v1/web_page:
+    get:
+      parameters:
+      - description: page title
+        in: query
+        name: title
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 获取webview页面
+      tags:
+      - 微信页面
+  /app_api/v1/wxapp_pages:
+    get:
+      parameters:
+      - description: page title
+        in: query
+        name: title
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 获取微信自定义页面
+      tags:
+      - 微信页面
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
