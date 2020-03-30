@@ -15,9 +15,10 @@ func InitAdminAPI(r *gin.Engine) {
 	// admin_apiv1.Use(jwt.JWTAuth())
 	// admin_apiv1.Use(role.AuthCheckRole())
 	{
-		admin_apiv1.POST("/orders", v1.DeliveryOrder)
 		admin_apiv1.GET("/orders", v1.GetOrders)
 		admin_apiv1.GET("/orders/:id", v1.GetOrder)
+		admin_apiv1.POST("/orders/:id/ship", v1.ShipOrder)
+		admin_apiv1.POST("/orders/:id/pay", v1.PayOrder)
 	}
 
 	{

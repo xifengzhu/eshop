@@ -7,7 +7,6 @@ type PropertyName struct {
 	PropertyValues []PropertyValue `json:"property_values"`
 }
 
-func (pname *PropertyName) Find() (err error) {
-	err = db.First(&pname).Error
-	return
+func (PropertyName) TableName() string {
+	return "property_name"
 }

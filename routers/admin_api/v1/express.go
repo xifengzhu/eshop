@@ -131,8 +131,7 @@ func UpdateExpress(c *gin.Context) {
 
 	var express models.Express
 
-	id, _ := strconv.Atoi(c.Param("id"))
-	express.ID = id
+	express.ID, _ = strconv.Atoi(c.Param("id"))
 	err = models.SaveResource(&express)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)

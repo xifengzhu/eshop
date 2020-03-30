@@ -10,6 +10,10 @@ type WxappPage struct {
 	PageData string `gorm:"type: text; not null" json:"page_data"`
 }
 
+func (WxappPage) TableName() string {
+	return "wxapp_page"
+}
+
 func (wxappPage *WxappPage) FindByName(name string) (err error) {
 	err = db.Where("name = ?", name).First(&wxappPage).Error
 	return

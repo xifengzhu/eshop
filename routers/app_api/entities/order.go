@@ -12,14 +12,14 @@ type OrderDetailEntity struct {
 	ReceiverProperties string          `json:"receiver_properties"`
 	BuyerMessage       string          `json:"buyer_message"`
 	Logistic           models.Logistic `json:"logistic"`
-	UserID             int            `json:"user_id"`
+	UserID             int             `json:"user_id"`
 }
 
 type OrderEntity struct {
-	ID            int               `json:"id"`
+	ID            int                `json:"id"`
 	WxappId       string             `json:"wxapp_id"`
 	OrderNo       string             `json:"order_no"`
-	Status        string             `json:"status"`
+	State         string             `json:"state"`
 	ExpressAmount float32            `json:"express_amount"`
 	PayAmount     float32            `json:"pay_amount"`
 	TotalAmount   float32            `json:"total_amount"`

@@ -2,11 +2,10 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-
 	"github.com/xifengzhu/eshop/helpers/setting"
 	"github.com/xifengzhu/eshop/routers"
 	_ "github.com/xifengzhu/eshop/workers"
+	"net/http"
 )
 
 func main() {

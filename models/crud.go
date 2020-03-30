@@ -3,11 +3,10 @@ package models
 import (
 	"errors"
 	"fmt"
+	"github.com/jinzhu/gorm"
 	"github.com/xifengzhu/eshop/helpers/utils"
 	"reflect"
 	"strings"
-
-	"github.com/jinzhu/gorm"
 )
 
 type Resource interface {
@@ -35,12 +34,23 @@ func FindResource(value Resource, options Options) (err error) {
 	if !ok {
 		return errors.New("value doesn't implement Resource")
 	}
-	cdb := db
-	for _, preload := range options.Preloads {
-		cdb = cdb.Preload(preload)
-	}
+	cdb := preloadQuery(options.Preloads)
 	err = cdb.First(value).Error
 	return
+}
+
+func FirstResource(value Resource, options Options) (err error) {
+	cdb := preloadQuery(options.Preloads)
+	err = cdb.Where(options.Conditions).First(value).Error
+	return
+}
+
+func preloadQuery(preloads []string) *gorm.DB {
+	cdb := db
+	for _, preload := range preloads {
+		cdb = cdb.Preload(preload)
+	}
+	return cdb
 }
 
 func DestroyResource(value Resource, options Options) (err error) {
@@ -65,7 +75,8 @@ func CreateResource(value Resource) (err error) {
 }
 
 func WhereResources(values interface{}, options Options) (err error) {
-	err = db.Where(options.Conditions).Find(values).Error
+	cdb := preloadQuery(options.Preloads)
+	err = cdb.Where(options.Conditions).Find(values).Error
 	return
 }
 
@@ -75,10 +86,7 @@ func DestroyAll(values interface{}, options Options) (err error) {
 }
 
 func AllResource(values interface{}, options Options) (err error) {
-	cdb := db
-	for _, preload := range options.Preloads {
-		cdb = cdb.Preload(preload)
-	}
+	cdb := preloadQuery(options.Preloads)
 	err = cdb.Find(values).Error
 	return
 }

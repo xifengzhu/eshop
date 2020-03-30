@@ -1,9 +1,7 @@
 package models
 
 import (
-	// "fmt"
 	"github.com/jinzhu/gorm"
-	"github.com/xifengzhu/eshop/helpers/utils"
 )
 
 type Delivery struct {
@@ -28,44 +26,12 @@ func (d *Delivery) IsCaculateByWeight() bool {
 	return d.Way == 2
 }
 
-func (cat Delivery) All(pagination *utils.Pagination, maps map[string]interface{}) (categories []Delivery, err error) {
-	offset := (pagination.Page - 1) * pagination.PerPage
-	db.Where(maps).Offset(offset).Limit(pagination.PerPage).Order("position asc").Find(&categories)
-	pagination.Total = GetDeliveryTotal(maps)
-	return
-}
-
-func (cat Delivery) AllWithoutPagination() (categories []Delivery, err error) {
-	err = db.Preload("Children").Order("position asc").Where("parent_id IS NULL").Find(&categories).Error
-	return
-}
-
-func GetDeliveryTotal(maps interface{}) (count int) {
-	db.Model(&Delivery{}).Where(maps).Count(&count)
-	return
-}
-
-func (delivery *Delivery) Create() (err error) {
-	err = db.Create(&delivery).Error
-	return
-}
-
 func (delivery Delivery) DestroyRules() {
 	db.Where("delivery_id = ?", delivery.ID).Delete(DeliveryRule{})
 }
 
-func (delivery *Delivery) Find() (err error) {
-	err = db.Preload("DeliveryRules").Find(&delivery).Error
-	return
-}
-
 func (delivery *Delivery) Reload() (err error) {
-	err = delivery.Find()
-	return
-}
-
-func (delivery *Delivery) Save() (err error) {
-	err = db.Save(&delivery).Error
+	err = FindResource(delivery, Options{})
 	return
 }
 

@@ -46,7 +46,8 @@ func (goods *Goods) SetPropertiesText() {
 		var pvalue PropertyValue
 		pvID, _ := strconv.Atoi(values[1])
 		pvalue.ID = pvID
-		pvalue.Find()
+
+		FindResource(&pvalue, Options{})
 
 		text += pvalue.Name + " "
 	}
@@ -66,11 +67,6 @@ func (goods *Goods) SetPropertyIDs() {
 	}
 	goods.PIDs = pids
 	goods.VIDs = vids
-}
-
-func (goods *Goods) Find() (err error) {
-	err = db.First(&goods, goods.ID).Error
-	return
 }
 
 func (goods *Goods) AfterFind() (err error) {

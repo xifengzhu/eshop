@@ -7,7 +7,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-
+	"github.com/qor/transition"
 	"github.com/xifengzhu/eshop/helpers/setting"
 )
 
@@ -49,7 +49,7 @@ func init() {
 
 func migration() {
 	//Migrate the schema
-	db.AutoMigrate(&User{}, &Tag{}, &Address{}, &AppSetting{}, &CarItem{}, &Category{}, &City{}, &Delivery{}, &DeliveryRule{}, &Goods{}, &Logistic{}, &Order{}, &OrderItem{}, &Product{}, &PropertyName{}, &PropertyValue{}, &Province{}, &Region{}, &Tag{}, &User{}, &WebPage{}, &WxappPage{}, &Express{}, &AdminUser{})
+	db.AutoMigrate(&User{}, &Tag{}, &Address{}, &AppSetting{}, &CarItem{}, &Category{}, &City{}, &Delivery{}, &DeliveryRule{}, &Goods{}, &Logistic{}, &Order{}, &OrderItem{}, &Product{}, &PropertyName{}, &PropertyValue{}, &Province{}, &Region{}, &Tag{}, &User{}, &WebPage{}, &WxappPage{}, &Express{}, &AdminUser{}, &transition.StateChangeLog{})
 }
 
 func CloseDB() {

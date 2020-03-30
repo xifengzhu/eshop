@@ -2,20 +2,10 @@ package workers
 
 import (
 	"github.com/gocraft/work"
-	"github.com/gomodule/redigo/redis"
 	"github.com/xifengzhu/eshop/helpers/setting"
+	"github.com/xifengzhu/eshop/helpers/utils"
 	"log"
 )
-
-// Make a redis pool
-var redisPool = &redis.Pool{
-	MaxActive: 5,
-	MaxIdle:   5,
-	Wait:      true,
-	Dial: func() (redis.Conn, error) {
-		return redis.DialURL(setting.RedisUrl)
-	},
-}
 
 type Context struct {
 	customerID int64
@@ -26,8 +16,8 @@ func init() {
 	// Context{} is a struct that will be the context for the request.
 	// 10 is the max concurrency
 	// "my_app_namespace" is the Redis namespace
-	// redisPool is a Redis pool
-	pool := work.NewWorkerPool(Context{}, 10, setting.RedisNamespace, redisPool)
+	// RedisPool is a Redis pool
+	pool := work.NewWorkerPool(Context{}, 10, setting.RedisNamespace, utils.RedisPool)
 
 	// Add middleware that will be executed for each job
 	pool.Middleware((*Context).Log)
@@ -35,6 +25,7 @@ func init() {
 
 	// Map the name of jobs to handler functions
 	pool.Job("send_email", (*Context).SendEmail)
+	pool.Job("close_order", (*Context).CloseOrder)
 
 	// Customize options:
 	pool.JobWithOptions("export", work.JobOptions{Priority: 10, MaxFails: 1}, (*Context).Export)

@@ -43,7 +43,7 @@ func GetOrders(c *gin.Context) {
 	orders := &[]models.Order{}
 
 	condition := c.QueryMap("q")
-	condition["user_id"] = string(user.ID)
+	condition["user_id"] = strconv.Itoa(user.ID)
 
 	models.SearchResourceQuery(&model, orders, &pagination, condition)
 
@@ -67,7 +67,7 @@ func GetOrder(c *gin.Context) {
 
 	var userOrders []models.Order
 	parmMap := map[string]interface{}{"id": orderID, "user_id": user.ID}
-	err := models.WhereResources(&userOrders, Query{Conditions: parmMap})
+	err := models.WhereResources(&userOrders, Query{Conditions: parmMap, Preloads: []string{"OrderItems"}})
 
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
@@ -122,7 +122,7 @@ func CreateOrder(c *gin.Context) {
 		}
 		var goods models.Goods
 		goods.ID = item.GoodsID
-		err = goods.Find()
+		err = models.FindResource(&goods, Query{})
 		log.Println("===goods.Find:===", goods)
 		if err != nil {
 			apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, errors.New("商品不存在或被下架"))
@@ -143,7 +143,7 @@ func CreateOrder(c *gin.Context) {
 		OrderItems:         orderItems,
 	}
 
-	err = order.Create()
+	err = models.CreateResource(&order)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -186,15 +186,18 @@ func DeleteOrder(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
 	orderID, _ := strconv.Atoi(c.Param("id"))
 
-	var userOrders []models.Order
+	var order models.Order
 	parmMap := map[string]interface{}{"id": orderID, "user_id": user.ID}
-	err := models.WhereResources(&userOrders, Query{Conditions: parmMap})
+	err := models.FirstResource(&order, Query{Conditions: parmMap})
 
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, errors.New("资源不存在"))
 		return
 	}
-	models.DestroyResource(userOrders[0], Query{})
+
+	models.DestroyResource(&order, Query{Callbacks: []func(){order.DestroyOrderItems}})
+
+	models.DestroyResource(order, Query{})
 	apiHelpers.ResponseOK(c)
 }
 

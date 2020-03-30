@@ -120,23 +120,6 @@ definitions:
     required:
     - name
     type: object
-  v1.DeliveryOrderParams:
-    properties:
-      address_id:
-        type: integer
-      buyer_message:
-        type: string
-      express_id:
-        type: integer
-      item_ids:
-        items:
-          type: integer
-        type: array
-    required:
-    - address_id
-    - express_id
-    - item_ids
-    type: object
   v1.DeliveryParams:
     properties:
       delivery_rules:
@@ -320,9 +303,9 @@ definitions:
         type: string
       q[order_no_cont]:
         type: string
-      q[status_in]:
+      q[state_in]:
         items:
-          type: integer
+          type: string
         type: array
       sort:
         type: string
@@ -330,6 +313,11 @@ definitions:
         type: integer
     type: object
   v1.QueryUserParams:
+    type: object
+  v1.ShipOrderParams:
+    properties:
+      express_no:
+        type: string
     type: object
   v1.UserInfo:
     properties:
@@ -354,10 +342,16 @@ paths:
     get:
       parameters:
       - in: query
+        name: per_page
+        type: integer
+      - in: query
         name: sort
         type: string
       - in: query
         name: total
+        type: integer
+      - in: query
+        name: page
         type: integer
       - in: query
         name: q[email_cont]
@@ -373,12 +367,6 @@ paths:
           type: integer
         name: q[status_in]
         type: array
-      - in: query
-        name: page
-        type: integer
-      - in: query
-        name: per_page
-        type: integer
       produces:
       - application/json
       responses:
@@ -490,8 +478,17 @@ paths:
     get:
       parameters:
       - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
         name: sort
         type: string
+      - in: query
+        name: total
+        type: integer
       - in: query
         name: name
         type: string
@@ -501,15 +498,6 @@ paths:
       - in: query
         name: created_at_lteq
         type: string
-      - in: query
-        name: total
-        type: integer
-      - in: query
-        name: page
-        type: integer
-      - in: query
-        name: per_page
-        type: integer
       produces:
       - application/json
       responses:
@@ -724,15 +712,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: q[name_cont]
-        type: string
-      - in: query
-        name: q[code_cont]
-        type: string
-      - in: query
-        name: page
-        type: integer
-      - in: query
         name: per_page
         type: integer
       - in: query
@@ -741,6 +720,15 @@ paths:
       - in: query
         name: total
         type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: q[name_cont]
+        type: string
+      - in: query
+        name: q[code_cont]
+        type: string
       produces:
       - application/json
       responses:
@@ -860,20 +848,6 @@ paths:
     get:
       parameters:
       - in: query
-        items:
-          type: integer
-        name: q[status_in]
-        type: array
-      - in: query
-        name: q[order_no_cont]
-        type: string
-      - in: query
-        name: q[created_at_gteq]
-        type: string
-      - in: query
-        name: q[created_at_lteq]
-        type: string
-      - in: query
         name: page
         type: integer
       - in: query
@@ -885,6 +859,20 @@ paths:
       - in: query
         name: total
         type: integer
+      - in: query
+        items:
+          type: string
+        name: q[state_in]
+        type: array
+      - in: query
+        name: q[order_no_cont]
+        type: string
+      - in: query
+        name: q[created_at_gteq]
+        type: string
+      - in: query
+        name: q[created_at_lteq]
+        type: string
       produces:
       - application/json
       responses:
@@ -917,26 +905,40 @@ paths:
       summary: 获取订单详情
       tags:
       - 后台订单管理
-  /admin_api/v1/orders/{id}/deliver:
+  /admin_api/v1/orders/{id}/pay:
     post:
       parameters:
-      - in: query
-        items:
-          type: integer
-        name: item_ids
-        required: true
-        type: array
-      - in: query
-        name: address_id
+      - description: order id
+        in: path
+        name: id
         required: true
         type: integer
-      - in: query
-        name: express_id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 后台支付订单
+      tags:
+      - 后台订单管理
+  /admin_api/v1/orders/{id}/ship:
+    post:
+      parameters:
+      - description: order id
+        in: path
+        name: id
         required: true
         type: integer
-      - in: query
-        name: buyer_message
-        type: string
+      - description: 发货参数
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ShipOrderParams'
       produces:
       - application/json
       responses:
@@ -1509,7 +1511,7 @@ paths:
   /app_api/v1/batch_products:
     get:
       parameters:
-      - description: 产品ids, 以逗号分隔
+      - description: 产品ids
         in: query
         items:
           type: integer
@@ -1563,9 +1565,18 @@ paths:
         name: sort
         type: string
       - in: query
+        name: total
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
         items:
-          type: integer
-        name: q[status_in]
+          type: string
+        name: q[state_in]
         type: array
       - in: query
         name: q[order_no_cont]
@@ -1576,15 +1587,6 @@ paths:
       - in: query
         name: q[created_at_lteq]
         type: string
-      - in: query
-        name: total
-        type: integer
-      - in: query
-        name: page
-        type: integer
-      - in: query
-        name: per_page
-        type: integer
       produces:
       - application/json
       responses:
@@ -1725,6 +1727,15 @@ paths:
     get:
       parameters:
       - in: query
+        name: q[category_id]
+        type: integer
+      - in: query
+        name: q[name_cont]
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
         name: page
         type: integer
       - in: query
@@ -1732,15 +1743,6 @@ paths:
         type: integer
       - in: query
         name: sort
-        type: string
-      - in: query
-        name: total
-        type: integer
-      - in: query
-        name: q[category_id]
-        type: integer
-      - in: query
-        name: q[name_cont]
         type: string
       produces:
       - application/json

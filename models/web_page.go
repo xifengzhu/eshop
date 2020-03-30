@@ -8,6 +8,10 @@ type WebPage struct {
 	Content string `gorm:"type: text; not null" json:"Content"`
 }
 
+func (WebPage) TableName() string {
+	return "web_page"
+}
+
 func (webPage *WebPage) FindByTitle(title string) (err error) {
 	err = db.Where("title = ?", title).First(&webPage).Error
 	return

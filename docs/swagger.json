@@ -26,6 +26,11 @@
                 "summary": "管理员列表",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "sort",
                         "in": "query"
@@ -33,6 +38,11 @@
                     {
                         "type": "integer",
                         "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
                         "in": "query"
                     },
                     {
@@ -56,16 +66,6 @@
                             "type": "integer"
                         },
                         "name": "q[status_in]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "per_page",
                         "in": "query"
                     }
                 ],
@@ -253,8 +253,23 @@
                 "summary": "分类列表",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -270,21 +285,6 @@
                     {
                         "type": "string",
                         "name": "created_at_lteq",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "per_page",
                         "in": "query"
                     }
                 ],
@@ -639,21 +639,6 @@
                 "summary": "快递列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "q[name_cont]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[code_cont]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "name": "per_page",
                         "in": "query"
@@ -666,6 +651,21 @@
                     {
                         "type": "integer",
                         "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[name_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[code_cont]",
                         "in": "query"
                     }
                 ],
@@ -862,29 +862,6 @@
                 "summary": "获取订单列表",
                 "parameters": [
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        },
-                        "name": "q[status_in]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[order_no_cont]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[created_at_gteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[created_at_lteq]",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "name": "page",
                         "in": "query"
@@ -902,6 +879,29 @@
                     {
                         "type": "integer",
                         "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "name": "q[state_in]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[order_no_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[created_at_gteq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[created_at_lteq]",
                         "in": "query"
                     }
                 ],
@@ -948,7 +948,40 @@
                 }
             }
         },
-        "/admin_api/v1/orders/{id}/deliver": {
+        "/admin_api/v1/orders/{id}/pay": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台订单管理"
+                ],
+                "summary": "后台支付订单",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "order id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/orders/{id}/ship": {
             "post": {
                 "security": [
                     {
@@ -964,30 +997,20 @@
                 "summary": "订单发货",
                 "parameters": [
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        },
-                        "name": "item_ids",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
                         "type": "integer",
-                        "name": "address_id",
-                        "in": "query",
+                        "description": "order id",
+                        "name": "id",
+                        "in": "path",
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "name": "express_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "name": "buyer_message",
-                        "in": "query"
+                        "description": "发货参数",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.ShipOrderParams"
+                        }
                     }
                 ],
                 "responses": {
@@ -1928,7 +1951,7 @@
                         "items": {
                             "type": "integer"
                         },
-                        "description": "产品ids, 以逗号分隔",
+                        "description": "产品ids",
                         "name": "ids",
                         "in": "query",
                         "required": true
@@ -2012,11 +2035,26 @@
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
                         "type": "array",
                         "items": {
-                            "type": "integer"
+                            "type": "string"
                         },
-                        "name": "q[status_in]",
+                        "name": "q[state_in]",
                         "in": "query"
                     },
                     {
@@ -2032,21 +2070,6 @@
                     {
                         "type": "string",
                         "name": "q[created_at_lteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "per_page",
                         "in": "query"
                     }
                 ],
@@ -2275,6 +2298,21 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "name": "q[category_id]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[name_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "page",
                         "in": "query"
                     },
@@ -2286,21 +2324,6 @@
                     {
                         "type": "string",
                         "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "q[category_id]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[name_cont]",
                         "in": "query"
                     }
                 ],
@@ -3193,31 +3216,6 @@
                 }
             }
         },
-        "v1.DeliveryOrderParams": {
-            "type": "object",
-            "required": [
-                "address_id",
-                "express_id",
-                "item_ids"
-            ],
-            "properties": {
-                "address_id": {
-                    "type": "integer"
-                },
-                "buyer_message": {
-                    "type": "string"
-                },
-                "express_id": {
-                    "type": "integer"
-                },
-                "item_ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            }
-        },
         "v1.DeliveryParams": {
             "type": "object",
             "required": [
@@ -3493,10 +3491,10 @@
                 "q[order_no_cont]": {
                     "type": "string"
                 },
-                "q[status_in]": {
+                "q[state_in]": {
                     "type": "array",
                     "items": {
-                        "type": "integer"
+                        "type": "string"
                     }
                 },
                 "sort": {
@@ -3509,6 +3507,14 @@
         },
         "v1.QueryUserParams": {
             "type": "object"
+        },
+        "v1.ShipOrderParams": {
+            "type": "object",
+            "properties": {
+                "express_no": {
+                    "type": "string"
+                }
+            }
         },
         "v1.UserInfo": {
             "type": "object",

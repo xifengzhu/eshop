@@ -59,20 +59,6 @@ func (product Product) DeliveryRule(expressID int, ProvinceID int) (rule Deliver
 	return rule
 }
 
-// func (pro Product) All(pagination *utils.Pagination, maps map[string]interface{}) (products []Product, err error) {
-// 	offset := (pagination.Page - 1) * pagination.PerPage
-// 	keyword, ok := maps["keyword"].(string)
-// 	// online product
-// 	searchQuery := db.Where("is_online = ?", true)
-// 	if ok {
-// 		delete(maps, "keyword")
-// 		searchQuery = searchQuery.Where("name LIKE ? ", "%"+keyword+"%")
-// 	}
-// 	searchQuery.Where(maps).Offset(offset).Limit(pagination.PerPage).Order(pagination.Sort).Find(&products)
-// 	pagination.Total = GetProductTotal(maps)
-// 	return
-// }
-
 func (product *Product) SetSpecifications() {
 	var specifications []Specification
 	var vids []int

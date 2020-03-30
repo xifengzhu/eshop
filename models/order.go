@@ -2,23 +2,23 @@ package models
 
 import (
 	"fmt"
+	"github.com/gocraft/work"
 	"github.com/jinzhu/gorm"
 	"github.com/objcoding/wxpay"
+	"github.com/qor/transition"
 	"github.com/xifengzhu/eshop/helpers/setting"
-	// "github.com/xifengzhu/eshop/helpers/utils"
+	"github.com/xifengzhu/eshop/helpers/utils"
+	"log"
 	"math"
 	"math/rand"
 	"time"
 )
-
-type OrderStatus int
 
 type Order struct {
 	BaseModel
 
 	WxappId            string      `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	OrderNo            string      `gorm:"type: varchar(50); not null; unique_index" json:"order_no"`
-	Status             OrderStatus `gorm:"type: tinyint; " json:"status"`
 	AddressID          int         `gorm:"-" json:"address_id"`
 	ReceiverProperties string      `gorm:"type: varchar(255); " json:"receiver_properties"`
 	OuterPayId         string      `gorm:"type: varchar(60); " json:"outer_pay_id"`
@@ -30,15 +30,25 @@ type Order struct {
 	UserID             int         `gorm:"type: int; " json:"user_id"`
 	BuyerMessage       string      `gorm:"type: varchar(120); " json:"buyer_message"`
 	OrderItems         []OrderItem `json:"order_items"`
+	Express            Express     `json:"express"`
+	transition.Transition
 }
-
-var WxpayClient *wxpay.Client
 
 func (Order) TableName() string {
 	return "orders"
 }
 
+var (
+	WxpayClient *wxpay.Client
+	OrderFSM    = transition.New(&Order{})
+)
+
 func init() {
+	initWechatAccount()
+	defineState()
+}
+
+func initWechatAccount() {
 	account := wxpay.NewAccount(setting.WechatAppId, setting.MchID, setting.MchKey, false)
 	WxpayClient = wxpay.NewClient(account)
 
@@ -52,34 +62,53 @@ func init() {
 	WxpayClient.SetSignType("MD5")
 }
 
-const (
-	wait_buyer_pay OrderStatus = iota
-	wait_seller_send_goods
-	wait_buyer_confirm_goods
-	buyer_confirm_goods
-	trade_finished
-	canceled
-	trade_closed
-	refunding
-	refunded
-)
+func defineState() {
+	// Define Order's States
+	OrderFSM.Initial("wait_buyer_pay")
+	OrderFSM.State("wait_seller_send_goods")
+	OrderFSM.State("wait_buyer_confirm_goods")
+	OrderFSM.State("buyer_confirm_goods")
+	OrderFSM.State("trade_finished")
+	OrderFSM.State("canceled")
+	OrderFSM.State("trade_closed")
+	OrderFSM.State("refunding")
+	OrderFSM.State("refunded")
 
-var OrderStatusEnum = map[string]OrderStatus{
-	"wait_buyer_pay":           wait_buyer_pay,
-	"wait_seller_send_goods":   wait_seller_send_goods,
-	"wait_buyer_confirm_goods": wait_buyer_confirm_goods,
-	"buyer_confirm_goods":      buyer_confirm_goods,
-	"trade_finished":           trade_finished,
-	"canceled":                 canceled,
-	"trade_closed":             trade_closed,
-	"refunding":                refunding,
-	"refunded":                 refunded,
+	// Define State Event
+	OrderFSM.Event("paid").
+		To("wait_seller_send_goods").
+		From("wait_buyer_pay").
+		After(func(value interface{}, tx *gorm.DB) error {
+			// TOTO: 1. 根据减库存规则减库存
+			log.Println("wait_seller_send_goods")
+			return nil
+		})
+	OrderFSM.Event("ship").
+		To("wait_buyer_confirm_goods").
+		From("wait_seller_send_goods").
+		After(func(value interface{}, tx *gorm.DB) error {
+			// TOTO: 1. 发货提醒 2. 7天之后自动确认收货任务
+			log.Println("wait_buyer_confirm_goods")
+			return nil
+		})
+	OrderFSM.Event("confirm").
+		To("buyer_confirm_goods").
+		From("wait_buyer_confirm_goods").
+		After(func(value interface{}, tx *gorm.DB) error {
+			// TOTO: 1. 确认收货之后，7天自动交易完成，关闭售后
+			log.Println("buyer_confirm_goods")
+			return nil
+		})
+	OrderFSM.Event("finish").To("trade_finished").From("buyer_confirm_goods")
+	OrderFSM.Event("cancel").To("wait_buyer_pay").From("canceled")
+	OrderFSM.Event("refund").To("refunding").From("wait_seller_send_goods")
+	OrderFSM.Event("drawback").To("refunded").From("refunding")
+	OrderFSM.Event("close").To("wait_buyer_pay").From("trade_closed")
+
 }
 
-var OrderStatusKeys []string = []string{"wait_buyer_pay", "wait_seller_send_goods", "wait_buyer_confirm_goods", "buyer_confirm_goods", "trade_finished", "canceled", "trade_closed", "refunding", "refunded"}
-
 // Scope
-func StatusScope(status []int) func(db *gorm.DB) *gorm.DB {
+func StateScope(status []string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where("status in (?)", status)
 	}
@@ -95,17 +124,11 @@ func (order *Order) Create() (err error) {
 	return
 }
 
-//删除数据
-func (order Order) Destroy() (err error) {
-	err = db.Delete(&order).Error
-	return
-}
-
 // Callbacks
-func (order *Order) BeforeSave() (err error) {
+func (order *Order) BeforeCreate() (err error) {
 	fmt.Println("=======order before save=============")
-	order.setOrderNo()     // 生成订单号
-	order.setOrderStatus() // 设置默认订单状态
+	order.setOrderNo()    // 生成订单号
+	order.setOrderState() // 设置默认订单状态
 	return nil
 }
 
@@ -113,6 +136,7 @@ func (order *Order) AfterCreate(tx *gorm.DB) (err error) {
 	fmt.Println("=======order after save=============")
 	order.caculateExpressAmount(tx)
 	order.caculateTotalAmount(tx)
+	order.enqueueCloseOrderJob()
 
 	err = reductStock()
 	if err != nil {
@@ -146,8 +170,8 @@ func removeFromCartItem() (err error) {
 	return
 }
 
-func (order *Order) setOrderStatus() {
-	order.Status = wait_buyer_pay
+func (order *Order) setOrderState() {
+	order.State = "wait_buyer_pay"
 }
 
 func (order *Order) generateNo() {
@@ -166,9 +190,7 @@ func (order *Order) caculateTotalAmount(tx *gorm.DB) {
 		totalAmount += orderItem.TotalAmount
 	}
 	totalAmount += order.ExpressAmount
-	attr := Order{TotalAmount: totalAmount, PayAmount: totalAmount}
-	tx.Model(order).Update(attr)
-	fmt.Println("=======order after caculateTotalAmount=============", order)
+	tx.Model(order).Updates(Order{TotalAmount: totalAmount, PayAmount: totalAmount})
 	return
 }
 
@@ -203,14 +225,13 @@ func (order *Order) caculateExpressAmount(tx *gorm.DB) {
 	for _, orderItem := range order.OrderItems {
 		var goods Goods
 		goods.ID = orderItem.GoodsID
-		_ = goods.Find()
+		FindResource(&goods, Options{})
 		rule := goods.DeliveryRule(order.ExpressID, order.AddressID)
 		rules = append(rules, rule)
 		if _, ok := m[rule.ID]; ok {
 			m[rule.ID] = append(m[rule.ID], orderItem)
 		}
 		m[rule.ID] = []OrderItem{orderItem}
-		fmt.Println("===all order_item delivery rules====:", m)
 	}
 	firstRule := findMaxRuleFirst(rules)
 	// 首重/首件 费用
@@ -247,11 +268,14 @@ func (order *Order) caculateExpressAmount(tx *gorm.DB) {
 			} else {
 				additionWeight = totalWeight
 			}
-			additionalAmount = currentRule.AdditionalFee * float32(math.Ceil(float64(additionWeight)/float64(currentRule.Additional)))
+			if currentRule.Additional != 0 {
+				additionalAmount = currentRule.AdditionalFee * float32(math.Ceil(float64(additionWeight)/float64(currentRule.Additional)))
+			} else {
+				additionalAmount = 0
+			}
 		}
 		expressAmount += additionalAmount
 		tx.Model(order).Update("express_amount", expressAmount)
-		fmt.Println("=======order after caculateExpressAmount=============", order)
 		return
 	}
 }
@@ -262,6 +286,11 @@ func (order Order) OrderNoIsTaken() bool {
 		return false
 	}
 	return true
+}
+
+func (order Order) enqueueCloseOrderJob() {
+	enqueuer := work.NewEnqueuer(setting.RedisNamespace, utils.RedisPool)
+	enqueuer.EnqueueIn("close_order", 900, work.Q{"order_id": order.ID})
 }
 
 func (order Order) User() (user User) {
@@ -282,7 +311,37 @@ func (order Order) RequestPayment() (map[string]string, error) {
 	return payment, err
 }
 
-func GetOrderTotal(maps interface{}) (count int) {
-	db.Model(&Order{}).Where(maps).Count(&count)
+func (order Order) Close() {
+	OrderFSM.Trigger("close", &order, db, "auto close order after 15min")
+}
+
+func (order Order) Pay() (err error) {
+	tx := db.Begin()
+	if err = OrderFSM.Trigger("paid", &order, tx, "admin user pay order"); err != nil {
+		log.Println("====pay order failed===", err)
+		return err
+	}
+
+	if err = tx.Save(&order).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	// Or commit the transaction
+	tx.Commit()
 	return
+}
+
+func (order Order) Ship(tx *gorm.DB) (err error) {
+	if err = OrderFSM.Trigger("ship", &order, tx, "admin user pay order"); err != nil {
+		log.Println("====ship order failed===", err)
+		return err
+	}
+	if err = tx.Save(&order).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (order Order) DestroyOrderItems() {
+	db.Where("order_id = ?", order.ID).Delete(OrderItem{})
 }
