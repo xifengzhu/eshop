@@ -78,25 +78,25 @@ func defineState() {
 	OrderFSM.Event("paid").
 		To("wait_seller_send_goods").
 		From("wait_buyer_pay").
-		After(func(value interface{}, tx *gorm.DB) error {
+		After(func(order interface{}, tx *gorm.DB) error {
 			// TOTO: 1. 根据减库存规则减库存
-			log.Println("wait_seller_send_goods")
+			log.Println("after paid....")
 			return nil
 		})
 	OrderFSM.Event("ship").
 		To("wait_buyer_confirm_goods").
 		From("wait_seller_send_goods").
-		After(func(value interface{}, tx *gorm.DB) error {
+		After(func(order interface{}, tx *gorm.DB) error {
 			// TOTO: 1. 发货提醒 2. 7天之后自动确认收货任务
-			log.Println("wait_buyer_confirm_goods")
+			log.Println("after ship....")
 			return nil
 		})
 	OrderFSM.Event("confirm").
 		To("buyer_confirm_goods").
 		From("wait_buyer_confirm_goods").
-		After(func(value interface{}, tx *gorm.DB) error {
+		After(func(order interface{}, tx *gorm.DB) error {
 			// TOTO: 1. 确认收货之后，7天自动交易完成，关闭售后
-			log.Println("buyer_confirm_goods")
+			log.Println("after confirm....")
 			return nil
 		})
 	OrderFSM.Event("finish").To("trade_finished").From("buyer_confirm_goods")
@@ -311,8 +311,21 @@ func (order Order) RequestPayment() (map[string]string, error) {
 	return payment, err
 }
 
-func (order Order) Close() {
-	OrderFSM.Trigger("close", &order, db, "auto close order after 15min")
+func (order Order) Close() (err error) {
+	tx := db.Begin()
+	if err = OrderFSM.Trigger("close", &order, db, "auto close order after 15min"); err != nil {
+		log.Println("====close order failed===", err)
+		return err
+	}
+
+	if err = tx.Save(&order).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	// Or commit the transaction
+	tx.Commit()
+	return
+
 }
 
 func (order Order) Pay() (err error) {
@@ -339,6 +352,34 @@ func (order Order) Ship(tx *gorm.DB) (err error) {
 	if err = tx.Save(&order).Error; err != nil {
 		return err
 	}
+	return nil
+}
+
+func (order Order) Finish() (err error) {
+	tx := db.Begin()
+	if err = OrderFSM.Trigger("finish", &order, tx, "system finish order"); err != nil {
+		log.Println("====ship order failed===", err)
+		return err
+	}
+	if err = tx.Save(&order).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	return nil
+}
+
+func (order Order) Confirm(operator string) (err error) {
+	tx := db.Begin()
+	message := fmt.Sprintf("%s finish order", operator)
+	if err = OrderFSM.Trigger("confirm", &order, tx, message); err != nil {
+		log.Println("====ship order failed===", err)
+		return err
+	}
+	if err = db.Save(&order).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
 	return nil
 }
 

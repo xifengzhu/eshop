@@ -1,53 +1,134 @@
 package v1
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/copier"
+	"github.com/xifengzhu/eshop/helpers/e"
+	"github.com/xifengzhu/eshop/models"
+	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+	"strconv"
 )
 
-type WxappPageParams struct {
+type WxAppPageParams struct {
+	Name     string `json:"name" binding:"required"`
+	PageType int    `json:"tinyint" binding:"required"`
+	PageData string `json:"page_data" binding:"required"`
 }
 
-// @Summary 添加WX页面
+// @Summary 添加webview
 // @Produce  json
-// @Tags 后台WX页面管理
-// @Param params body WxappPageParams true "query params"
+// @Tags 后台webview管理
+// @Param params body WxAppPageParams true "query params"
 // @Success 200 {object} apiHelpers.Response
 // @Router /admin_api/v1/wxapp_pages [post]
 // @Security ApiKeyAuth
-func AddWxappPage(c *gin.Context) {
+func AddWxAppPage(c *gin.Context) {
+	var err error
+	var wpParams WxAppPageParams
+	if err = c.ShouldBind(&wpParams); err != nil {
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		return
+	}
 
+	var wxAppPage models.WxappPage
+	copier.Copy(&wxAppPage, &wpParams)
+
+	err = models.SaveResource(&wxAppPage)
+	if err != nil {
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		return
+	}
+	apiHelpers.ResponseSuccess(c, wxAppPage)
 }
 
-// @Summary 删除WX页面
+// @Summary 删除webview
 // @Produce  json
-// @Tags 后台WX页面管理
+// @Tags 后台webview管理
 // @Param id path int true "web_page id"
 // @Success 200 {object} apiHelpers.Response
 // @Router /admin_api/v1/wxapp_pages/{id} [delete]
 // @Security ApiKeyAuth
-func DeleteWxappPage(c *gin.Context) {
+func DeleteWxAppPage(c *gin.Context) {
+	var wxAppPage models.WxappPage
+	id, _ := strconv.Atoi(c.Param("id"))
+	wxAppPage.ID = id
 
+	err := models.DestroyResource(&wxAppPage, Query{})
+	if err != nil {
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		return
+	}
+	apiHelpers.ResponseSuccess(c, nil)
 }
 
-// @Summary WX页面详情
+// @Summary webview详情
 // @Produce  json
-// @Tags 后台WX页面管理
+// @Tags 后台webview管理
 // @Param id path int true "web_page id"
 // @Success 200 {object} apiHelpers.Response
 // @Router /admin_api/v1/wxapp_pages/{id} [get]
 // @Security ApiKeyAuth
-func GetWxappPage(c *gin.Context) {
+func GetWxAppPage(c *gin.Context) {
+	var wxAppPage models.WxappPage
+	id, _ := strconv.Atoi(c.Param("id"))
+	wxAppPage.ID = id
+	err := models.FindResource(&wxAppPage, Query{})
+	if err != nil {
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		return
+	}
 
+	apiHelpers.ResponseSuccess(c, wxAppPage)
 }
 
-// @Summary 更新WX页面
+// @Summary webview列表
 // @Produce  json
-// @Tags 后台WX页面管理
+// @Tags 后台webview管理
+// @Success 200 {object} apiHelpers.Response
+// @Router /admin_api/v1/wxapp_pages/{id} [get]
+// @Security ApiKeyAuth
+func GetWxAppPages(c *gin.Context) {
+	var wxAppPage []models.WxappPage
+	models.AllResource(&wxAppPage, Query{})
+	apiHelpers.ResponseSuccess(c, wxAppPage)
+}
+
+// @Summary 更新webview
+// @Produce  json
+// @Tags 后台webview管理
 // @Param id path int true "id"
-// @Param params body WxappPageParams true "web_page params"
+// @Param params body WxAppPageParams true "web_page params"
 // @Success 200 {object} apiHelpers.Response
 // @Router /admin_api/v1/wxapp_pages/{id} [put]
 // @Security ApiKeyAuth
-func UpdateWxappPage(c *gin.Context) {
+func UpdateWxAppPage(c *gin.Context) {
+	if c.Param("id") == "" {
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("id 不能为空"))
+		return
+	}
+	var err error
+	var wxAppPageParams WxAppPageParams
+	if err = c.ShouldBindJSON(&wxAppPageParams); err != nil {
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		return
+	}
 
+	var wxAppPage models.WxappPage
+	id, _ := strconv.Atoi(c.Param("id"))
+	wxAppPage.ID = id
+	err = models.FindResource(&wxAppPage, Query{})
+	if err != nil {
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		return
+	}
+
+	copier.Copy(&wxAppPage, &wxAppPageParams)
+
+	err = models.SaveResource(&wxAppPage)
+	if err != nil {
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		return
+	}
+	apiHelpers.ResponseSuccess(c, wxAppPage)
 }

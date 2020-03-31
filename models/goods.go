@@ -20,10 +20,7 @@ type Goods struct {
 	LinePrice  float32 `gorm:"type: decimal(10,2); " json:"line_price"`
 	Weight     float32 `gorm:"type: double; " json:"weight"`
 	ProductID  int     `gorm:"type: int; " json:"product_id"`
-
-	PropertiesText string `gorm:"-" json:"properties_text"`
-	PIDs           []int  `gorm:"-" json:"pids"`
-	VIDs           []int  `gorm:"-" json:"vids"`
+	Destroy    bool    `sql:"-" json:"_destroy,omitempty"`
 }
 
 func (Goods) TableName() string {
@@ -37,7 +34,7 @@ func (goods *Goods) IsExist() bool {
 	return true
 }
 
-func (goods *Goods) SetPropertiesText() {
+func (goods *Goods) PropertiesText() string {
 	var text string
 	properties := strings.Split(goods.Properties, ";")
 	for _, property := range properties {
@@ -49,14 +46,12 @@ func (goods *Goods) SetPropertiesText() {
 
 		FindResource(&pvalue, Options{})
 
-		text += pvalue.Name + " "
+		text += pvalue.Value + " "
 	}
-	goods.PropertiesText = strings.Trim(text, "\t \n")
+	return strings.Trim(text, "\t \n")
 }
 
-func (goods *Goods) SetPropertyIDs() {
-	var pids []int
-	var vids []int
+func (goods *Goods) PVIDs() (pids []int, vids []int) {
 	properties := strings.Split(goods.Properties, ";")
 	for _, property := range properties {
 		values := strings.Split(property, ":")
@@ -65,12 +60,10 @@ func (goods *Goods) SetPropertyIDs() {
 		pids = append(pids, pid)
 		vids = append(vids, vid)
 	}
-	goods.PIDs = pids
-	goods.VIDs = vids
+	return pids, vids
 }
 
 func (goods *Goods) AfterFind() (err error) {
-	goods.SetPropertiesText()
 	return
 }
 

@@ -73,7 +73,7 @@ func GetProduct(c *gin.Context) {
 		return
 	}
 	for index, _ := range product.Goodses {
-		product.Goodses[index].SetPropertiesText()
+		product.Goodses[index].PropertiesText()
 	}
 
 	product.SetSpecifications()

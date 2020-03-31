@@ -56,4 +56,39 @@ func InitAdminAPI(r *gin.Engine) {
 		admin_apiv1.GET("/expresses", v1.GetExpresses)
 		admin_apiv1.PUT("/expresses/:id", v1.UpdateExpress)
 	}
+
+	{
+		admin_apiv1.POST("/products", v1.AddProduct)
+		admin_apiv1.GET("/products/:id", v1.GetProduct)
+		admin_apiv1.DELETE("/products/:id", v1.DeleteProduct)
+		admin_apiv1.GET("/products", v1.GetProductes)
+		admin_apiv1.PUT("/products/:id", v1.UpdateProduct)
+	}
+
+	{
+		admin_apiv1.POST("/property_names", v1.AddPropertyName)
+		admin_apiv1.GET("/property_names/:id", v1.GetPropertyName)
+		admin_apiv1.DELETE("/property_names/:id", v1.DeletePropertyName)
+		admin_apiv1.GET("/property_names", v1.GetPropertyNames)
+		admin_apiv1.PUT("/property_names/:id", v1.UpdatePropertyName)
+
+		admin_apiv1.POST("/property_values", v1.AddPropertyValue)
+		admin_apiv1.DELETE("/property_values/:id", v1.DeletePropertyValue)
+	}
+
+	{
+		admin_apiv1.POST("/web_pages", v1.AddWebPage)
+		admin_apiv1.GET("/web_pages/:id", v1.GetWebPage)
+		admin_apiv1.DELETE("/web_pages/:id", v1.DeleteWebPage)
+		admin_apiv1.GET("/web_pages", v1.GetWebPages)
+		admin_apiv1.PUT("/web_pages/:id", v1.UpdateWebPage)
+	}
+
+	{
+		admin_apiv1.POST("/wxapp_pages", v1.AddWxAppPage)
+		admin_apiv1.GET("/wxapp_pages/:id", v1.GetWxAppPage)
+		admin_apiv1.DELETE("/wxapp_pages/:id", v1.DeleteWxAppPage)
+		admin_apiv1.GET("/wxapp_pages", v1.GetWxAppPages)
+		admin_apiv1.PUT("/wxapp_pages/:id", v1.UpdateWxAppPage)
+	}
 }

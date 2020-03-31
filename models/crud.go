@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/xifengzhu/eshop/helpers/utils"
 	"reflect"
+	"strconv"
 	"strings"
 )
 
@@ -133,6 +134,10 @@ func queryConditionTranslator(q map[string]string) []interface{} {
 				if pred == "_cont" {
 					value = fmt.Sprintf("%s%s%s", "%", value, "%")
 				}
+				if IsBoolValue(value) {
+					valStr := value.(string)
+					value, _ = strconv.ParseBool(valStr)
+				}
 				break
 			}
 		}
@@ -226,4 +231,13 @@ func BuildWhere(db *gorm.DB, where interface{}) (*gorm.DB, error) {
 		return nil, errors.New("参数有误")
 	}
 	return db, nil
+}
+
+func IsBoolValue(value interface{}) bool {
+	valStr, _ := value.(string)
+	boolStr := []string{"1", "t", "T",
+		"TRUE", "true", "True",
+		"0", "f", "F",
+		"FALSE", "false", "False"}
+	return utils.ContainsString(boolStr, valStr)
 }

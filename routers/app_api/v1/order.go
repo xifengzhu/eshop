@@ -128,7 +128,7 @@ func CreateOrder(c *gin.Context) {
 			apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, errors.New("商品不存在或被下架"))
 			return
 		}
-		orderItem := models.OrderItem{GoodsName: goods.Name, GoodsPrice: goods.Price, LinePrice: goods.LinePrice, GoodsWeight: goods.Weight, GoodsAttr: goods.PropertiesText, TotalNum: item.Quantity, DeductStockType: 10, GoodsID: item.GoodsID}
+		orderItem := models.OrderItem{GoodsName: goods.Name, GoodsPrice: goods.Price, LinePrice: goods.LinePrice, GoodsWeight: goods.Weight, GoodsAttr: goods.PropertiesText(), TotalNum: item.Quantity, DeductStockType: 10, GoodsID: item.GoodsID}
 		orderItems = append(orderItems, orderItem)
 	}
 

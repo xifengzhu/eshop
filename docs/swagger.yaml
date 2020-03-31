@@ -168,6 +168,31 @@ definitions:
       name:
         type: string
     type: object
+  v1.GoodsParams:
+    properties:
+      _destroy:
+        type: boolean
+      id:
+        type: integer
+      images:
+        type: string
+      line_price:
+        type: number
+      name:
+        type: string
+      position:
+        type: integer
+      price:
+        type: number
+      properties:
+        type: string
+      sku_no:
+        type: string
+      stock_num:
+        type: integer
+      weight:
+        type: number
+    type: object
   v1.LoginParams:
     properties:
       email:
@@ -205,6 +230,27 @@ definitions:
         type: string
     type: object
   v1.ProductParams:
+    properties:
+      content:
+        type: string
+      deduct_stock_type:
+        type: integer
+      goodses:
+        items:
+          $ref: '#/definitions/v1.GoodsParams'
+        type: array
+      is_online:
+        type: boolean
+      name:
+        type: string
+      position:
+        type: integer
+      price:
+        type: number
+      product_id:
+        type: integer
+      sales_initial:
+        type: integer
     type: object
   v1.ProductQueryParams:
     properties:
@@ -221,9 +267,26 @@ definitions:
       total:
         type: integer
     type: object
-  v1.PropertyNameParams:
+  v1.PropertyParams:
+    properties:
+      name:
+        type: string
+      property_values:
+        items:
+          type: string
+        type: array
+    required:
+    - name
     type: object
   v1.PropertyValueParams:
+    properties:
+      property_name_id:
+        type: integer
+      value:
+        type: string
+    required:
+    - property_name_id
+    - value
     type: object
   v1.QueryAdminUserParams:
     properties:
@@ -297,22 +360,50 @@ definitions:
         type: integer
       per_page:
         type: integer
-      q[created_at_gteq]:
+      q[status]:
         type: string
-      q[created_at_lteq]:
+      sort:
         type: string
-      q[order_no_cont]:
+      total:
+        type: integer
+    type: object
+  v1.QueryProductParams:
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      q[is_online_eq]:
+        type: boolean
+      q[name_cont]:
         type: string
-      q[state_in]:
-        items:
-          type: string
-        type: array
+      q[price_gteq]:
+        type: number
+      q[price_lteq]:
+        type: number
       sort:
         type: string
       total:
         type: integer
     type: object
   v1.QueryUserParams:
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      q[created_at_gteq]:
+        type: string
+      q[created_at_lteq]:
+        type: string
+      q[open_id_eq]:
+        type: string
+      q[username_cont]:
+        type: string
+      sort:
+        type: string
+      total:
+        type: integer
     type: object
   v1.ShipOrderParams:
     properties:
@@ -327,8 +418,27 @@ definitions:
         type: string
     type: object
   v1.WebPageParams:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    required:
+    - content
+    - title
     type: object
-  v1.WxappPageParams:
+  v1.WxAppPageParams:
+    properties:
+      name:
+        type: string
+      page_data:
+        type: string
+      tinyint:
+        type: integer
+    required:
+    - name
+    - page_data
+    - tinyint
     type: object
 host: 127.0.0.1:8000
 info:
@@ -342,16 +452,7 @@ paths:
     get:
       parameters:
       - in: query
-        name: per_page
-        type: integer
-      - in: query
-        name: sort
-        type: string
-      - in: query
         name: total
-        type: integer
-      - in: query
-        name: page
         type: integer
       - in: query
         name: q[email_cont]
@@ -367,6 +468,15 @@ paths:
           type: integer
         name: q[status_in]
         type: array
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
       produces:
       - application/json
       responses:
@@ -478,16 +588,16 @@ paths:
     get:
       parameters:
       - in: query
-        name: page
-        type: integer
-      - in: query
-        name: per_page
-        type: integer
-      - in: query
         name: sort
         type: string
       - in: query
         name: total
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
         type: integer
       - in: query
         name: name
@@ -712,6 +822,9 @@ paths:
     get:
       parameters:
       - in: query
+        name: page
+        type: integer
+      - in: query
         name: per_page
         type: integer
       - in: query
@@ -719,9 +832,6 @@ paths:
         type: string
       - in: query
         name: total
-        type: integer
-      - in: query
-        name: page
         type: integer
       - in: query
         name: q[name_cont]
@@ -848,9 +958,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: page
-        type: integer
-      - in: query
         name: per_page
         type: integer
       - in: query
@@ -860,18 +967,10 @@ paths:
         name: total
         type: integer
       - in: query
-        items:
-          type: string
-        name: q[state_in]
-        type: array
+        name: page
+        type: integer
       - in: query
-        name: q[order_no_cont]
-        type: string
-      - in: query
-        name: q[created_at_gteq]
-        type: string
-      - in: query
-        name: q[created_at_lteq]
+        name: q[status]
         type: string
       produces:
       - application/json
@@ -952,6 +1051,44 @@ paths:
       tags:
       - 后台订单管理
   /admin_api/v1/products:
+    get:
+      parameters:
+      - in: query
+        name: q[price_gteq]
+        type: number
+      - in: query
+        name: q[price_lteq]
+        type: number
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
+        name: q[is_online_eq]
+        type: boolean
+      - in: query
+        name: q[name_cont]
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 产品列表
+      tags:
+      - 后台产品管理
     post:
       parameters:
       - description: query params
@@ -1037,6 +1174,19 @@ paths:
       tags:
       - 后台产品管理
   /admin_api/v1/property_names:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 规格列表
+      tags:
+      - 后台规格名管理
     post:
       parameters:
       - description: query params
@@ -1044,7 +1194,7 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.PropertyNameParams'
+          $ref: '#/definitions/v1.PropertyParams'
       produces:
       - application/json
       responses:
@@ -1108,7 +1258,7 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.PropertyNameParams'
+          $ref: '#/definitions/v1.PropertyParams'
       produces:
       - application/json
       responses:
@@ -1162,52 +1312,33 @@ paths:
       summary: 删除规格值
       tags:
       - 后台规格值管理
-    get:
-      parameters:
-      - description: property_value id
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/apiHelpers.Response'
-      security:
-      - ApiKeyAuth: []
-      summary: 规格值详情
-      tags:
-      - 后台规格值管理
-    put:
-      parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: property_value params
-        in: body
-        name: params
-        required: true
-        schema:
-          $ref: '#/definitions/v1.PropertyValueParams'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/apiHelpers.Response'
-      security:
-      - ApiKeyAuth: []
-      summary: 更新规格值
-      tags:
-      - 后台规格值管理
   /admin_api/v1/users:
     get:
+      parameters:
+      - in: query
+        name: q[created_at_gteq]
+        type: string
+      - in: query
+        name: q[created_at_lteq]
+        type: string
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: q[open_id_eq]
+        type: string
+      - in: query
+        name: q[username_cont]
+        type: string
       produces:
       - application/json
       responses:
@@ -1282,12 +1413,6 @@ paths:
       tags:
       - 后台webview管理
     get:
-      parameters:
-      - description: web_page id
-        in: path
-        name: id
-        required: true
-        type: integer
       produces:
       - application/json
       responses:
@@ -1297,7 +1422,7 @@ paths:
             $ref: '#/definitions/apiHelpers.Response'
       security:
       - ApiKeyAuth: []
-      summary: webview详情
+      summary: webview列表
       tags:
       - 后台webview管理
     put:
@@ -1333,7 +1458,7 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.WxappPageParams'
+          $ref: '#/definitions/v1.WxAppPageParams'
       produces:
       - application/json
       responses:
@@ -1343,9 +1468,9 @@ paths:
             $ref: '#/definitions/apiHelpers.Response'
       security:
       - ApiKeyAuth: []
-      summary: 添加WX页面
+      summary: 添加webview
       tags:
-      - 后台WX页面管理
+      - 后台webview管理
   /admin_api/v1/wxapp_pages/{id}:
     delete:
       parameters:
@@ -1363,16 +1488,10 @@ paths:
             $ref: '#/definitions/apiHelpers.Response'
       security:
       - ApiKeyAuth: []
-      summary: 删除WX页面
+      summary: 删除webview
       tags:
-      - 后台WX页面管理
+      - 后台webview管理
     get:
-      parameters:
-      - description: web_page id
-        in: path
-        name: id
-        required: true
-        type: integer
       produces:
       - application/json
       responses:
@@ -1382,9 +1501,9 @@ paths:
             $ref: '#/definitions/apiHelpers.Response'
       security:
       - ApiKeyAuth: []
-      summary: WX页面详情
+      summary: webview列表
       tags:
-      - 后台WX页面管理
+      - 后台webview管理
     put:
       parameters:
       - description: id
@@ -1397,7 +1516,7 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.WxappPageParams'
+          $ref: '#/definitions/v1.WxAppPageParams'
       produces:
       - application/json
       responses:
@@ -1407,9 +1526,9 @@ paths:
             $ref: '#/definitions/apiHelpers.Response'
       security:
       - ApiKeyAuth: []
-      summary: 更新WX页面
+      summary: 更新webview
       tags:
-      - 后台WX页面管理
+      - 后台webview管理
   /app_api/v1/addresses:
     get:
       produces:
@@ -1562,30 +1681,19 @@ paths:
     get:
       parameters:
       - in: query
-        name: sort
-        type: string
-      - in: query
-        name: total
-        type: integer
-      - in: query
         name: page
         type: integer
       - in: query
         name: per_page
         type: integer
       - in: query
-        items:
-          type: string
-        name: q[state_in]
-        type: array
-      - in: query
-        name: q[order_no_cont]
+        name: sort
         type: string
       - in: query
-        name: q[created_at_gteq]
-        type: string
+        name: total
+        type: integer
       - in: query
-        name: q[created_at_lteq]
+        name: q[status]
         type: string
       produces:
       - application/json
@@ -1727,12 +1835,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: q[category_id]
-        type: integer
-      - in: query
-        name: q[name_cont]
-        type: string
-      - in: query
         name: total
         type: integer
       - in: query
@@ -1743,6 +1845,12 @@ paths:
         type: integer
       - in: query
         name: sort
+        type: string
+      - in: query
+        name: q[category_id]
+        type: integer
+      - in: query
+        name: q[name_cont]
         type: string
       produces:
       - application/json

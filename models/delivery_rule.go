@@ -19,7 +19,7 @@ type DeliveryRule struct {
 	DeliveryID    int      `gorm:"type: int;" json:"delivery_id"`
 	ExpressID     int      `gorm:"type: int; not null" json:"express_id"`
 	Delivery      Delivery `json:"delivery,omitempty"`
-	Destroy       bool     `gorm:"-" json:"_destroy,omitempty"`
+	Destroy       bool     `sql:"-" json:"_destroy,omitempty"`
 }
 
 func (rule DeliveryRule) SuitableProvinceIDs() (provinceIDs []int) {

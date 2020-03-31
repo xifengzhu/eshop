@@ -27,22 +27,7 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
                         "in": "query"
                     },
                     {
@@ -66,6 +51,21 @@
                             "type": "integer"
                         },
                         "name": "q[status_in]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -253,16 +253,6 @@
                 "summary": "分类列表",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "sort",
                         "in": "query"
@@ -270,6 +260,16 @@
                     {
                         "type": "integer",
                         "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
                         "in": "query"
                     },
                     {
@@ -640,6 +640,11 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
@@ -651,11 +656,6 @@
                     {
                         "type": "integer",
                         "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
                         "in": "query"
                     },
                     {
@@ -863,11 +863,6 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
@@ -882,26 +877,13 @@
                         "in": "query"
                     },
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "name": "q[state_in]",
+                        "type": "integer",
+                        "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "name": "q[order_no_cont]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[created_at_gteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[created_at_lteq]",
+                        "name": "q[status]",
                         "in": "query"
                     }
                 ],
@@ -1024,6 +1006,70 @@
             }
         },
         "/admin_api/v1/products": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台产品管理"
+                ],
+                "summary": "产品列表",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "name": "q[price_gteq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "name": "q[price_lteq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "q[is_online_eq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[name_cont]",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -1163,6 +1209,28 @@
             }
         },
         "/admin_api/v1/property_names": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台规格名管理"
+                ],
+                "summary": "规格列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -1183,7 +1251,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.PropertyNameParams"
+                            "$ref": "#/definitions/v1.PropertyParams"
                         }
                     }
                 ],
@@ -1256,7 +1324,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.PropertyNameParams"
+                            "$ref": "#/definitions/v1.PropertyParams"
                         }
                     }
                 ],
@@ -1337,77 +1405,6 @@
             }
         },
         "/admin_api/v1/property_values/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "后台规格值管理"
-                ],
-                "summary": "规格值详情",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "property_value id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "后台规格值管理"
-                ],
-                "summary": "更新规格值",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "property_value params",
-                        "name": "params",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.PropertyValueParams"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
-                        }
-                    }
-                }
-            },
             "delete": {
                 "security": [
                     {
@@ -1454,6 +1451,48 @@
                     "后台用户管理"
                 ],
                 "summary": "获取用户列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "q[created_at_gteq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[created_at_lteq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[open_id_eq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[username_cont]",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1545,16 +1584,7 @@
                 "tags": [
                     "后台webview管理"
                 ],
-                "summary": "webview详情",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "web_page id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "webview列表",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1647,9 +1677,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "后台WX页面管理"
+                    "后台webview管理"
                 ],
-                "summary": "添加WX页面",
+                "summary": "添加webview",
                 "parameters": [
                     {
                         "description": "query params",
@@ -1657,7 +1687,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.WxappPageParams"
+                            "$ref": "#/definitions/v1.WxAppPageParams"
                         }
                     }
                 ],
@@ -1682,18 +1712,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "后台WX页面管理"
+                    "后台webview管理"
                 ],
-                "summary": "WX页面详情",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "web_page id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "webview列表",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1713,9 +1734,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "后台WX页面管理"
+                    "后台webview管理"
                 ],
-                "summary": "更新WX页面",
+                "summary": "更新webview",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1730,7 +1751,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.WxappPageParams"
+                            "$ref": "#/definitions/v1.WxAppPageParams"
                         }
                     }
                 ],
@@ -1753,9 +1774,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "后台WX页面管理"
+                    "后台webview管理"
                 ],
-                "summary": "删除WX页面",
+                "summary": "删除webview",
                 "parameters": [
                     {
                         "type": "integer",
@@ -2030,16 +2051,6 @@
                 "summary": "获取订单列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "name": "page",
                         "in": "query"
@@ -2050,26 +2061,18 @@
                         "in": "query"
                     },
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "name": "q[state_in]",
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "name": "q[order_no_cont]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[created_at_gteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[created_at_lteq]",
+                        "name": "q[status]",
                         "in": "query"
                     }
                 ],
@@ -2298,16 +2301,6 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "q[category_id]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[name_cont]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "total",
                         "in": "query"
                     },
@@ -2324,6 +2317,16 @@
                     {
                         "type": "string",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "q[category_id]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[name_cont]",
                         "in": "query"
                     }
                 ],
@@ -3286,6 +3289,44 @@
                 }
             }
         },
+        "v1.GoodsParams": {
+            "type": "object",
+            "properties": {
+                "_destroy": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "images": {
+                    "type": "string"
+                },
+                "line_price": {
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "properties": {
+                    "type": "string"
+                },
+                "sku_no": {
+                    "type": "string"
+                },
+                "stock_num": {
+                    "type": "integer"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
         "v1.LoginParams": {
             "type": "object",
             "required": [
@@ -3341,7 +3382,39 @@
             }
         },
         "v1.ProductParams": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "deduct_stock_type": {
+                    "type": "integer"
+                },
+                "goodses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.GoodsParams"
+                    }
+                },
+                "is_online": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "sales_initial": {
+                    "type": "integer"
+                }
+            }
         },
         "v1.ProductQueryParams": {
             "type": "object",
@@ -3366,11 +3439,37 @@
                 }
             }
         },
-        "v1.PropertyNameParams": {
-            "type": "object"
+        "v1.PropertyParams": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "property_values": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
         },
         "v1.PropertyValueParams": {
-            "type": "object"
+            "type": "object",
+            "required": [
+                "property_name_id",
+                "value"
+            ],
+            "properties": {
+                "property_name_id": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
         },
         "v1.QueryAdminUserParams": {
             "type": "object",
@@ -3482,20 +3581,37 @@
                 "per_page": {
                     "type": "integer"
                 },
-                "q[created_at_gteq]": {
+                "q[status]": {
                     "type": "string"
                 },
-                "q[created_at_lteq]": {
+                "sort": {
                     "type": "string"
                 },
-                "q[order_no_cont]": {
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "v1.QueryProductParams": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer"
+                },
+                "per_page": {
+                    "type": "integer"
+                },
+                "q[is_online_eq]": {
+                    "type": "boolean"
+                },
+                "q[name_cont]": {
                     "type": "string"
                 },
-                "q[state_in]": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "q[price_gteq]": {
+                    "type": "number"
+                },
+                "q[price_lteq]": {
+                    "type": "number"
                 },
                 "sort": {
                     "type": "string"
@@ -3506,7 +3622,33 @@
             }
         },
         "v1.QueryUserParams": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer"
+                },
+                "per_page": {
+                    "type": "integer"
+                },
+                "q[created_at_gteq]": {
+                    "type": "string"
+                },
+                "q[created_at_lteq]": {
+                    "type": "string"
+                },
+                "q[open_id_eq]": {
+                    "type": "string"
+                },
+                "q[username_cont]": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
         },
         "v1.ShipOrderParams": {
             "type": "object",
@@ -3528,10 +3670,38 @@
             }
         },
         "v1.WebPageParams": {
-            "type": "object"
+            "type": "object",
+            "required": [
+                "content",
+                "title"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
         },
-        "v1.WxappPageParams": {
-            "type": "object"
+        "v1.WxAppPageParams": {
+            "type": "object",
+            "required": [
+                "name",
+                "page_data",
+                "tinyint"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "page_data": {
+                    "type": "string"
+                },
+                "tinyint": {
+                    "type": "integer"
+                }
+            }
         }
     },
     "securityDefinitions": {

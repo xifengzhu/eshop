@@ -3,8 +3,9 @@ package models
 type PropertyValue struct {
 	BaseModel
 
-	Name           string `gorm:"type: varchar(50); not null" json:"name"`
+	Value          string `gorm:"type: varchar(50); not null" json:"value"`
 	PropertyNameID int    `gorm:"type: int; not null" json:"property_name_id"`
+	Destroy        bool   `sql:"-" json:"_destroy,omitempty"`
 }
 
 func (PropertyValue) TableName() string {

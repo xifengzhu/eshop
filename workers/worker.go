@@ -26,12 +26,13 @@ func init() {
 	// Map the name of jobs to handler functions
 	pool.Job("send_email", (*Context).SendEmail)
 	pool.Job("close_order", (*Context).CloseOrder)
-
+	pool.Job("confirm_order", (*Context).ConfirmOrder)
+	pool.Job("refresh_wechat_access_token", (*Context).RefreshWechatAccessToken)
 	// Customize options:
 	pool.JobWithOptions("export", work.JobOptions{Priority: 10, MaxFails: 1}, (*Context).Export)
 
 	pool.PeriodicallyEnqueue("* 1 * * * *", "refresh_wechat_access_token")
-	pool.Job("refresh_wechat_access_token", (*Context).RefreshWechatAccessToken)
+
 	// Start processing jobs
 	pool.Start()
 

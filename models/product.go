@@ -2,8 +2,9 @@ package models
 
 import (
 	"fmt"
+	"github.com/jinzhu/gorm"
 	"github.com/xifengzhu/eshop/helpers/utils"
-	"log"
+	// "log"
 	"time"
 )
 
@@ -22,11 +23,11 @@ type Product struct {
 	DeletedAt       *time.Time `gorm:"type: datetime; " json:"deleted_at"`
 	DeliveryID      int        `gorm:"type: int; " json:"delivery_id"`
 	CategoryID      int        `gorm:"type: int; " json:"category_id"`
-	Goodses         []Goods    `json:"goodses"`
-	Category        Category   `json:"category"`
-	Delivery        Delivery   `json:"delivery"`
+	Goodses         []Goods    `json:"goodses,omitemptys"`
+	Category        *Category  `json:"category,omitempty"`
+	Delivery        *Delivery  `json:"delivery,omitempty"`
 
-	Specifications []Specification `gorm:"-" json:"specifications"`
+	Specifications []Specification `sql:"-" json:"specifications,omitempty"`
 }
 
 func (Product) TableName() string {
@@ -62,15 +63,18 @@ func (product Product) DeliveryRule(expressID int, ProvinceID int) (rule Deliver
 func (product *Product) SetSpecifications() {
 	var specifications []Specification
 	var vids []int
+	var pids []int
 	var propertyNames []PropertyName
 
 	for index, _ := range product.Goodses {
-		product.Goodses[index].SetPropertyIDs()
-		log.Println("goods.VIDs", product.Goodses[index].VIDs)
-		vids = append(vids, product.Goodses[index].VIDs...)
+		var gvids []int
+		if index == 0 {
+			pids, gvids = product.Goodses[index].PVIDs()
+		} else {
+			_, gvids = product.Goodses[index].PVIDs()
+		}
+		vids = append(vids, gvids...)
 	}
-
-	pids := product.Goodses[0].PIDs
 
 	db.Model(&PropertyName{}).Preload("PropertyValues").Where(pids).Find(&propertyNames)
 
@@ -79,11 +83,35 @@ func (product *Product) SetSpecifications() {
 		for _, propertyValue := range propertyName.PropertyValues {
 			found := utils.ContainsInt(vids, int(propertyValue.ID))
 			if found {
-				pvalue := PValue{Vid: propertyValue.ID, Name: propertyValue.Name}
+				pvalue := PValue{Vid: propertyValue.ID, Name: propertyValue.Value}
 				specification.PValues = append(specification.PValues, pvalue)
 			}
 		}
 		specifications = append(specifications, specification)
 	}
 	product.Specifications = specifications
+}
+
+func (product *Product) NestUpdate() (err error) {
+	return db.Transaction(func(tx *gorm.DB) error {
+		var goodses []Goods
+		var deleteIDs []int
+		for _, goods := range product.Goodses {
+			if goods.Destroy == true {
+				deleteIDs = append(deleteIDs, goods.ID)
+			} else {
+				goodses = append(goodses, goods)
+			}
+		}
+		if len(deleteIDs) > 0 {
+			err = tx.Where("id = ?", deleteIDs).Delete(Goods{}).Error
+		}
+		product.Goodses = goodses
+		err = tx.Save(&product).Error
+		return err
+	})
+}
+
+func (p *Product) RemoveGoodses() {
+	db.Where("product_id = ?", p.ID).Delete(Goods{})
 }
