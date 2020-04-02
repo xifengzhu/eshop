@@ -45,7 +45,7 @@ func GetOrders(c *gin.Context) {
 	condition := c.QueryMap("q")
 	condition["user_id"] = strconv.Itoa(user.ID)
 
-	models.SearchResourceQuery(&model, orders, &pagination, condition)
+	models.SearchResourceQuery(&model, orders, pagination, condition)
 
 	orderEntities := transferOrderToEntity(*orders)
 

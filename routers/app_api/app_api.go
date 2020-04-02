@@ -16,8 +16,8 @@ func InitAppAPI(r *gin.Engine) {
 	}
 
 	{
-		apiv1.GET("/wxapp_pages", v1.GetWxappPage)
-		apiv1.GET("/categories", v1.GetCategories)
+		apiv1.GET("/web_page", v1.GetWxappPage)
+		apiv1.GET("/wxapp_page", v1.GetWxappPage)
 	}
 
 	// 回调通知接口

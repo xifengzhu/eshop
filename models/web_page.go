@@ -11,8 +11,3 @@ type WebPage struct {
 func (WebPage) TableName() string {
 	return "web_page"
 }
-
-func (webPage *WebPage) FindByTitle(title string) (err error) {
-	err = db.Where("title = ?", title).First(&webPage).Error
-	return
-}

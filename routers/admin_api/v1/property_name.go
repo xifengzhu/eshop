@@ -97,7 +97,8 @@ func GetPropertyName(c *gin.Context) {
 func GetPropertyNames(c *gin.Context) {
 	var pnames []models.PropertyName
 	models.AllResource(&pnames, Query{Preloads: []string{"PropertyValues"}})
-	apiHelpers.ResponseSuccess(c, pnames)
+	response := apiHelpers.Collection{List: pnames}
+	apiHelpers.ResponseSuccess(c, response)
 }
 
 // @Summary 更新规格名

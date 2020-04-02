@@ -14,9 +14,10 @@ import (
 // @Success 200 {object} apiHelpers.Response
 // @Router /app_api/v1/web_page [get]
 func GetWebPage(c *gin.Context) {
-	title := c.Query("title")
 	var webPage models.WebPage
-	err := webPage.FindByTitle(title)
+	parmMap := map[string]interface{}{"title": c.Query("title")}
+	err := models.FirstResource(&webPage, Query{Conditions: parmMap})
+
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return

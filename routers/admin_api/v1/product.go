@@ -105,7 +105,7 @@ func GetProductes(c *gin.Context) {
 	var model models.Product
 	result := &[]models.Product{}
 
-	models.SearchResourceQuery(&model, result, &pagination, c.QueryMap("q"))
+	models.SearchResourceQuery(&model, result, pagination, c.QueryMap("q"))
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 

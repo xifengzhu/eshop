@@ -91,4 +91,9 @@ func InitAdminAPI(r *gin.Engine) {
 		admin_apiv1.GET("/wxapp_pages", v1.GetWxAppPages)
 		admin_apiv1.PUT("/wxapp_pages/:id", v1.UpdateWxAppPage)
 	}
+
+	{
+		admin_apiv1.GET("/users/:id", v1.GetUser)
+		admin_apiv1.GET("/users", v1.GetUsers)
+	}
 }

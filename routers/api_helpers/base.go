@@ -15,15 +15,15 @@ type Response struct {
 }
 
 type Collection struct {
-	Pagination utils.Pagination `json:"pagination"`
-	List       interface{}      `json:"list"`
+	Pagination *utils.Pagination `json:"pagination,omitempty"`
+	List       interface{}       `json:"list"`
 }
 
-func SetDefaultPagination(c *gin.Context) (pagination utils.Pagination) {
+func SetDefaultPagination(c *gin.Context) (pagination *utils.Pagination) {
 	perPage := com.StrTo(c.DefaultQuery("per_page", "10")).MustInt()
 	page := com.StrTo(c.DefaultQuery("page", "1")).MustInt()
 	Sort := c.DefaultQuery("sort", "id desc")
-	pagination = utils.Pagination{Page: page, PerPage: perPage, Sort: Sort}
+	pagination = &utils.Pagination{Page: page, PerPage: perPage, Sort: Sort}
 	return
 }
 

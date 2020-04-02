@@ -103,7 +103,7 @@ func GetExpresses(c *gin.Context) {
 	var model models.Express
 	result := &[]models.Express{}
 
-	models.SearchResourceQuery(&model, result, &pagination, c.QueryMap("q"))
+	models.SearchResourceQuery(&model, result, pagination, c.QueryMap("q"))
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 

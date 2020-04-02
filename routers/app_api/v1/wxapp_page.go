@@ -12,11 +12,12 @@ import (
 // @Tags 微信页面
 // @Param title query string true "page title"
 // @Success 200 {object} apiHelpers.Response
-// @Router /app_api/v1/wxapp_pages [get]
+// @Router /app_api/v1/wxapp_page [get]
 func GetWxappPage(c *gin.Context) {
-	name := c.Query("name")
 	var wxappPage models.WxappPage
-	err := wxappPage.FindByName(name)
+	parmMap := map[string]interface{}{"name": c.Query("name")}
+	err := models.FirstResource(&wxappPage, Query{Conditions: parmMap})
+
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return

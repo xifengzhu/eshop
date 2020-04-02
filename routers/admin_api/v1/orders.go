@@ -77,7 +77,7 @@ func GetOrders(c *gin.Context) {
 	var model models.Order
 	result := &[]models.Order{}
 
-	models.SearchResourceQuery(&model, result, &pagination, c.QueryMap("q"))
+	models.SearchResourceQuery(&model, result, pagination, c.QueryMap("q"))
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 

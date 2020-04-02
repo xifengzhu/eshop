@@ -433,12 +433,12 @@ definitions:
         type: string
       page_data:
         type: string
-      tinyint:
+      page_type:
         type: integer
     required:
     - name
     - page_data
-    - tinyint
+    - page_type
     type: object
 host: 127.0.0.1:8000
 info:
@@ -452,12 +452,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: total
-        type: integer
-      - in: query
-        name: q[email_cont]
-        type: string
-      - in: query
         name: q[created_at_gteq]
         type: string
       - in: query
@@ -469,13 +463,19 @@ paths:
         name: q[status_in]
         type: array
       - in: query
-        name: page
-        type: integer
-      - in: query
         name: per_page
         type: integer
       - in: query
         name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: q[email_cont]
         type: string
       produces:
       - application/json
@@ -588,16 +588,16 @@ paths:
     get:
       parameters:
       - in: query
-        name: sort
-        type: string
-      - in: query
-        name: total
-        type: integer
-      - in: query
         name: page
         type: integer
       - in: query
         name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
         type: integer
       - in: query
         name: name
@@ -708,16 +708,16 @@ paths:
     get:
       parameters:
       - in: query
-        name: page
-        type: integer
-      - in: query
-        name: per_page
-        type: integer
-      - in: query
         name: sort
         type: string
       - in: query
         name: total
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
         type: integer
       - in: query
         name: q[name_cont]
@@ -822,22 +822,22 @@ paths:
     get:
       parameters:
       - in: query
+        name: total
+        type: integer
+      - in: query
         name: page
         type: integer
       - in: query
         name: per_page
         type: integer
       - in: query
-        name: sort
-        type: string
-      - in: query
-        name: total
-        type: integer
-      - in: query
         name: q[name_cont]
         type: string
       - in: query
         name: q[code_cont]
+        type: string
+      - in: query
+        name: sort
         type: string
       produces:
       - application/json
@@ -958,6 +958,9 @@ paths:
     get:
       parameters:
       - in: query
+        name: page
+        type: integer
+      - in: query
         name: per_page
         type: integer
       - in: query
@@ -965,9 +968,6 @@ paths:
         type: string
       - in: query
         name: total
-        type: integer
-      - in: query
-        name: page
         type: integer
       - in: query
         name: q[status]
@@ -1060,6 +1060,9 @@ paths:
         name: q[price_lteq]
         type: number
       - in: query
+        name: total
+        type: integer
+      - in: query
         name: page
         type: integer
       - in: query
@@ -1068,9 +1071,6 @@ paths:
       - in: query
         name: sort
         type: string
-      - in: query
-        name: total
-        type: integer
       - in: query
         name: q[is_online_eq]
         type: boolean
@@ -1322,6 +1322,9 @@ paths:
         name: q[created_at_lteq]
         type: string
       - in: query
+        name: page
+        type: integer
+      - in: query
         name: per_page
         type: integer
       - in: query
@@ -1329,9 +1332,6 @@ paths:
         type: string
       - in: query
         name: total
-        type: integer
-      - in: query
-        name: page
         type: integer
       - in: query
         name: q[open_id_eq]
@@ -1372,6 +1372,19 @@ paths:
       tags:
       - 后台用户管理
   /admin_api/v1/web_pages:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: webview列表
+      tags:
+      - 后台webview管理
     post:
       parameters:
       - description: query params
@@ -1413,6 +1426,12 @@ paths:
       tags:
       - 后台webview管理
     get:
+      parameters:
+      - description: web_page id
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -1422,7 +1441,7 @@ paths:
             $ref: '#/definitions/apiHelpers.Response'
       security:
       - ApiKeyAuth: []
-      summary: webview列表
+      summary: webview详情
       tags:
       - 后台webview管理
     put:
@@ -1468,9 +1487,9 @@ paths:
             $ref: '#/definitions/apiHelpers.Response'
       security:
       - ApiKeyAuth: []
-      summary: 添加webview
+      summary: 添加自定义页面
       tags:
-      - 后台webview管理
+      - 后台自定义页面管理
   /admin_api/v1/wxapp_pages/{id}:
     delete:
       parameters:
@@ -1488,9 +1507,9 @@ paths:
             $ref: '#/definitions/apiHelpers.Response'
       security:
       - ApiKeyAuth: []
-      summary: 删除webview
+      summary: 删除自定义页面
       tags:
-      - 后台webview管理
+      - 后台自定义页面管理
     get:
       produces:
       - application/json
@@ -1501,9 +1520,9 @@ paths:
             $ref: '#/definitions/apiHelpers.Response'
       security:
       - ApiKeyAuth: []
-      summary: webview列表
+      summary: 自定义页面列表
       tags:
-      - 后台webview管理
+      - 后台自定义页面管理
     put:
       parameters:
       - description: id
@@ -1526,9 +1545,9 @@ paths:
             $ref: '#/definitions/apiHelpers.Response'
       security:
       - ApiKeyAuth: []
-      summary: 更新webview
+      summary: 更新自定义页面
       tags:
-      - 后台webview管理
+      - 后台自定义页面管理
   /app_api/v1/addresses:
     get:
       produces:
@@ -1681,6 +1700,9 @@ paths:
     get:
       parameters:
       - in: query
+        name: q[status]
+        type: string
+      - in: query
         name: page
         type: integer
       - in: query
@@ -1692,9 +1714,6 @@ paths:
       - in: query
         name: total
         type: integer
-      - in: query
-        name: q[status]
-        type: string
       produces:
       - application/json
       responses:
@@ -1835,23 +1854,23 @@ paths:
     get:
       parameters:
       - in: query
-        name: total
-        type: integer
-      - in: query
-        name: page
-        type: integer
-      - in: query
-        name: per_page
-        type: integer
-      - in: query
         name: sort
         type: string
+      - in: query
+        name: total
+        type: integer
       - in: query
         name: q[category_id]
         type: integer
       - in: query
         name: q[name_cont]
         type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
       produces:
       - application/json
       responses:
@@ -2285,7 +2304,7 @@ paths:
       summary: 获取webview页面
       tags:
       - 微信页面
-  /app_api/v1/wxapp_pages:
+  /app_api/v1/wxapp_page:
     get:
       parameters:
       - description: page title

@@ -109,7 +109,7 @@ func GetCategories(c *gin.Context) {
 	var model models.Category
 	result := &[]models.Category{}
 
-	models.SearchResourceQuery(&model, result, &pagination, c.QueryMap("q"))
+	models.SearchResourceQuery(&model, result, pagination, c.QueryMap("q"))
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 

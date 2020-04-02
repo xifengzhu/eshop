@@ -149,7 +149,8 @@ func DeleteAddress(c *gin.Context) {
 func GetProvinces(c *gin.Context) {
 	var provinces []models.Province
 	models.AllResource(&provinces, Query{})
-	apiHelpers.ResponseSuccess(c, provinces)
+	response := apiHelpers.Collection{List: provinces}
+	apiHelpers.ResponseSuccess(c, response)
 }
 
 // @Summary 根据省ID获取城市列表信息

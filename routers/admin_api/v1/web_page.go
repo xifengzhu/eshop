@@ -85,12 +85,13 @@ func GetWebPage(c *gin.Context) {
 // @Produce  json
 // @Tags 后台webview管理
 // @Success 200 {object} apiHelpers.Response
-// @Router /admin_api/v1/web_pages/{id} [get]
+// @Router /admin_api/v1/web_pages [get]
 // @Security ApiKeyAuth
 func GetWebPages(c *gin.Context) {
-	var webPage []models.WebPage
-	models.AllResource(&webPage, Query{})
-	apiHelpers.ResponseSuccess(c, webPage)
+	var webPages []models.WebPage
+	models.AllResource(&webPages, Query{})
+	response := apiHelpers.Collection{List: webPages}
+	apiHelpers.ResponseSuccess(c, response)
 }
 
 // @Summary 更新webview

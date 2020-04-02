@@ -31,7 +31,7 @@ func GetUsers(c *gin.Context) {
 	var model models.User
 	result := &[]models.User{}
 
-	models.SearchResourceQuery(&model, result, &pagination, c.QueryMap("q"))
+	models.SearchResourceQuery(&model, result, pagination, c.QueryMap("q"))
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 

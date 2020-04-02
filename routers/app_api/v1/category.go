@@ -14,5 +14,6 @@ import (
 func GetCategories(c *gin.Context) {
 	var categories []models.Category
 	models.AllResource(&categories, Query{Preloads: []string{"Children"}})
-	apiHelpers.ResponseSuccess(c, categories)
+	response := apiHelpers.Collection{List: categories}
+	apiHelpers.ResponseSuccess(c, response)
 }

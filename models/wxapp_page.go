@@ -13,8 +13,3 @@ type WxappPage struct {
 func (WxappPage) TableName() string {
 	return "wxapp_page"
 }
-
-func (wxappPage *WxappPage) FindByName(name string) (err error) {
-	err = db.Where("name = ?", name).First(&wxappPage).Error
-	return
-}

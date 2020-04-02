@@ -118,7 +118,7 @@ func GetDeliveries(c *gin.Context) {
 	var model models.Delivery
 	result := &[]models.Delivery{}
 
-	models.SearchResourceQuery(&model, result, &pagination, c.QueryMap("q"))
+	models.SearchResourceQuery(&model, result, pagination, c.QueryMap("q"))
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 

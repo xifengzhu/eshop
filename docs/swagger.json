@@ -26,16 +26,6 @@
                 "summary": "管理员列表",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[email_cont]",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "q[created_at_gteq]",
                         "in": "query"
@@ -55,17 +45,27 @@
                     },
                     {
                         "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[email_cont]",
                         "in": "query"
                     }
                 ],
@@ -253,16 +253,6 @@
                 "summary": "分类列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "name": "page",
                         "in": "query"
@@ -270,6 +260,16 @@
                     {
                         "type": "integer",
                         "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -451,16 +451,6 @@
                 "summary": "运费模板列表",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "sort",
                         "in": "query"
@@ -468,6 +458,16 @@
                     {
                         "type": "integer",
                         "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
                         "in": "query"
                     },
                     {
@@ -640,6 +640,11 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "page",
                         "in": "query"
                     },
@@ -650,22 +655,17 @@
                     },
                     {
                         "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "name": "q[name_cont]",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "name": "q[code_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -863,6 +863,11 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
@@ -874,11 +879,6 @@
                     {
                         "type": "integer",
                         "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
                         "in": "query"
                     },
                     {
@@ -1032,6 +1032,11 @@
                     },
                     {
                         "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "page",
                         "in": "query"
                     },
@@ -1043,11 +1048,6 @@
                     {
                         "type": "string",
                         "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -1464,6 +1464,11 @@
                     },
                     {
                         "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
@@ -1475,11 +1480,6 @@
                     {
                         "type": "integer",
                         "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
                         "in": "query"
                     },
                     {
@@ -1537,6 +1537,28 @@
             }
         },
         "/admin_api/v1/web_pages": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台webview管理"
+                ],
+                "summary": "webview列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -1584,7 +1606,16 @@
                 "tags": [
                     "后台webview管理"
                 ],
-                "summary": "webview列表",
+                "summary": "webview详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "web_page id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1677,9 +1708,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "后台webview管理"
+                    "后台自定义页面管理"
                 ],
-                "summary": "添加webview",
+                "summary": "添加自定义页面",
                 "parameters": [
                     {
                         "description": "query params",
@@ -1712,9 +1743,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "后台webview管理"
+                    "后台自定义页面管理"
                 ],
-                "summary": "webview列表",
+                "summary": "自定义页面列表",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1734,9 +1765,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "后台webview管理"
+                    "后台自定义页面管理"
                 ],
-                "summary": "更新webview",
+                "summary": "更新自定义页面",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1774,9 +1805,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "后台webview管理"
+                    "后台自定义页面管理"
                 ],
-                "summary": "删除webview",
+                "summary": "删除自定义页面",
                 "parameters": [
                     {
                         "type": "integer",
@@ -2051,6 +2082,11 @@
                 "summary": "获取订单列表",
                 "parameters": [
                     {
+                        "type": "string",
+                        "name": "q[status]",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "page",
                         "in": "query"
@@ -2068,11 +2104,6 @@
                     {
                         "type": "integer",
                         "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[status]",
                         "in": "query"
                     }
                 ],
@@ -2300,23 +2331,13 @@
                 "summary": "获取产品列表",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -2327,6 +2348,16 @@
                     {
                         "type": "string",
                         "name": "q[name_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
                         "in": "query"
                     }
                 ],
@@ -3013,7 +3044,7 @@
                 }
             }
         },
-        "/app_api/v1/wxapp_pages": {
+        "/app_api/v1/wxapp_page": {
             "get": {
                 "produces": [
                     "application/json"
@@ -3689,7 +3720,7 @@
             "required": [
                 "name",
                 "page_data",
-                "tinyint"
+                "page_type"
             ],
             "properties": {
                 "name": {
@@ -3698,7 +3729,7 @@
                 "page_data": {
                     "type": "string"
                 },
-                "tinyint": {
+                "page_type": {
                     "type": "integer"
                 }
             }

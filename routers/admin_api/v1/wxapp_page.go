@@ -12,13 +12,13 @@ import (
 
 type WxAppPageParams struct {
 	Name     string `json:"name" binding:"required"`
-	PageType int    `json:"tinyint" binding:"required"`
+	PageType int    `json:"page_type" binding:"required"`
 	PageData string `json:"page_data" binding:"required"`
 }
 
-// @Summary 添加webview
+// @Summary 添加自定义页面
 // @Produce  json
-// @Tags 后台webview管理
+// @Tags 后台自定义页面管理
 // @Param params body WxAppPageParams true "query params"
 // @Success 200 {object} apiHelpers.Response
 // @Router /admin_api/v1/wxapp_pages [post]
@@ -42,9 +42,9 @@ func AddWxAppPage(c *gin.Context) {
 	apiHelpers.ResponseSuccess(c, wxAppPage)
 }
 
-// @Summary 删除webview
+// @Summary 删除自定义页面
 // @Produce  json
-// @Tags 后台webview管理
+// @Tags 后台自定义页面管理
 // @Param id path int true "web_page id"
 // @Success 200 {object} apiHelpers.Response
 // @Router /admin_api/v1/wxapp_pages/{id} [delete]
@@ -62,9 +62,9 @@ func DeleteWxAppPage(c *gin.Context) {
 	apiHelpers.ResponseSuccess(c, nil)
 }
 
-// @Summary webview详情
+// @Summary 自定义页面详情
 // @Produce  json
-// @Tags 后台webview管理
+// @Tags 后台自定义页面管理
 // @Param id path int true "web_page id"
 // @Success 200 {object} apiHelpers.Response
 // @Router /admin_api/v1/wxapp_pages/{id} [get]
@@ -82,21 +82,22 @@ func GetWxAppPage(c *gin.Context) {
 	apiHelpers.ResponseSuccess(c, wxAppPage)
 }
 
-// @Summary webview列表
+// @Summary 自定义页面列表
 // @Produce  json
-// @Tags 后台webview管理
+// @Tags 后台自定义页面管理
 // @Success 200 {object} apiHelpers.Response
 // @Router /admin_api/v1/wxapp_pages/{id} [get]
 // @Security ApiKeyAuth
 func GetWxAppPages(c *gin.Context) {
-	var wxAppPage []models.WxappPage
-	models.AllResource(&wxAppPage, Query{})
-	apiHelpers.ResponseSuccess(c, wxAppPage)
+	var wxAppPages []models.WxappPage
+	models.AllResource(&wxAppPages, Query{})
+	response := apiHelpers.Collection{List: wxAppPages}
+	apiHelpers.ResponseSuccess(c, response)
 }
 
-// @Summary 更新webview
+// @Summary 更新自定义页面
 // @Produce  json
-// @Tags 后台webview管理
+// @Tags 后台自定义页面管理
 // @Param id path int true "id"
 // @Param params body WxAppPageParams true "web_page params"
 // @Success 200 {object} apiHelpers.Response
