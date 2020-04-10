@@ -32,6 +32,7 @@ require (
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/microcosm-cc/bluemonday v1.0.2 // indirect
 	github.com/objcoding/wxpay v1.0.6
+	github.com/qiniu/api.v7/v7 v7.4.1
 	github.com/qor/admin v0.0.0-20200315024928-877b98a68a6f // indirect
 	github.com/qor/assetfs v0.0.0-20170713023933-ff57fdc13a14 // indirect
 	github.com/qor/audited v0.0.0-20171228121055-b52c9c2f0571 // indirect

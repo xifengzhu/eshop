@@ -37,6 +37,11 @@ var (
 
 	RedisUrl       string
 	RedisNamespace string
+
+	QiniuAccessKey    string
+	QiniuSecretKey    string
+	QiniuBucket       string
+	QiniuBucketDomain string
 )
 
 func init() {
@@ -59,6 +64,7 @@ func init() {
 	LoadLog()
 	LoadDatabase()
 	LoadRedis()
+	LoadQiniu()
 }
 
 func LoadBase() {
@@ -106,4 +112,11 @@ func LoadDatabase() {
 func LoadRedis() {
 	RedisUrl = os.Getenv("REDIS_URL")
 	RedisNamespace = os.Getenv("REDIS_NAMESPACE")
+}
+
+func LoadQiniu() {
+	QiniuAccessKey = os.Getenv("ACCESS_KEY")
+	QiniuSecretKey = os.Getenv("SECRET_KEY")
+	QiniuBucket = os.Getenv("BUCKET")
+	QiniuBucketDomain = os.Getenv("BUCKET_DOMAIN")
 }
