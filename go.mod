@@ -31,6 +31,7 @@ require (
 	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/microcosm-cc/bluemonday v1.0.2 // indirect
+	github.com/mojocn/base64Captcha v1.3.1
 	github.com/objcoding/wxpay v1.0.6
 	github.com/qiniu/api.v7/v7 v7.4.1
 	github.com/qor/admin v0.0.0-20200315024928-877b98a68a6f // indirect
@@ -50,6 +51,7 @@ require (
 	github.com/theplant/cldr v0.0.0-20190423050709-9f76f7ce4ee8 // indirect
 	github.com/unknwon/com v1.0.1
 	golang.org/x/crypto v0.0.0-20200221231518-2aa609cf4a9d
+	golang.org/x/image v0.0.0-20200119044424-58c23975cae1 // indirect
 	golang.org/x/net v0.0.0-20200114155413-6afb5195e5aa // indirect
 	golang.org/x/sys v0.0.0-20200219091948-cb0a6d8edb6c // indirect
 	golang.org/x/tools v0.0.0-20200119215504-eb0d8dd85bcc // indirect

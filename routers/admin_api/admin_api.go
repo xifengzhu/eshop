@@ -12,7 +12,9 @@ func InitAdminAPI(r *gin.Engine) {
 	admin_apiv1 := r.Group("/admin_api/v1")
 
 	admin_apiv1.POST("/login", v1.Login)
-	// admin_apiv1.Use(jwt.JWTAuth())
+	admin_apiv1.GET("/get_captcha", v1.GetCaptcha)
+	admin_apiv1.POST("/verify_captcha", v1.VerifyCaptcha)
+	admin_apiv1.Use(jwt.JWTAuth())
 	// admin_apiv1.Use(role.AuthCheckRole())
 	{
 		admin_apiv1.GET("/orders", v1.GetOrders)
