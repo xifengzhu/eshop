@@ -2,7 +2,7 @@ package admin_api
 
 import (
 	"github.com/gin-gonic/gin"
-	// "github.com/xifengzhu/eshop/middleware/jwt"
+	"github.com/xifengzhu/eshop/middleware/jwt"
 	// "github.com/xifengzhu/eshop/middleware/role"
 	"github.com/xifengzhu/eshop/routers/admin_api/v1"
 )
@@ -11,9 +11,10 @@ func InitAdminAPI(r *gin.Engine) {
 
 	admin_apiv1 := r.Group("/admin_api/v1")
 
-	admin_apiv1.POST("/login", v1.Login)
+	admin_apiv1.POST("/sessions/login", v1.Login)
+	admin_apiv1.POST("/sessions/forget_password", v1.ForgetPassword)
+	admin_apiv1.PUT("/sessions/reset_password", v1.ResetPassword)
 	admin_apiv1.GET("/get_captcha", v1.GetCaptcha)
-	admin_apiv1.POST("/verify_captcha", v1.VerifyCaptcha)
 	admin_apiv1.Use(jwt.JWTAuth())
 	// admin_apiv1.Use(role.AuthCheckRole())
 	{
@@ -26,12 +27,16 @@ func InitAdminAPI(r *gin.Engine) {
 	{
 		admin_apiv1.POST("/admin_users", v1.AddAdminUser)
 		admin_apiv1.GET("/admin_users", v1.GetAdminUsers)
+		admin_apiv1.GET("/admin_users/:id", v1.GetAdminUser)
+		admin_apiv1.PUT("/admin_users/:id", v1.UpdateAdminUser)
+		admin_apiv1.DELETE("/admin_users/:id", v1.DeleteAdminUser)
+		admin_apiv1.GET("/sessions/mine", v1.GetCurrentAdminUsers)
 		admin_apiv1.POST("/cabin_rules", v1.AddPolicy)
 		admin_apiv1.DELETE("/cabin_rules", v1.RemovePolicy)
 	}
 
 	{
-		admin_apiv1.POST("/categories", v1.AddCategory)
+		admin_apiv1.POST("/categories", v1.AddProductGroup)
 		admin_apiv1.GET("/categories/:id", v1.GetCategory)
 		admin_apiv1.DELETE("/categories/:id", v1.DeleteCategory)
 		admin_apiv1.GET("/categories", v1.GetCategories)
@@ -39,8 +44,17 @@ func InitAdminAPI(r *gin.Engine) {
 	}
 
 	{
+		admin_apiv1.POST("/product_groups", v1.AddProductGroup)
+		admin_apiv1.GET("/product_groups/:id", v1.GetProductGroup)
+		admin_apiv1.DELETE("/product_groups/:id", v1.DeleteProductGroup)
+		admin_apiv1.GET("/product_groups", v1.GetProductGroups)
+		admin_apiv1.PUT("/product_groups/:id", v1.UpdateProductGroup)
+	}
+
+	{
 		admin_apiv1.GET("/app_setting", v1.GetAppSetting)
 		admin_apiv1.PUT("/app_setting", v1.UpdateAppSetting)
+		admin_apiv1.POST("/app_setting/cert", v1.UpdateWechatCert)
 	}
 
 	{
@@ -88,6 +102,7 @@ func InitAdminAPI(r *gin.Engine) {
 
 	{
 		admin_apiv1.POST("/wxapp_pages", v1.AddWxAppPage)
+		admin_apiv1.GET("/page_group_links", v1.GetPageGroupLinks)
 		admin_apiv1.GET("/wxapp_pages/:id", v1.GetWxAppPage)
 		admin_apiv1.DELETE("/wxapp_pages/:id", v1.DeleteWxAppPage)
 		admin_apiv1.GET("/wxapp_pages", v1.GetWxAppPages)
@@ -97,5 +112,17 @@ func InitAdminAPI(r *gin.Engine) {
 	{
 		admin_apiv1.GET("/users/:id", v1.GetUser)
 		admin_apiv1.GET("/users", v1.GetUsers)
+	}
+
+	{
+		admin_apiv1.GET("/dashboard", v1.Dashboard)
+		admin_apiv1.GET("/qiniu_meta", v1.GetQiniuMeta)
+	}
+
+	{
+		admin_apiv1.GET("/addresses", v1.GetUserAdddresses)
+		admin_apiv1.GET("/provinces", v1.GetProvinces)
+		admin_apiv1.GET("/cities", v1.GetCities)
+		admin_apiv1.GET("/regions", v1.GetRegions)
 	}
 }

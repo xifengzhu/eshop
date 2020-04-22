@@ -18,6 +18,7 @@ type ShipOrderParams struct {
 
 type QueryOrderParams struct {
 	utils.Pagination
+	UserID          int        `json:"q[user_id_eq]"`
 	State           []string   `json:"q[state_in]"`
 	Order_no        string     `json:"q[order_no_cont]"`
 	Created_at_gteq *time.Time `json:"q[created_at_gteq]"`
@@ -77,7 +78,7 @@ func GetOrders(c *gin.Context) {
 	var model models.Order
 	result := &[]models.Order{}
 
-	models.SearchResourceQuery(&model, result, pagination, c.QueryMap("q"))
+	models.SearchResourceWithPreloadQuery(&model, result, pagination, c.QueryMap("q"), []string{"OrderItems", "User"})
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 
@@ -95,7 +96,7 @@ func GetOrder(c *gin.Context) {
 	var order models.Order
 	order.ID, _ = strconv.Atoi(c.Param("id"))
 
-	err := models.FindResource(&order, Query{Preloads: []string{"OrderItems"}})
+	err := models.FindResource(&order, Query{Preloads: []string{"OrderItems", "User", "Express"}})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return

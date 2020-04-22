@@ -29,7 +29,7 @@ func SetDefaultPagination(c *gin.Context) (pagination *utils.Pagination) {
 
 func ResponseError(c *gin.Context, code int, err error) {
 	response := &Response{Code: code, Msg: err.Error(), Data: nil}
-	c.JSON(http.StatusBadRequest, response)
+	c.AbortWithStatusJSON(http.StatusBadRequest, response)
 }
 
 func ResponseSuccess(c *gin.Context, data interface{}) {

@@ -4,6 +4,7 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/mojocn/base64Captcha"
 	"github.com/xifengzhu/eshop/helpers/setting"
+	"log"
 	"strings"
 )
 
@@ -11,6 +12,7 @@ type redisStore struct {
 	redisClient redis.Conn
 }
 
+// redisStore Implement the store interface(Set, Get, Verify)
 func (s *redisStore) Set(id string, value string) {
 	var err error
 	_, err = s.redisClient.Do("SETEX", id, 600, value)
@@ -20,22 +22,15 @@ func (s *redisStore) Set(id string, value string) {
 }
 
 // redisStore implementing Get method of  Store interface
-func (s *redisStore) Get(id string, clear bool) string {
-	val, err := s.redisClient.Do("GET", id)
+func (s *redisStore) Get(id string, clear bool) (value string) {
+	reply, err := redis.Values(redisConn.Do("MGET", id))
 	if err != nil {
-		panic(err)
+		log.Println("====get %s err=====", id)
 	}
-	if clear {
-		_, err := s.redisClient.Do("Del", id)
-		if err != nil {
-			panic(err)
-		}
+	if _, err := redis.Scan(reply, &value); err != nil {
+		log.Println("scan reply err:", err)
 	}
-	if str, ok := val.(string); ok {
-		return str
-	} else {
-		return ""
-	}
+	return
 }
 
 func (s *redisStore) Verify(id, answer string, clear bool) (match bool) {

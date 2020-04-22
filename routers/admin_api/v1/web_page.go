@@ -12,6 +12,7 @@ import (
 
 type WebPageParams struct {
 	Title   string `json:"title" binding:"required"`
+	Cover   string `json:"cover"`
 	Content string `json:"content" binding:"required"`
 }
 
@@ -88,9 +89,15 @@ func GetWebPage(c *gin.Context) {
 // @Router /admin_api/v1/web_pages [get]
 // @Security ApiKeyAuth
 func GetWebPages(c *gin.Context) {
-	var webPages []models.WebPage
-	models.AllResource(&webPages, Query{})
-	response := apiHelpers.Collection{List: webPages}
+	pagination := apiHelpers.SetDefaultPagination(c)
+
+	var model models.WebPage
+	result := &[]models.WebPage{}
+
+	models.SearchResourceQuery(&model, result, pagination, c.QueryMap("q"))
+
+	response := apiHelpers.Collection{Pagination: pagination, List: result}
+
 	apiHelpers.ResponseSuccess(c, response)
 }
 

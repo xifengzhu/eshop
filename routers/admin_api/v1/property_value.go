@@ -10,8 +10,10 @@ import (
 )
 
 type PropertyValueParams struct {
+	ID             int    `json:"id,omitempty"`
 	Value          string `json:"value" binding:"required"`
 	PropertyNameID int    `json:"property_name_id" binding:"required"`
+	Destroy        bool   `json:"_destroy,omitempty"`
 }
 
 // @Summary 添加规格值

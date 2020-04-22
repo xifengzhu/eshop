@@ -8,12 +8,14 @@ import (
 	"github.com/xifengzhu/eshop/helpers/utils"
 	"github.com/xifengzhu/eshop/models"
 	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+	"log"
 	"strconv"
 )
 
 type PropertyParams struct {
-	Name           string   `json:"name" binding:"required"`
-	PropertyValues []string `json:"property_values"`
+	ID             int                   `json:"id,omitempty"`
+	Name           string                `json:"name" binding:"required"`
+	PropertyValues []PropertyValueParams `json:"property_values"  binding:"dive"`
 }
 
 type QueryPropertyParams struct {
@@ -39,7 +41,9 @@ func AddPropertyName(c *gin.Context) {
 	var propertyName models.PropertyName
 	copier.Copy(&propertyName, &pnp)
 
-	err = models.SaveResource(&propertyName)
+	log.Println("=====add propertyName params===", propertyName)
+
+	err = models.CreateResource(&propertyName)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -95,10 +99,18 @@ func GetPropertyName(c *gin.Context) {
 // @Router /admin_api/v1/property_names [get]
 // @Security ApiKeyAuth
 func GetPropertyNames(c *gin.Context) {
-	var pnames []models.PropertyName
-	models.AllResource(&pnames, Query{Preloads: []string{"PropertyValues"}})
-	response := apiHelpers.Collection{List: pnames}
+
+	pagination := apiHelpers.SetDefaultPagination(c)
+
+	var model models.PropertyName
+	result := &[]models.PropertyName{}
+
+	models.SearchResourceWithPreloadQuery(&model, result, pagination, c.QueryMap("q"), []string{"PropertyValues"})
+
+	response := apiHelpers.Collection{Pagination: pagination, List: result}
+
 	apiHelpers.ResponseSuccess(c, response)
+
 }
 
 // @Summary 更新规格名

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -9,7 +10,7 @@ type AdminUser struct {
 
 	WxappId  string `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	Email    string `gorm:"type: varchar(100); not null" json:"email"`
-	Status   int    `gorm:"type: tinyint;" json:"status"`
+	Status   string `gorm:"type: varchar(10);" json:"status"`
 	Password string `gorm:"type: varchar(120); not null" json:"password"`
 	Role     string `gorm:"type: varchar(50);" json:"role"`
 }
@@ -37,16 +38,23 @@ func (admin *AdminUser) GetAdminUserByEmail(email string) (err error) {
 	return
 }
 
-func (admin *AdminUser) Create() (err error) {
-	var password string
-	password, err = HashPassword(admin.Password)
-	if err != nil {
-		return
+func (admin *AdminUser) BeforeSave(scope *gorm.Scope) (err error) {
+	if pw, err := HashPassword(admin.Password); err == nil {
+		scope.SetColumn("Password", pw)
 	}
-	admin.Password = password
-	err = db.Create(&admin).Error
 	return
 }
+
+// func (admin *AdminUser) Create() (err error) {
+// 	var password string
+// 	password, err = HashPassword(admin.Password)
+// 	if err != nil {
+// 		return
+// 	}
+// 	admin.Password = password
+// 	err = db.Create(&admin).Error
+// 	return
+// }
 
 func GetAdminUserById(ID int) (admin AdminUser, err error) {
 	err = db.First(&admin, ID).Error

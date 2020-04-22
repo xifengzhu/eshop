@@ -18,6 +18,19 @@ definitions:
         example: status bad request
         type: string
     type: object
+  v1.AddAdminUserParams:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+    required:
+    - email
+    - password
+    - role
+    type: object
   v1.AddressParams:
     properties:
       city_id:
@@ -43,22 +56,13 @@ definitions:
     - region_id
     - user_id
     type: object
-  v1.AdminUserParams:
-    properties:
-      confirm_password:
-        type: string
-      email:
-        type: string
-      password:
-        type: string
-    required:
-    - confirm_password
-    - email
-    - password
-    type: object
   v1.AppSettingParams:
     properties:
+      api_client_cert:
+        type: string
       api_key:
+        type: string
+      app_id:
         type: string
       app_name:
         type: string
@@ -72,11 +76,20 @@ definitions:
         type: string
     required:
     - api_key
+    - app_id
     - app_name
     - app_secret
     - mchid
-    - notify_url
-    - sevice_phone
+    type: object
+  v1.CaptchaParam:
+    properties:
+      id:
+        type: string
+      value:
+        type: string
+    required:
+    - id
+    - value
     type: object
   v1.CartItemIDParams:
     properties:
@@ -159,7 +172,9 @@ definitions:
         type: integer
       region:
         description: 可配送区域(省id集)
-        type: string
+        items:
+          type: integer
+        type: array
     type: object
   v1.ExpressParams:
     properties:
@@ -195,11 +210,17 @@ definitions:
     type: object
   v1.LoginParams:
     properties:
+      captcha_id:
+        type: string
+      captcha_value:
+        type: string
       email:
         type: string
       password:
         type: string
     required:
+    - captcha_id
+    - captcha_value
     - email
     - password
     type: object
@@ -227,6 +248,19 @@ definitions:
       path:
         type: string
       rolename:
+        type: string
+    type: object
+  v1.ProductGroupParams:
+    properties:
+      image:
+        type: string
+      name:
+        type: string
+      parent_id:
+        type: integer
+      position:
+        type: integer
+      remark:
         type: string
     type: object
   v1.ProductParams:
@@ -269,17 +303,23 @@ definitions:
     type: object
   v1.PropertyParams:
     properties:
+      id:
+        type: integer
       name:
         type: string
       property_values:
         items:
-          type: string
+          $ref: '#/definitions/v1.PropertyValueParams'
         type: array
     required:
     - name
     type: object
   v1.PropertyValueParams:
     properties:
+      _destroy:
+        type: boolean
+      id:
+        type: integer
       property_name_id:
         type: integer
       value:
@@ -311,16 +351,16 @@ definitions:
     type: object
   v1.QueryCategoryParams:
     properties:
-      created_at_gteq:
-        type: string
-      created_at_lteq:
-        type: string
-      name:
-        type: string
       page:
         type: integer
       per_page:
         type: integer
+      q[created_at_gteq]:
+        type: string
+      q[created_at_lteq]:
+        type: string
+      q[name]:
+        type: string
       sort:
         type: string
       total:
@@ -367,6 +407,23 @@ definitions:
       total:
         type: integer
     type: object
+  v1.QueryProductGroupParams:
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      q[created_at_gteq]:
+        type: string
+      q[created_at_lteq]:
+        type: string
+      q[name]:
+        type: string
+      sort:
+        type: string
+      total:
+        type: integer
+    type: object
   v1.QueryProductParams:
     properties:
       page:
@@ -405,9 +462,34 @@ definitions:
       total:
         type: integer
     type: object
+  v1.ResetPasswordParams:
+    properties:
+      captcha_id:
+        type: string
+      captcha_value:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - captcha_id
+    - captcha_value
+    - email
+    - password
+    type: object
   v1.ShipOrderParams:
     properties:
       express_no:
+        type: string
+    type: object
+  v1.UpdateAdminUserParams:
+    properties:
+      password:
+        type: string
+      role:
+        type: string
+      status:
         type: string
     type: object
   v1.UserInfo:
@@ -421,6 +503,8 @@ definitions:
     properties:
       content:
         type: string
+      cover:
+        type: string
       title:
         type: string
     required:
@@ -429,16 +513,18 @@ definitions:
     type: object
   v1.WxAppPageParams:
     properties:
+      key:
+        type: string
       name:
         type: string
       page_data:
         type: string
-      page_type:
-        type: integer
-    required:
-    - name
-    - page_data
-    - page_type
+      share_background_cover:
+        type: string
+      share_cover:
+        type: string
+      share_sentence:
+        type: string
     type: object
 host: 127.0.0.1:8000
 info:
@@ -448,9 +534,24 @@ info:
   title: Eshop API
   version: "1.0"
 paths:
+  /admin_api/v1/addresses:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 获取所有的省份信息
+      tags:
+      - 后台管理地址
   /admin_api/v1/admin_users:
     get:
       parameters:
+      - in: query
+        name: q[email_cont]
+        type: string
       - in: query
         name: q[created_at_gteq]
         type: string
@@ -463,6 +564,9 @@ paths:
         name: q[status_in]
         type: array
       - in: query
+        name: page
+        type: integer
+      - in: query
         name: per_page
         type: integer
       - in: query
@@ -471,12 +575,6 @@ paths:
       - in: query
         name: total
         type: integer
-      - in: query
-        name: page
-        type: integer
-      - in: query
-        name: q[email_cont]
-        type: string
       produces:
       - application/json
       responses:
@@ -496,7 +594,7 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.AdminUserParams'
+          $ref: '#/definitions/v1.AddAdminUserParams'
       produces:
       - application/json
       responses:
@@ -507,6 +605,70 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 添加管理员
+      tags:
+      - 后台管理员
+  /admin_api/v1/admin_users/{id}:
+    delete:
+      parameters:
+      - description: admin_user id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除管理员
+      tags:
+      - 后台管理员
+    get:
+      parameters:
+      - description: admin user id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 管理员详情
+      tags:
+      - 后台管理员
+    put:
+      parameters:
+      - description: admin user id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 邮箱密码
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateAdminUserParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新管理员
       tags:
       - 后台管理员
   /admin_api/v1/app_setting:
@@ -541,6 +703,28 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 更新配置
+      tags:
+      - 后台配置管理
+  /admin_api/v1/app_setting/cert:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: wechat pay certification
+        in: formData
+        name: api_client_cert
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新证书
       tags:
       - 后台配置管理
   /admin_api/v1/cabin_rules:
@@ -588,6 +772,15 @@ paths:
     get:
       parameters:
       - in: query
+        name: q[name]
+        type: string
+      - in: query
+        name: q[created_at_gteq]
+        type: string
+      - in: query
+        name: q[created_at_lteq]
+        type: string
+      - in: query
         name: page
         type: integer
       - in: query
@@ -599,15 +792,6 @@ paths:
       - in: query
         name: total
         type: integer
-      - in: query
-        name: name
-        type: string
-      - in: query
-        name: created_at_gteq
-        type: string
-      - in: query
-        name: created_at_lteq
-        type: string
       produces:
       - application/json
       responses:
@@ -704,20 +888,50 @@ paths:
       summary: 更新分类
       tags:
       - 后台分类管理
+  /admin_api/v1/cities:
+    get:
+      parameters:
+      - description: province id
+        in: query
+        name: province_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 根据省ID获取城市列表信息
+      tags:
+      - 后台管理地址
+  /admin_api/v1/dashboard:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: dashboard
+      tags:
+      - 数据统计
   /admin_api/v1/deliveries:
     get:
       parameters:
-      - in: query
-        name: sort
-        type: string
-      - in: query
-        name: total
-        type: integer
       - in: query
         name: page
         type: integer
       - in: query
         name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
         type: integer
       - in: query
         name: q[name_cont]
@@ -825,17 +1039,17 @@ paths:
         name: total
         type: integer
       - in: query
-        name: page
-        type: integer
-      - in: query
-        name: per_page
-        type: integer
-      - in: query
         name: q[name_cont]
         type: string
       - in: query
         name: q[code_cont]
         type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
       - in: query
         name: sort
         type: string
@@ -935,15 +1149,8 @@ paths:
       summary: 更新快递
       tags:
       - 后台快递管理
-  /admin_api/v1/login:
-    post:
-      parameters:
-      - description: 邮箱密码
-        in: body
-        name: params
-        required: true
-        schema:
-          $ref: '#/definitions/v1.LoginParams'
+  /admin_api/v1/get_captcha:
+    get:
       produces:
       - application/json
       responses:
@@ -951,12 +1158,18 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/apiHelpers.Response'
-      summary: 管理员登录
+      summary: 获取图形验证码
       tags:
-      - 后台管理员
+      - 后台图形验证码
   /admin_api/v1/orders:
     get:
       parameters:
+      - in: query
+        name: q[status]
+        type: string
+      - in: query
+        name: total
+        type: integer
       - in: query
         name: page
         type: integer
@@ -965,12 +1178,6 @@ paths:
         type: integer
       - in: query
         name: sort
-        type: string
-      - in: query
-        name: total
-        type: integer
-      - in: query
-        name: q[status]
         type: string
       produces:
       - application/json
@@ -1050,18 +1257,9 @@ paths:
       summary: 订单发货
       tags:
       - 后台订单管理
-  /admin_api/v1/products:
+  /admin_api/v1/product_groups:
     get:
       parameters:
-      - in: query
-        name: q[price_gteq]
-        type: number
-      - in: query
-        name: q[price_lteq]
-        type: number
-      - in: query
-        name: total
-        type: integer
       - in: query
         name: page
         type: integer
@@ -1072,11 +1270,140 @@ paths:
         name: sort
         type: string
       - in: query
+        name: total
+        type: integer
+      - in: query
+        name: q[name]
+        type: string
+      - in: query
+        name: q[created_at_gteq]
+        type: string
+      - in: query
+        name: q[created_at_lteq]
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 主题产品列表
+      tags:
+      - 后台主题产品管理
+    post:
+      parameters:
+      - description: query params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ProductGroupParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加主题产品
+      tags:
+      - 后台主题产品管理
+  /admin_api/v1/product_groups/{id}:
+    delete:
+      parameters:
+      - description: productGroup id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除主题产品
+      tags:
+      - 后台主题产品管理
+    get:
+      parameters:
+      - description: productGroup id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 主题产品详情
+      tags:
+      - 后台主题产品管理
+    put:
+      parameters:
+      - description: productGroup id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: productGroup params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ProductGroupParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新主题产品
+      tags:
+      - 后台主题产品管理
+  /admin_api/v1/products:
+    get:
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
         name: q[is_online_eq]
         type: boolean
       - in: query
         name: q[name_cont]
         type: string
+      - in: query
+        name: q[price_gteq]
+        type: number
+      - in: query
+        name: q[price_lteq]
+        type: number
       produces:
       - application/json
       responses:
@@ -1312,6 +1639,108 @@ paths:
       summary: 删除规格值
       tags:
       - 后台规格值管理
+  /admin_api/v1/provinces:
+    get:
+      parameters:
+      - description: user id
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 获取所有的省份信息
+      tags:
+      - 后台管理地址
+  /admin_api/v1/qiniu_meta:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 七牛上传凭证
+      tags:
+      - 上传凭证
+  /admin_api/v1/regions:
+    get:
+      parameters:
+      - description: city id
+        in: query
+        name: city_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 根据市ID获取下级城市列表信息
+      tags:
+      - 后台管理地址
+  /admin_api/v1/sessions/login:
+    post:
+      parameters:
+      - description: 邮箱密码
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.LoginParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 管理员登录
+      tags:
+      - 后台管理员
+  /admin_api/v1/sessions/mine:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 当前管理员
+      tags:
+      - 后台管理员
+  /admin_api/v1/sessions/reset_password:
+    post:
+      parameters:
+      - description: 重置密码
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ResetPasswordParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 管理员登录
+      tags:
+      - 后台管理员
   /admin_api/v1/users:
     get:
       parameters:
@@ -1371,6 +1800,27 @@ paths:
       summary: 获取用户详情
       tags:
       - 后台用户管理
+  /admin_api/v1/verify_captcha:
+    post:
+      parameters:
+      - description: 验证码
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CaptchaParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 校验图形验证码
+      tags:
+      - 后台图形验证码
   /admin_api/v1/web_pages:
     get:
       produces:
@@ -1470,6 +1920,19 @@ paths:
       tags:
       - 后台webview管理
   /admin_api/v1/wxapp_pages:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 自定义页面列表
+      tags:
+      - 后台自定义页面管理
     post:
       parameters:
       - description: query params
@@ -1511,6 +1974,12 @@ paths:
       tags:
       - 后台自定义页面管理
     get:
+      parameters:
+      - description: web_page id
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -1520,7 +1989,7 @@ paths:
             $ref: '#/definitions/apiHelpers.Response'
       security:
       - ApiKeyAuth: []
-      summary: 自定义页面列表
+      summary: 自定义页面详情
       tags:
       - 后台自定义页面管理
     put:
@@ -1700,8 +2169,8 @@ paths:
     get:
       parameters:
       - in: query
-        name: q[status]
-        type: string
+        name: total
+        type: integer
       - in: query
         name: page
         type: integer
@@ -1712,8 +2181,8 @@ paths:
         name: sort
         type: string
       - in: query
-        name: total
-        type: integer
+        name: q[status]
+        type: string
       produces:
       - application/json
       responses:
@@ -1854,15 +2323,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: sort
-        type: string
-      - in: query
-        name: total
-        type: integer
-      - in: query
-        name: q[category_id]
-        type: integer
-      - in: query
         name: q[name_cont]
         type: string
       - in: query
@@ -1870,6 +2330,15 @@ paths:
         type: integer
       - in: query
         name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
+        name: q[category_id]
         type: integer
       produces:
       - application/json

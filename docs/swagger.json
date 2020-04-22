@@ -10,6 +10,25 @@
     "host": "127.0.0.1:8000",
     "basePath": "/",
     "paths": {
+        "/admin_api/v1/addresses": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理地址"
+                ],
+                "summary": "获取所有的省份信息",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin_api/v1/admin_users": {
             "get": {
                 "security": [
@@ -25,6 +44,11 @@
                 ],
                 "summary": "管理员列表",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "name": "q[email_cont]",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "name": "q[created_at_gteq]",
@@ -45,6 +69,11 @@
                     },
                     {
                         "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
@@ -56,16 +85,6 @@
                     {
                         "type": "integer",
                         "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[email_cont]",
                         "in": "query"
                     }
                 ],
@@ -98,8 +117,112 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.AdminUserParams"
+                            "$ref": "#/definitions/v1.AddAdminUserParams"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/admin_users/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理员"
+                ],
+                "summary": "管理员详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "admin user id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理员"
+                ],
+                "summary": "更新管理员",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "admin user id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "邮箱密码",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UpdateAdminUserParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理员"
+                ],
+                "summary": "删除管理员",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "admin_user id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -157,6 +280,42 @@
                         "schema": {
                             "$ref": "#/definitions/v1.AppSettingParams"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/app_setting/cert": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台配置管理"
+                ],
+                "summary": "更新证书",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "wechat pay certification",
+                        "name": "api_client_cert",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -253,6 +412,21 @@
                 "summary": "分类列表",
                 "parameters": [
                     {
+                        "type": "string",
+                        "name": "q[name]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[created_at_gteq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[created_at_lteq]",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "page",
                         "in": "query"
@@ -270,21 +444,6 @@
                     {
                         "type": "integer",
                         "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "created_at_gteq",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "created_at_lteq",
                         "in": "query"
                     }
                 ],
@@ -435,6 +594,53 @@
                 }
             }
         },
+        "/admin_api/v1/cities": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理地址"
+                ],
+                "summary": "根据省ID获取城市列表信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "province id",
+                        "name": "province_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/dashboard": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "数据统计"
+                ],
+                "summary": "dashboard",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin_api/v1/deliveries": {
             "get": {
                 "security": [
@@ -451,16 +657,6 @@
                 "summary": "运费模板列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "name": "page",
                         "in": "query"
@@ -468,6 +664,16 @@
                     {
                         "type": "integer",
                         "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -644,16 +850,6 @@
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "q[name_cont]",
                         "in": "query"
@@ -661,6 +857,16 @@
                     {
                         "type": "string",
                         "name": "q[code_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
                         "in": "query"
                     },
                     {
@@ -816,26 +1022,15 @@
                 }
             }
         },
-        "/admin_api/v1/login": {
-            "post": {
+        "/admin_api/v1/get_captcha": {
+            "get": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "后台管理员"
+                    "后台图形验证码"
                 ],
-                "summary": "管理员登录",
-                "parameters": [
-                    {
-                        "description": "邮箱密码",
-                        "name": "params",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.LoginParams"
-                        }
-                    }
-                ],
+                "summary": "获取图形验证码",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -862,6 +1057,16 @@
                 "summary": "获取订单列表",
                 "parameters": [
                     {
+                        "type": "string",
+                        "name": "q[status]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "page",
                         "in": "query"
@@ -874,16 +1079,6 @@
                     {
                         "type": "string",
                         "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[status]",
                         "in": "query"
                     }
                 ],
@@ -1005,7 +1200,7 @@
                 }
             }
         },
-        "/admin_api/v1/products": {
+        "/admin_api/v1/product_groups": {
             "get": {
                 "security": [
                     {
@@ -1016,25 +1211,10 @@
                     "application/json"
                 ],
                 "tags": [
-                    "后台产品管理"
+                    "后台主题产品管理"
                 ],
-                "summary": "产品列表",
+                "summary": "主题产品列表",
                 "parameters": [
-                    {
-                        "type": "number",
-                        "name": "q[price_gteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "q[price_lteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
                     {
                         "type": "integer",
                         "name": "page",
@@ -1051,6 +1231,209 @@
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[name]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[created_at_gteq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[created_at_lteq]",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台主题产品管理"
+                ],
+                "summary": "添加主题产品",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.ProductGroupParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/product_groups/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台主题产品管理"
+                ],
+                "summary": "主题产品详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "productGroup id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台主题产品管理"
+                ],
+                "summary": "更新主题产品",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "productGroup id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "productGroup params",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.ProductGroupParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台主题产品管理"
+                ],
+                "summary": "删除主题产品",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "productGroup id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/products": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台产品管理"
+                ],
+                "summary": "产品列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "name": "q[is_online_eq]",
                         "in": "query"
@@ -1058,6 +1441,16 @@
                     {
                         "type": "string",
                         "name": "q[name_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "name": "q[price_gteq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "name": "q[price_lteq]",
                         "in": "query"
                     }
                 ],
@@ -1437,6 +1830,170 @@
                 }
             }
         },
+        "/admin_api/v1/provinces": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理地址"
+                ],
+                "summary": "获取所有的省份信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "user id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/qiniu_meta": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "上传凭证"
+                ],
+                "summary": "七牛上传凭证",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/regions": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理地址"
+                ],
+                "summary": "根据市ID获取下级城市列表信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "city id",
+                        "name": "city_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/sessions/login": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理员"
+                ],
+                "summary": "管理员登录",
+                "parameters": [
+                    {
+                        "description": "邮箱密码",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LoginParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/sessions/mine": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理员"
+                ],
+                "summary": "当前管理员",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/sessions/reset_password": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理员"
+                ],
+                "summary": "管理员登录",
+                "parameters": [
+                    {
+                        "description": "重置密码",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.ResetPasswordParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin_api/v1/users": {
             "get": {
                 "security": [
@@ -1524,6 +2081,41 @@
                         "name": "id",
                         "in": "path",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/verify_captcha": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台图形验证码"
+                ],
+                "summary": "校验图形验证码",
+                "parameters": [
+                    {
+                        "description": "验证码",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.CaptchaParam"
+                        }
                     }
                 ],
                 "responses": {
@@ -1698,6 +2290,28 @@
             }
         },
         "/admin_api/v1/wxapp_pages": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台自定义页面管理"
+                ],
+                "summary": "自定义页面列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -1745,7 +2359,16 @@
                 "tags": [
                     "后台自定义页面管理"
                 ],
-                "summary": "自定义页面列表",
+                "summary": "自定义页面详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "web_page id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -2082,8 +2705,8 @@
                 "summary": "获取订单列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "q[status]",
+                        "type": "integer",
+                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -2102,8 +2725,8 @@
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "name": "total",
+                        "type": "string",
+                        "name": "q[status]",
                         "in": "query"
                     }
                 ],
@@ -2332,21 +2955,6 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "q[category_id]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "name": "q[name_cont]",
                         "in": "query"
                     },
@@ -2358,6 +2966,21 @@
                     {
                         "type": "integer",
                         "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "q[category_id]",
                         "in": "query"
                     }
                 ],
@@ -3101,6 +3724,25 @@
                 }
             }
         },
+        "v1.AddAdminUserParams": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "role"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.AddressParams": {
             "type": "object",
             "required": [
@@ -3136,37 +3778,23 @@
                 }
             }
         },
-        "v1.AdminUserParams": {
-            "type": "object",
-            "required": [
-                "confirm_password",
-                "email",
-                "password"
-            ],
-            "properties": {
-                "confirm_password": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
         "v1.AppSettingParams": {
             "type": "object",
             "required": [
                 "api_key",
+                "app_id",
                 "app_name",
                 "app_secret",
-                "mchid",
-                "notify_url",
-                "sevice_phone"
+                "mchid"
             ],
             "properties": {
+                "api_client_cert": {
+                    "type": "string"
+                },
                 "api_key": {
+                    "type": "string"
+                },
+                "app_id": {
                     "type": "string"
                 },
                 "app_name": {
@@ -3182,6 +3810,21 @@
                     "type": "string"
                 },
                 "sevice_phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.CaptchaParam": {
+            "type": "object",
+            "required": [
+                "id",
+                "value"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "value": {
                     "type": "string"
                 }
             }
@@ -3305,7 +3948,10 @@
                 },
                 "region": {
                     "description": "可配送区域(省id集)",
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -3361,10 +4007,18 @@
         "v1.LoginParams": {
             "type": "object",
             "required": [
+                "captcha_id",
+                "captcha_value",
                 "email",
                 "password"
             ],
             "properties": {
+                "captcha_id": {
+                    "type": "string"
+                },
+                "captcha_value": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -3408,6 +4062,26 @@
                     "type": "string"
                 },
                 "rolename": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.ProductGroupParams": {
+            "type": "object",
+            "properties": {
+                "image": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "integer"
+                },
+                "position": {
+                    "type": "integer"
+                },
+                "remark": {
                     "type": "string"
                 }
             }
@@ -3476,13 +4150,16 @@
                 "name"
             ],
             "properties": {
+                "id": {
+                    "type": "integer"
+                },
                 "name": {
                     "type": "string"
                 },
                 "property_values": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/v1.PropertyValueParams"
                     }
                 }
             }
@@ -3494,6 +4171,12 @@
                 "value"
             ],
             "properties": {
+                "_destroy": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
                 "property_name_id": {
                     "type": "integer"
                 },
@@ -3537,20 +4220,20 @@
         "v1.QueryCategoryParams": {
             "type": "object",
             "properties": {
-                "created_at_gteq": {
-                    "type": "string"
-                },
-                "created_at_lteq": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
                 "page": {
                     "type": "integer"
                 },
                 "per_page": {
                     "type": "integer"
+                },
+                "q[created_at_gteq]": {
+                    "type": "string"
+                },
+                "q[created_at_lteq]": {
+                    "type": "string"
+                },
+                "q[name]": {
+                    "type": "string"
                 },
                 "sort": {
                     "type": "string"
@@ -3623,6 +4306,32 @@
                 }
             }
         },
+        "v1.QueryProductGroupParams": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer"
+                },
+                "per_page": {
+                    "type": "integer"
+                },
+                "q[created_at_gteq]": {
+                    "type": "string"
+                },
+                "q[created_at_lteq]": {
+                    "type": "string"
+                },
+                "q[name]": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "v1.QueryProductParams": {
             "type": "object",
             "properties": {
@@ -3681,10 +4390,47 @@
                 }
             }
         },
+        "v1.ResetPasswordParams": {
+            "type": "object",
+            "required": [
+                "captcha_id",
+                "captcha_value",
+                "email",
+                "password"
+            ],
+            "properties": {
+                "captcha_id": {
+                    "type": "string"
+                },
+                "captcha_value": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.ShipOrderParams": {
             "type": "object",
             "properties": {
                 "express_no": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.UpdateAdminUserParams": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
@@ -3710,6 +4456,9 @@
                 "content": {
                     "type": "string"
                 },
+                "cover": {
+                    "type": "string"
+                },
                 "title": {
                     "type": "string"
                 }
@@ -3717,20 +4466,24 @@
         },
         "v1.WxAppPageParams": {
             "type": "object",
-            "required": [
-                "name",
-                "page_data",
-                "page_type"
-            ],
             "properties": {
+                "key": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
                 "page_data": {
                     "type": "string"
                 },
-                "page_type": {
-                    "type": "integer"
+                "share_background_cover": {
+                    "type": "string"
+                },
+                "share_cover": {
+                    "type": "string"
+                },
+                "share_sentence": {
+                    "type": "string"
                 }
             }
         }

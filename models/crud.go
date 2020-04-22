@@ -30,6 +30,15 @@ func SaveResource(value Resource) (err error) {
 	return err
 }
 
+func UpdateResource(value Resource) (err error) {
+	_, ok := value.(Resource)
+	if !ok {
+		return errors.New("value doesn't implement Resource")
+	}
+	err = db.Model(value).Updates(value).Error
+	return err
+}
+
 func FindResource(value Resource, options Options) (err error) {
 	_, ok := value.(Resource)
 	if !ok {
@@ -44,6 +53,13 @@ func FirstResource(value Resource, options Options) (err error) {
 	cdb := preloadQuery(options.Preloads)
 	err = cdb.Where(options.Conditions).First(value).Error
 	return
+}
+
+func ExistResource(value Resource, options Options) bool {
+	if db.Where(options.Conditions).Take(value).RecordNotFound() {
+		return false
+	}
+	return true
 }
 
 func preloadQuery(preloads []string) *gorm.DB {
@@ -98,6 +114,19 @@ func SearchResourceQuery(model interface{}, result interface{}, pagination *util
 
 	query := queryConditionTranslator(q)
 	baseQuery := db.Model(model)
+	baseQuery, _ = BuildWhere(baseQuery, query)
+	baseQuery.Count(&pagination.Total)
+
+	baseQuery.Offset(offset).Limit(pagination.PerPage).Order(pagination.Sort).Find(result)
+}
+
+func SearchResourceWithPreloadQuery(model interface{}, result interface{}, pagination *utils.Pagination, q map[string]string, preloads []string) {
+
+	offset := (pagination.Page - 1) * pagination.PerPage
+
+	cdb := preloadQuery(preloads)
+	query := queryConditionTranslator(q)
+	baseQuery := cdb.Model(model)
 	baseQuery, _ = BuildWhere(baseQuery, query)
 	baseQuery.Count(&pagination.Total)
 

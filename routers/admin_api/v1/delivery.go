@@ -8,6 +8,7 @@ import (
 	"github.com/xifengzhu/eshop/helpers/utils"
 	"github.com/xifengzhu/eshop/models"
 	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+	"log"
 	"strconv"
 )
 
@@ -17,7 +18,7 @@ type DeliveryRuleParams struct {
 	FirstFee      float32 `json:"first_fee" `
 	Additional    float32 `json:"additional" `     // 续件/续重
 	AdditionalFee float32 `json:"additional_fee" ` // 续件/续重
-	Region        string  `json:"region" `         // 可配送区域(省id集)
+	Region        []int   `json:"region" `         // 可配送区域(省id集)
 	ExpressID     int     `json:"express_id" `
 	Destroy       bool    `json:"_destroy,omitempty"`
 }
@@ -95,7 +96,7 @@ func GetDelivery(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	delivery.ID = int(id)
 
-	err := models.FindResource(&delivery, Query{})
+	err := models.FindResource(&delivery, Query{Preloads: []string{"DeliveryRules"}})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -157,13 +158,14 @@ func UpdateDelivery(c *gin.Context) {
 		return
 	}
 
+	log.Println("=======deliveryParams====", deliveryParams)
 	copier.Copy(&delivery, &deliveryParams)
 	// reset delivery rules
 	delivery.DeliveryRules = nil
 	// recover the delivery id
 	delivery.ID = id
 	copier.Copy(&delivery.DeliveryRules, &deliveryParams.DeliveryRules)
-
+	log.Println("=======delivery====", delivery)
 	err = delivery.NestUpdate()
 	delivery.Reload()
 	if err != nil {

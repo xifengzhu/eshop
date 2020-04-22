@@ -30,7 +30,8 @@ type Order struct {
 	UserID             int         `gorm:"type: int; " json:"user_id"`
 	BuyerMessage       string      `gorm:"type: varchar(120); " json:"buyer_message"`
 	OrderItems         []OrderItem `json:"order_items"`
-	Express            Express     `json:"express"`
+	User               *User       `json:"user"`
+	Express            *Express    `json:"express,omitempty"`
 	transition.Transition
 }
 
@@ -51,6 +52,9 @@ func init() {
 func initWechatAccount() {
 	account := wxpay.NewAccount(setting.WechatAppId, setting.MchID, setting.MchKey, false)
 	WxpayClient = wxpay.NewClient(account)
+
+	// 设置证书
+	// WxpayClient.certData = AppSetting.ApiClientCertData
 
 	// 设置http请求超时时间
 	WxpayClient.SetHttpConnectTimeoutMs(2000)
@@ -293,10 +297,10 @@ func (order Order) enqueueCloseOrderJob() {
 	enqueuer.EnqueueIn("close_order", 900, work.Q{"order_id": order.ID})
 }
 
-func (order Order) User() (user User) {
-	user, _ = GetUserById(order.UserID)
-	return user
-}
+// func (order Order) User() (user User) {
+// 	user, _ = GetUserById(order.UserID)
+// 	return user
+// }
 
 func (order Order) RequestPayment() (map[string]string, error) {
 	params := make(wxpay.Params)
@@ -306,7 +310,7 @@ func (order Order) RequestPayment() (map[string]string, error) {
 		SetString("spbill_create_ip", "127.0.0.1").
 		SetString("notify_url", "http://notify.objcoding.com/notify").
 		SetString("trade_type", "JSAPI").
-		SetString("openid", order.User().OpenId)
+		SetString("openid", order.User.OpenId)
 	payment, err := WxpayClient.UnifiedOrder(params)
 	return payment, err
 }

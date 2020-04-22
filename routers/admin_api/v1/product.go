@@ -124,7 +124,7 @@ func GetProduct(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	product.ID = id
 
-	err := models.FindResource(&product, Query{Preloads: []string{"Goodses"}})
+	err := models.FindResource(&product, Query{Preloads: []string{"Goodses", "Delivery"}})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return

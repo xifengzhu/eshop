@@ -22,9 +22,9 @@ type CategoryParams struct {
 
 type QueryCategoryParams struct {
 	utils.Pagination
-	Name            string    `uri:"q[name]"`
-	Created_at_gteq time.Time `uri:"q[created_at_gteq]" time_format:"2006-01-02T15:04:05Z07:00"`
-	Created_at_lteq time.Time `uri:"q[created_at_lteq]" time_format:"2006-01-02T15:04:05Z07:00"`
+	Name            string    `json:"q[name]"`
+	Created_at_gteq time.Time `json:"q[created_at_gteq]" time_format:"2006-01-02T15:04:05Z07:00"`
+	Created_at_lteq time.Time `json:"q[created_at_lteq]" time_format:"2006-01-02T15:04:05Z07:00"`
 }
 
 // @Summary 添加分类
