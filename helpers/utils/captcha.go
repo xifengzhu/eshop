@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"github.com/mojocn/base64Captcha"
 	"github.com/xifengzhu/eshop/helpers/setting"
@@ -15,7 +16,7 @@ type redisStore struct {
 // redisStore Implement the store interface(Set, Get, Verify)
 func (s *redisStore) Set(id string, value string) {
 	var err error
-	_, err = s.redisClient.Do("SETEX", id, 600, value)
+	_, err = s.redisClient.Do("SETEX", fmt.Sprintf("eshop:captcha:%s", id), 600, value)
 	if err != nil {
 		panic(err)
 	}
@@ -23,7 +24,7 @@ func (s *redisStore) Set(id string, value string) {
 
 // redisStore implementing Get method of  Store interface
 func (s *redisStore) Get(id string, clear bool) (value string) {
-	reply, err := redis.Values(redisConn.Do("MGET", id))
+	reply, err := redis.Values(redisConn.Do("MGET", fmt.Sprintf("eshop:captcha:%s", id)))
 	if err != nil {
 		log.Println("====get %s err=====", id)
 	}
