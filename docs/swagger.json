@@ -45,6 +45,26 @@
                 "summary": "管理员列表",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "q[email_cont]",
                         "in": "query"
@@ -65,26 +85,6 @@
                             "type": "integer"
                         },
                         "name": "q[status_in]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
                         "in": "query"
                     }
                 ],
@@ -235,99 +235,6 @@
                 }
             }
         },
-        "/admin_api/v1/app_setting": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "后台配置管理"
-                ],
-                "summary": "配置详情",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "后台配置管理"
-                ],
-                "summary": "更新配置",
-                "parameters": [
-                    {
-                        "description": "app_setting params",
-                        "name": "params",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.AppSettingParams"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin_api/v1/app_setting/cert": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "后台配置管理"
-                ],
-                "summary": "更新证书",
-                "parameters": [
-                    {
-                        "type": "file",
-                        "description": "wechat pay certification",
-                        "name": "api_client_cert",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/admin_api/v1/cabin_rules": {
             "post": {
                 "security": [
@@ -428,11 +335,6 @@
                     },
                     {
                         "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
@@ -444,6 +346,11 @@
                     {
                         "type": "integer",
                         "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
                         "in": "query"
                     }
                 ],
@@ -845,11 +752,6 @@
                 "summary": "快递列表",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "q[name_cont]",
                         "in": "query"
@@ -857,6 +759,11 @@
                     {
                         "type": "string",
                         "name": "q[code_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -1057,11 +964,6 @@
                 "summary": "获取订单列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "q[status]",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "name": "total",
                         "in": "query"
@@ -1079,6 +981,11 @@
                     {
                         "type": "string",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[status]",
                         "in": "query"
                     }
                 ],
@@ -1217,6 +1124,11 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "page",
                         "in": "query"
                     },
@@ -1228,11 +1140,6 @@
                     {
                         "type": "string",
                         "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -1415,11 +1322,6 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
@@ -1451,6 +1353,11 @@
                     {
                         "type": "number",
                         "name": "q[price_lteq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
                         "in": "query"
                     }
                 ],
@@ -1910,6 +1817,36 @@
                 }
             }
         },
+        "/admin_api/v1/sessions/forget_password": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理员"
+                ],
+                "summary": "管理员忘记密码",
+                "parameters": [
+                    {
+                        "description": "重置密码",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.ForgetPasswordParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin_api/v1/sessions/login": {
             "post": {
                 "produces": [
@@ -1965,15 +1902,22 @@
             }
         },
         "/admin_api/v1/sessions/reset_password": {
-            "post": {
+            "put": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "后台管理员"
                 ],
-                "summary": "管理员登录",
+                "summary": "管理员设置密码",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "充值密码token",
+                        "name": "reset_password_token",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "重置密码",
                         "name": "params",
@@ -2010,21 +1954,6 @@
                 "summary": "获取用户列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "q[created_at_gteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[created_at_lteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "name": "per_page",
                         "in": "query"
@@ -2047,6 +1976,21 @@
                     {
                         "type": "string",
                         "name": "q[username_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[created_at_gteq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[created_at_lteq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
                         "in": "query"
                     }
                 ],
@@ -2081,41 +2025,6 @@
                         "name": "id",
                         "in": "path",
                         "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin_api/v1/verify_captcha": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "后台图形验证码"
-                ],
-                "summary": "校验图形验证码",
-                "parameters": [
-                    {
-                        "description": "验证码",
-                        "name": "params",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.CaptchaParam"
-                        }
                     }
                 ],
                 "responses": {
@@ -2450,6 +2359,99 @@
                 }
             }
         },
+        "/admin_api/v1/wxpay_setting": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台配置管理"
+                ],
+                "summary": "微信支付配置详情",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台配置管理"
+                ],
+                "summary": "更新微信支付配置微信支付",
+                "parameters": [
+                    {
+                        "description": "wxpay_setting params",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.WxpaySettingParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/wxpay_setting/cert": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台配置管理"
+                ],
+                "summary": "更新微信支付证书",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "wechat pay certification",
+                        "name": "api_client_cert",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/app_api/v1/addresses": {
             "get": {
                 "security": [
@@ -2706,11 +2708,6 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "page",
                         "in": "query"
                     },
@@ -2722,6 +2719,11 @@
                     {
                         "type": "string",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -2954,16 +2956,6 @@
                 "summary": "获取产品列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "q[name_cont]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "name": "per_page",
                         "in": "query"
@@ -2980,7 +2972,17 @@
                     },
                     {
                         "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "q[category_id]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[name_cont]",
                         "in": "query"
                     }
                 ],
@@ -3778,57 +3780,6 @@
                 }
             }
         },
-        "v1.AppSettingParams": {
-            "type": "object",
-            "required": [
-                "api_key",
-                "app_id",
-                "app_name",
-                "app_secret",
-                "mchid"
-            ],
-            "properties": {
-                "api_client_cert": {
-                    "type": "string"
-                },
-                "api_key": {
-                    "type": "string"
-                },
-                "app_id": {
-                    "type": "string"
-                },
-                "app_name": {
-                    "type": "string"
-                },
-                "app_secret": {
-                    "type": "string"
-                },
-                "mchid": {
-                    "type": "string"
-                },
-                "notify_url": {
-                    "type": "string"
-                },
-                "sevice_phone": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.CaptchaParam": {
-            "type": "object",
-            "required": [
-                "id",
-                "value"
-            ],
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
         "v1.CartItemIDParams": {
             "type": "object",
             "required": [
@@ -3962,6 +3913,25 @@
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.ForgetPasswordParams": {
+            "type": "object",
+            "required": [
+                "captcha_id",
+                "captcha_value",
+                "email"
+            ],
+            "properties": {
+                "captcha_id": {
+                    "type": "string"
+                },
+                "captcha_value": {
+                    "type": "string"
+                },
+                "email": {
                     "type": "string"
                 }
             }
@@ -4393,21 +4363,9 @@
         "v1.ResetPasswordParams": {
             "type": "object",
             "required": [
-                "captcha_id",
-                "captcha_value",
-                "email",
                 "password"
             ],
             "properties": {
-                "captcha_id": {
-                    "type": "string"
-                },
-                "captcha_value": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
                 "password": {
                     "type": "string"
                 }
@@ -4483,6 +4441,42 @@
                     "type": "string"
                 },
                 "share_sentence": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.WxpaySettingParams": {
+            "type": "object",
+            "required": [
+                "api_key",
+                "app_id",
+                "app_name",
+                "app_secret",
+                "mchid"
+            ],
+            "properties": {
+                "api_client_cert": {
+                    "type": "string"
+                },
+                "api_key": {
+                    "type": "string"
+                },
+                "app_id": {
+                    "type": "string"
+                },
+                "app_name": {
+                    "type": "string"
+                },
+                "app_secret": {
+                    "type": "string"
+                },
+                "mchid": {
+                    "type": "string"
+                },
+                "notify_url": {
+                    "type": "string"
+                },
+                "sevice_phone": {
                     "type": "string"
                 }
             }

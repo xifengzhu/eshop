@@ -52,9 +52,9 @@ func InitAdminAPI(r *gin.Engine) {
 	}
 
 	{
-		admin_apiv1.GET("/app_setting", v1.GetAppSetting)
-		admin_apiv1.PUT("/app_setting", v1.UpdateAppSetting)
-		admin_apiv1.POST("/app_setting/cert", v1.UpdateWechatCert)
+		admin_apiv1.GET("/wxpay_setting", v1.GetWxpaySetting)
+		admin_apiv1.PUT("/wxpay_setting", v1.UpdateWxpaySetting)
+		admin_apiv1.POST("/wxpay_setting/cert", v1.UpdateWechatCert)
 	}
 
 	{

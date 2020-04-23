@@ -56,41 +56,6 @@ definitions:
     - region_id
     - user_id
     type: object
-  v1.AppSettingParams:
-    properties:
-      api_client_cert:
-        type: string
-      api_key:
-        type: string
-      app_id:
-        type: string
-      app_name:
-        type: string
-      app_secret:
-        type: string
-      mchid:
-        type: string
-      notify_url:
-        type: string
-      sevice_phone:
-        type: string
-    required:
-    - api_key
-    - app_id
-    - app_name
-    - app_secret
-    - mchid
-    type: object
-  v1.CaptchaParam:
-    properties:
-      id:
-        type: string
-      value:
-        type: string
-    required:
-    - id
-    - value
-    type: object
   v1.CartItemIDParams:
     properties:
       item_id:
@@ -182,6 +147,19 @@ definitions:
         type: string
       name:
         type: string
+    type: object
+  v1.ForgetPasswordParams:
+    properties:
+      captcha_id:
+        type: string
+      captcha_value:
+        type: string
+      email:
+        type: string
+    required:
+    - captcha_id
+    - captcha_value
+    - email
     type: object
   v1.GoodsParams:
     properties:
@@ -464,18 +442,9 @@ definitions:
     type: object
   v1.ResetPasswordParams:
     properties:
-      captcha_id:
-        type: string
-      captcha_value:
-        type: string
-      email:
-        type: string
       password:
         type: string
     required:
-    - captcha_id
-    - captcha_value
-    - email
     - password
     type: object
   v1.ShipOrderParams:
@@ -526,6 +495,31 @@ definitions:
       share_sentence:
         type: string
     type: object
+  v1.WxpaySettingParams:
+    properties:
+      api_client_cert:
+        type: string
+      api_key:
+        type: string
+      app_id:
+        type: string
+      app_name:
+        type: string
+      app_secret:
+        type: string
+      mchid:
+        type: string
+      notify_url:
+        type: string
+      sevice_phone:
+        type: string
+    required:
+    - api_key
+    - app_id
+    - app_name
+    - app_secret
+    - mchid
+    type: object
 host: 127.0.0.1:8000
 info:
   contact: {}
@@ -550,6 +544,18 @@ paths:
     get:
       parameters:
       - in: query
+        name: total
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
         name: q[email_cont]
         type: string
       - in: query
@@ -563,18 +569,6 @@ paths:
           type: integer
         name: q[status_in]
         type: array
-      - in: query
-        name: page
-        type: integer
-      - in: query
-        name: per_page
-        type: integer
-      - in: query
-        name: sort
-        type: string
-      - in: query
-        name: total
-        type: integer
       produces:
       - application/json
       responses:
@@ -671,62 +665,6 @@ paths:
       summary: 更新管理员
       tags:
       - 后台管理员
-  /admin_api/v1/app_setting:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/apiHelpers.Response'
-      security:
-      - ApiKeyAuth: []
-      summary: 配置详情
-      tags:
-      - 后台配置管理
-    put:
-      parameters:
-      - description: app_setting params
-        in: body
-        name: params
-        required: true
-        schema:
-          $ref: '#/definitions/v1.AppSettingParams'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/apiHelpers.Response'
-      security:
-      - ApiKeyAuth: []
-      summary: 更新配置
-      tags:
-      - 后台配置管理
-  /admin_api/v1/app_setting/cert:
-    post:
-      consumes:
-      - multipart/form-data
-      parameters:
-      - description: wechat pay certification
-        in: formData
-        name: api_client_cert
-        required: true
-        type: file
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/apiHelpers.Response'
-      security:
-      - ApiKeyAuth: []
-      summary: 更新证书
-      tags:
-      - 后台配置管理
   /admin_api/v1/cabin_rules:
     delete:
       parameters:
@@ -781,9 +719,6 @@ paths:
         name: q[created_at_lteq]
         type: string
       - in: query
-        name: page
-        type: integer
-      - in: query
         name: per_page
         type: integer
       - in: query
@@ -791,6 +726,9 @@ paths:
         type: string
       - in: query
         name: total
+        type: integer
+      - in: query
+        name: page
         type: integer
       produces:
       - application/json
@@ -1036,14 +974,14 @@ paths:
     get:
       parameters:
       - in: query
-        name: total
-        type: integer
-      - in: query
         name: q[name_cont]
         type: string
       - in: query
         name: q[code_cont]
         type: string
+      - in: query
+        name: total
+        type: integer
       - in: query
         name: page
         type: integer
@@ -1165,9 +1103,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: q[status]
-        type: string
-      - in: query
         name: total
         type: integer
       - in: query
@@ -1178,6 +1113,9 @@ paths:
         type: integer
       - in: query
         name: sort
+        type: string
+      - in: query
+        name: q[status]
         type: string
       produces:
       - application/json
@@ -1261,6 +1199,9 @@ paths:
     get:
       parameters:
       - in: query
+        name: total
+        type: integer
+      - in: query
         name: page
         type: integer
       - in: query
@@ -1269,9 +1210,6 @@ paths:
       - in: query
         name: sort
         type: string
-      - in: query
-        name: total
-        type: integer
       - in: query
         name: q[name]
         type: string
@@ -1381,9 +1319,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: page
-        type: integer
-      - in: query
         name: per_page
         type: integer
       - in: query
@@ -1404,6 +1339,9 @@ paths:
       - in: query
         name: q[price_lteq]
         type: number
+      - in: query
+        name: page
+        type: integer
       produces:
       - application/json
       responses:
@@ -1689,6 +1627,25 @@ paths:
       summary: 根据市ID获取下级城市列表信息
       tags:
       - 后台管理地址
+  /admin_api/v1/sessions/forget_password:
+    post:
+      parameters:
+      - description: 重置密码
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ForgetPasswordParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 管理员忘记密码
+      tags:
+      - 后台管理员
   /admin_api/v1/sessions/login:
     post:
       parameters:
@@ -1723,8 +1680,13 @@ paths:
       tags:
       - 后台管理员
   /admin_api/v1/sessions/reset_password:
-    post:
+    put:
       parameters:
+      - description: 充值密码token
+        in: path
+        name: reset_password_token
+        required: true
+        type: string
       - description: 重置密码
         in: body
         name: params
@@ -1738,21 +1700,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/apiHelpers.Response'
-      summary: 管理员登录
+      summary: 管理员设置密码
       tags:
       - 后台管理员
   /admin_api/v1/users:
     get:
       parameters:
-      - in: query
-        name: q[created_at_gteq]
-        type: string
-      - in: query
-        name: q[created_at_lteq]
-        type: string
-      - in: query
-        name: page
-        type: integer
       - in: query
         name: per_page
         type: integer
@@ -1768,6 +1721,15 @@ paths:
       - in: query
         name: q[username_cont]
         type: string
+      - in: query
+        name: q[created_at_gteq]
+        type: string
+      - in: query
+        name: q[created_at_lteq]
+        type: string
+      - in: query
+        name: page
+        type: integer
       produces:
       - application/json
       responses:
@@ -1800,27 +1762,6 @@ paths:
       summary: 获取用户详情
       tags:
       - 后台用户管理
-  /admin_api/v1/verify_captcha:
-    post:
-      parameters:
-      - description: 验证码
-        in: body
-        name: params
-        required: true
-        schema:
-          $ref: '#/definitions/v1.CaptchaParam'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/apiHelpers.Response'
-      security:
-      - ApiKeyAuth: []
-      summary: 校验图形验证码
-      tags:
-      - 后台图形验证码
   /admin_api/v1/web_pages:
     get:
       produces:
@@ -2017,6 +1958,62 @@ paths:
       summary: 更新自定义页面
       tags:
       - 后台自定义页面管理
+  /admin_api/v1/wxpay_setting:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 微信支付配置详情
+      tags:
+      - 后台配置管理
+    put:
+      parameters:
+      - description: wxpay_setting params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.WxpaySettingParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新微信支付配置微信支付
+      tags:
+      - 后台配置管理
+  /admin_api/v1/wxpay_setting/cert:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: wechat pay certification
+        in: formData
+        name: api_client_cert
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新微信支付证书
+      tags:
+      - 后台配置管理
   /app_api/v1/addresses:
     get:
       produces:
@@ -2169,9 +2166,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: total
-        type: integer
-      - in: query
         name: page
         type: integer
       - in: query
@@ -2180,6 +2174,9 @@ paths:
       - in: query
         name: sort
         type: string
+      - in: query
+        name: total
+        type: integer
       - in: query
         name: q[status]
         type: string
@@ -2323,12 +2320,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: q[name_cont]
-        type: string
-      - in: query
-        name: page
-        type: integer
-      - in: query
         name: per_page
         type: integer
       - in: query
@@ -2338,8 +2329,14 @@ paths:
         name: total
         type: integer
       - in: query
+        name: page
+        type: integer
+      - in: query
         name: q[category_id]
         type: integer
+      - in: query
+        name: q[name_cont]
+        type: string
       produces:
       - application/json
       responses:

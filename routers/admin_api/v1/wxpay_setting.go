@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 )
 
-type AppSettingParams struct {
+type WxpaySettingParams struct {
 	WxappId       string `json:"app_id" binding:"required"`
 	AppName       string `json:"app_name" binding:"required"`
 	AppSecret     string `json:"app_secret" binding:"required"`
@@ -21,35 +21,35 @@ type AppSettingParams struct {
 	NotifyUrl     string `json:"notify_url,omitempty"`
 }
 
-// @Summary 配置详情
+// @Summary 微信支付配置详情
 // @Produce  json
 // @Tags 后台配置管理
 // @Success 200 {object} apiHelpers.Response
-// @Router /admin_api/v1/app_setting [get]
+// @Router /admin_api/v1/wxpay_setting [get]
 // @Security ApiKeyAuth
-func GetAppSetting(c *gin.Context) {
-	var setting models.AppSetting
+func GetWxpaySetting(c *gin.Context) {
+	var setting models.WxpaySetting
 
 	setting.Current()
 
 	apiHelpers.ResponseSuccess(c, setting)
 }
 
-// @Summary 更新配置
+// @Summary 更新微信支付配置微信支付
 // @Produce  json
 // @Tags 后台配置管理
-// @Param params body AppSettingParams true "app_setting params"
+// @Param params body WxpaySettingParams true "wxpay_setting params"
 // @Success 200 {object} apiHelpers.Response
-// @Router /admin_api/v1/app_setting [put]
+// @Router /admin_api/v1/wxpay_setting [put]
 // @Security ApiKeyAuth
-func UpdateAppSetting(c *gin.Context) {
+func UpdateWxpaySetting(c *gin.Context) {
 	var err error
-	var settingParams AppSettingParams
+	var settingParams WxpaySettingParams
 	if err = c.ShouldBindJSON(&settingParams); err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 	}
 
-	var setting models.AppSetting
+	var setting models.WxpaySetting
 
 	copier.Copy(&setting, &settingParams)
 
@@ -61,17 +61,17 @@ func UpdateAppSetting(c *gin.Context) {
 	apiHelpers.ResponseSuccess(c, setting)
 }
 
-// @Summary 更新证书
+// @Summary 更新微信支付证书
 // @Produce  json
 // @Tags 后台配置管理
 // @Accept  multipart/form-data
 // @Param api_client_cert formData file true "wechat pay certification"
 // @Success 200 {object} apiHelpers.Response
-// @Router /admin_api/v1/app_setting/cert [post]
+// @Router /admin_api/v1/wxpay_setting/cert [post]
 // @Security ApiKeyAuth
 func UpdateWechatCert(c *gin.Context) {
 	var err error
-	var setting models.AppSetting
+	var setting models.WxpaySetting
 	setting.Current()
 
 	// read file base64

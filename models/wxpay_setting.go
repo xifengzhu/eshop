@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-type AppSetting struct {
+type WxpaySetting struct {
 	BaseModel
 
 	WxappId       string `gorm:"type: varchar(50); not null" json:"wxapp_id"`
@@ -18,24 +18,24 @@ type AppSetting struct {
 	ApiClientCert string `gorm:"type: varchar(255);" json:"api_client_cert"`
 }
 
-func (AppSetting) TableName() string {
-	return "app_setting"
+func (WxpaySetting) TableName() string {
+	return "wxpay_setting"
 }
 
-func (setting *AppSetting) CreateOrUpdate() (err error) {
-	var existSetting AppSetting
+func (setting *WxpaySetting) CreateOrUpdate() (err error) {
+	var existSetting WxpaySetting
 	db.First(&existSetting)
 	setting.ID = existSetting.ID
 	err = db.Save(&setting).Error
 	return
 }
 
-func (setting *AppSetting) Current() (err error) {
+func (setting *WxpaySetting) Current() (err error) {
 	err = db.First(&setting).Error
 	return
 }
 
-func (setting *AppSetting) ApiClientCertData() (data string) {
+func (setting *WxpaySetting) ApiClientCertData() (data string) {
 	setting.Current()
 	if setting.ID == 0 || setting.ApiClientCert == "" {
 		return
