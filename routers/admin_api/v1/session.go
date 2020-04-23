@@ -109,7 +109,7 @@ func ForgetPassword(c *gin.Context) {
 // @Summary 管理员设置密码
 // @Produce  json
 // @Tags 后台管理员
-// @Param params query reset_password_token true "充值密码token"
+// @Param reset_password_token path string true "充值密码token"
 // @Param params body ResetPasswordParams true "重置密码"
 // @Success 200 {object} apiHelpers.Response
 // @Router /admin_api/v1/sessions/reset_password [put]
