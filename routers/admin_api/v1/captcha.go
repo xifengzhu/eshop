@@ -15,7 +15,7 @@ import (
 func GetCaptcha(c *gin.Context) {
 	id, b64s, err := utils.CaptchaGenerate()
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR, err)
+		apiHelpers.ResponseError(c, e.SERVER_ERROR, err)
 	}
 
 	data := map[string]interface{}{"img": b64s, "captchaId": id}

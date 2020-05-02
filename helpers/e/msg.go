@@ -2,7 +2,7 @@ package e
 
 var MsgFlags = map[int]string{
 	SUCCESS:                        "ok",
-	ERROR:                          "fail",
+	SERVER_ERROR:                   "服务器繁忙",
 	INVALID_PARAMS:                 "请求参数错误",
 	ERROR_EXIST:                    "资源已存在",
 	ERROR_NOT_EXIST:                "资源不存在",
@@ -18,5 +18,5 @@ func GetMsg(code int) string {
 		return msg
 	}
 
-	return MsgFlags[ERROR]
+	return MsgFlags[SERVER_ERROR]
 }

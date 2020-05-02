@@ -2,7 +2,7 @@ package v1
 
 import (
 	"errors"
-	// "fmt"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
@@ -14,7 +14,7 @@ import (
 )
 
 type CategoryParams struct {
-	Name     string `binding:"required" json:"name"`
+	Name     string `json:"name" binding:"required" `
 	Position int    `json:"position"`
 	ParentID int    `json:"parent_id"`
 	Image    string `json:"image"`
@@ -25,6 +25,7 @@ type QueryCategoryParams struct {
 	Name            string    `json:"q[name]"`
 	Created_at_gteq time.Time `json:"q[created_at_gteq]" time_format:"2006-01-02T15:04:05Z07:00"`
 	Created_at_lteq time.Time `json:"q[created_at_lteq]" time_format:"2006-01-02T15:04:05Z07:00"`
+	ParentID        int       `json:"q[parent_id_eq]"`
 }
 
 // @Summary 添加分类
@@ -86,7 +87,7 @@ func GetCategory(c *gin.Context) {
 	var category models.Category
 	id, _ := strconv.Atoi(c.Param("id"))
 	category.ID = id
-	err := models.FindResource(&category, Query{})
+	err := models.FindResource(&category, Query{Preloads: []string{"Parent", "Children"}})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -109,6 +110,7 @@ func GetCategories(c *gin.Context) {
 	var model models.Category
 	result := &[]models.Category{}
 
+	fmt.Println("======c.QueryMap('q')=====", c.QueryMap("q"))
 	models.SearchResourceQuery(&model, result, pagination, c.QueryMap("q"))
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}

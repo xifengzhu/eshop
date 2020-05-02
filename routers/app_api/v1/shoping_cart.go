@@ -88,7 +88,7 @@ func AddCartItem(c *gin.Context) {
 		models.SaveResource(&item)
 	}
 
-	apiHelpers.ResponseSuccess(c, item)
+	apiHelpers.ResponseOK(c)
 }
 
 // @Summary 勾选购物车项

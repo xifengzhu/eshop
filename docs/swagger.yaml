@@ -9,6 +9,27 @@ definitions:
       msg:
         type: string
     type: object
+  entities.WxpaySettingParams:
+    properties:
+      api_client_cert:
+        type: string
+      apikey:
+        type: string
+      app_name:
+        type: string
+      app_secret:
+        type: string
+      mchid:
+        type: string
+      notify_url:
+        type: string
+      wxapp_id:
+        type: string
+    type: object
+  models.JSON:
+    items:
+      type: integer
+    type: array
   utils.HTTPError:
     properties:
       code:
@@ -43,6 +64,8 @@ definitions:
         type: string
       province_id:
         type: integer
+      receiver:
+        type: string
       region_id:
         type: integer
       user_id:
@@ -53,8 +76,8 @@ definitions:
     - is_default
     - phone
     - province_id
+    - receiver
     - region_id
-    - user_id
     type: object
   v1.CartItemIDParams:
     properties:
@@ -126,8 +149,6 @@ definitions:
       additional_fee:
         description: 续件/续重
         type: number
-      express_id:
-        type: integer
       first:
         description: 首件/首重
         type: number
@@ -135,11 +156,12 @@ definitions:
         type: number
       id:
         type: integer
+      position:
+        type: integer
       region:
+        $ref: '#/definitions/models.JSON'
         description: 可配送区域(省id集)
-        items:
-          type: integer
-        type: array
+        type: object
     type: object
   v1.ExpressParams:
     properties:
@@ -167,7 +189,7 @@ definitions:
         type: boolean
       id:
         type: integer
-      images:
+      image:
         type: string
       line_price:
         type: number
@@ -210,14 +232,9 @@ definitions:
         type: string
       express_id:
         type: integer
-      item_ids:
-        items:
-          type: integer
-        type: array
     required:
     - address_id
     - express_id
-    - item_ids
     type: object
   v1.PolicyRuleParams:
     properties:
@@ -230,22 +247,27 @@ definitions:
     type: object
   v1.ProductGroupParams:
     properties:
-      image:
+      key:
         type: string
       name:
         type: string
-      parent_id:
-        type: integer
-      position:
-        type: integer
+      product_ids:
+        $ref: '#/definitions/models.JSON'
+        type: object
       remark:
         type: string
     type: object
   v1.ProductParams:
     properties:
+      category_ids:
+        items:
+          type: integer
+        type: array
       content:
         type: string
       deduct_stock_type:
+        type: integer
+      delivery_id:
         type: integer
       goodses:
         items:
@@ -253,16 +275,23 @@ definitions:
         type: array
       is_online:
         type: boolean
+      main_pictures:
+        $ref: '#/definitions/models.JSON'
+        type: object
       name:
         type: string
       position:
         type: integer
       price:
         type: number
-      product_id:
-        type: integer
       sales_initial:
         type: integer
+      serial_no:
+        type: string
+      share_cover:
+        type: string
+      share_desc:
+        type: string
     type: object
   v1.ProductQueryParams:
     properties:
@@ -339,6 +368,8 @@ definitions:
         type: string
       q[name]:
         type: string
+      q[parent_id_eq]:
+        type: integer
       sort:
         type: string
       total:
@@ -366,6 +397,21 @@ definitions:
       q[code_cont]:
         type: string
       q[name_cont]:
+        type: string
+      sort:
+        type: string
+      total:
+        type: integer
+    type: object
+  v1.QueryLogisticParams:
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      q[express_company_cont]:
+        type: string
+      q[express_no_cont]:
         type: string
       sort:
         type: string
@@ -449,6 +495,8 @@ definitions:
     type: object
   v1.ShipOrderParams:
     properties:
+      express_company:
+        type: string
       express_no:
         type: string
     type: object
@@ -487,38 +535,14 @@ definitions:
       name:
         type: string
       page_data:
-        type: string
+        $ref: '#/definitions/models.JSON'
+        type: object
       share_background_cover:
         type: string
       share_cover:
         type: string
       share_sentence:
         type: string
-    type: object
-  v1.WxpaySettingParams:
-    properties:
-      api_client_cert:
-        type: string
-      api_key:
-        type: string
-      app_id:
-        type: string
-      app_name:
-        type: string
-      app_secret:
-        type: string
-      mchid:
-        type: string
-      notify_url:
-        type: string
-      sevice_phone:
-        type: string
-    required:
-    - api_key
-    - app_id
-    - app_name
-    - app_secret
-    - mchid
     type: object
 host: 127.0.0.1:8000
 info:
@@ -544,17 +568,14 @@ paths:
     get:
       parameters:
       - in: query
-        name: total
-        type: integer
-      - in: query
-        name: page
-        type: integer
-      - in: query
         name: per_page
         type: integer
       - in: query
         name: sort
         type: string
+      - in: query
+        name: total
+        type: integer
       - in: query
         name: q[email_cont]
         type: string
@@ -569,6 +590,9 @@ paths:
           type: integer
         name: q[status_in]
         type: array
+      - in: query
+        name: page
+        type: integer
       produces:
       - application/json
       responses:
@@ -710,6 +734,12 @@ paths:
     get:
       parameters:
       - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
         name: q[name]
         type: string
       - in: query
@@ -719,16 +749,13 @@ paths:
         name: q[created_at_lteq]
         type: string
       - in: query
-        name: per_page
-        type: integer
-      - in: query
-        name: sort
-        type: string
-      - in: query
-        name: total
+        name: q[parent_id_eq]
         type: integer
       - in: query
         name: page
+        type: integer
+      - in: query
+        name: per_page
         type: integer
       produces:
       - application/json
@@ -974,12 +1001,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: q[name_cont]
-        type: string
-      - in: query
-        name: q[code_cont]
-        type: string
-      - in: query
         name: total
         type: integer
       - in: query
@@ -990,6 +1011,12 @@ paths:
         type: integer
       - in: query
         name: sort
+        type: string
+      - in: query
+        name: q[name_cont]
+        type: string
+      - in: query
+        name: q[code_cont]
         type: string
       produces:
       - application/json
@@ -1099,12 +1126,9 @@ paths:
       summary: 获取图形验证码
       tags:
       - 后台图形验证码
-  /admin_api/v1/orders:
+  /admin_api/v1/logistics:
     get:
       parameters:
-      - in: query
-        name: total
-        type: integer
       - in: query
         name: page
         type: integer
@@ -1112,8 +1136,64 @@ paths:
         name: per_page
         type: integer
       - in: query
+        name: q[express_company_cont]
+        type: string
+      - in: query
+        name: q[express_no_cont]
+        type: string
+      - in: query
         name: sort
         type: string
+      - in: query
+        name: total
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 物流列表
+      tags:
+      - 后台物流管理
+  /admin_api/v1/logistics/{id}:
+    get:
+      parameters:
+      - description: logistic id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 物流详情
+      tags:
+      - 后台物流管理
+  /admin_api/v1/orders:
+    get:
+      parameters:
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
+        name: page
+        type: integer
       - in: query
         name: q[status]
         type: string
@@ -1199,9 +1279,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: total
-        type: integer
-      - in: query
         name: page
         type: integer
       - in: query
@@ -1210,6 +1287,9 @@ paths:
       - in: query
         name: sort
         type: string
+      - in: query
+        name: total
+        type: integer
       - in: query
         name: q[name]
         type: string
@@ -1319,6 +1399,9 @@ paths:
     get:
       parameters:
       - in: query
+        name: q[price_lteq]
+        type: number
+      - in: query
         name: per_page
         type: integer
       - in: query
@@ -1326,6 +1409,9 @@ paths:
         type: string
       - in: query
         name: total
+        type: integer
+      - in: query
+        name: page
         type: integer
       - in: query
         name: q[is_online_eq]
@@ -1336,12 +1422,6 @@ paths:
       - in: query
         name: q[price_gteq]
         type: number
-      - in: query
-        name: q[price_lteq]
-        type: number
-      - in: query
-        name: page
-        type: integer
       produces:
       - application/json
       responses:
@@ -1436,6 +1516,26 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 更新产品
+      tags:
+      - 后台产品管理
+  /admin_api/v1/products/{id}/goodses:
+    get:
+      parameters:
+      - description: product_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: SKU列表
       tags:
       - 后台产品管理
   /admin_api/v1/property_names:
@@ -1716,6 +1816,9 @@ paths:
         name: total
         type: integer
       - in: query
+        name: page
+        type: integer
+      - in: query
         name: q[open_id_eq]
         type: string
       - in: query
@@ -1727,9 +1830,6 @@ paths:
       - in: query
         name: q[created_at_lteq]
         type: string
-      - in: query
-        name: page
-        type: integer
       produces:
       - application/json
       responses:
@@ -1979,7 +2079,7 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.WxpaySettingParams'
+          $ref: '#/definitions/entities.WxpaySettingParams'
       produces:
       - application/json
       responses:
@@ -2166,16 +2266,16 @@ paths:
     get:
       parameters:
       - in: query
-        name: page
-        type: integer
-      - in: query
-        name: per_page
-        type: integer
-      - in: query
         name: sort
         type: string
       - in: query
         name: total
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
         type: integer
       - in: query
         name: q[status]
@@ -2320,9 +2420,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: per_page
-        type: integer
-      - in: query
         name: sort
         type: string
       - in: query
@@ -2330,6 +2427,9 @@ paths:
         type: integer
       - in: query
         name: page
+        type: integer
+      - in: query
+        name: per_page
         type: integer
       - in: query
         name: q[category_id]

@@ -11,7 +11,7 @@ type ProductGroup struct {
 	WxappId    string    `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	Name       string    `gorm:"type: varchar(50); not null" json:"name"`
 	Remark     string    `gorm:"type: varchar(100); not null" json:"remark"`
-	ProductIDs string    `gorm:"type: text; " json:"product_ids"`
+	ProductIDs JSON      `gorm:"type: json; " json:"product_ids"`
 	Key        string    `gorm:"type: varchar(50); unique" json:"key"`
 	Products   []Product `sql:"-" json:"products,omitempty"`
 }

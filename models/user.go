@@ -112,6 +112,11 @@ func (user User) GetShoppingCartItemByIDs(itemIDs []int) (cartItems []CarItem, e
 	return
 }
 
+func (user User) GetCheckedShoppingCartItems() (cartItems []CarItem, err error) {
+	err = db.Set("gorm:auto_preload", true).Find(&cartItems, "user_id = ? AND checked IS TRUE", user.ID).Error
+	return
+}
+
 func (user User) FindShoppingCartItemByGoodsID(goodsID int) (cartItem CarItem, err error) {
 	err = db.Where("user_id = ? AND goods_id = ?", user.ID, goodsID).First(&cartItem).Error
 	return

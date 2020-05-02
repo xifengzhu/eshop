@@ -11,26 +11,25 @@ type Logistic struct {
 	ExpressCompany string `gorm:"type: varchar(50); not null" json:"express_company"`
 	ExpressCode    string `gorm:"type: varchar(50); " json:"express_code"`
 	ExpressNo      string `gorm:"type: varchar(255); not null" json:"express_no"`
-	Trace          string `gorm:"type: text; " json:"trace"`
-	OrderID        int    `gorm:"type: int; default 1" json:"order_id"`
+	Trace          JSON   `gorm:"type: json; " json:"trace"`
+	OrderID        int    `gorm:"type: int; " json:"order_id"`
+	Order          *Order `json:"order"`
 }
 
 func (Logistic) TableName() string {
 	return "logistic"
 }
 
-func (logistic *Logistic) Order() (order Order, err error) {
+func (logistic *Logistic) AfterCreate(tx *gorm.DB) (err error) {
+	var order Order
 	order.ID = logistic.OrderID
 	err = FindResource(&order, Options{})
-	return
-}
-
-func (logistic *Logistic) AfterCreate(tx *gorm.DB) (err error) {
-	order, err := logistic.Order()
-	err = order.Ship(tx)
-	if err != nil {
-		log.Println("ship order err", err)
-		return
+	if err == nil {
+		err = order.Ship(tx)
+		if err != nil {
+			log.Println("ship order err", err)
+			return
+		}
 	}
 	return
 }

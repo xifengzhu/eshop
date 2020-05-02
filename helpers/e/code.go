@@ -2,7 +2,7 @@ package e
 
 const (
 	SUCCESS        = 200
-	ERROR          = 500
+	SERVER_ERROR   = 500
 	INVALID_PARAMS = 400
 
 	ERROR_EXIST             = 10001

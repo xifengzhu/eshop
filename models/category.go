@@ -10,10 +10,11 @@ type Category struct {
 	WxappId  string     `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	Name     string     `gorm:"type: varchar(50); not null" json:"name"`
 	Position int        `gorm:"type: int; " json:"position"`
-	ParentID int        `gorm:"type: int; " json:"parent_id"`
+	ParentID int        `gorm:"type: int; DEFAULT: 0" json:"parent_id"`
 	Image    string     `gorm:"type: varchar(100);" json:"image"`
 	Children []Category `gorm:"foreignkey:parent_id" json:"children,omitempty"`
-	Products []Product  `json:"products,omitempty"`
+	Parent   *Category  `json:"parent,omitempty"`
+	Products []*Product `gorm:"many2many:product_categories;" json:"products,omitempty"`
 }
 
 func (Category) TableName() string {

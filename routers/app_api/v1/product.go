@@ -72,9 +72,6 @@ func GetProduct(c *gin.Context) {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
 	}
-	for index, _ := range product.Goodses {
-		product.Goodses[index].PropertiesText()
-	}
 
 	product.SetSpecifications()
 	var productDetail []entities.ProductDetailEntity

@@ -46,22 +46,17 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -85,6 +80,11 @@
                             "type": "integer"
                         },
                         "name": "q[status_in]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
                         "in": "query"
                     }
                 ],
@@ -320,6 +320,16 @@
                 "parameters": [
                     {
                         "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "q[name]",
                         "in": "query"
                     },
@@ -335,22 +345,17 @@
                     },
                     {
                         "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
+                        "name": "q[parent_id_eq]",
                         "in": "query"
                     },
                     {
                         "type": "integer",
                         "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
                         "in": "query"
                     }
                 ],
@@ -752,16 +757,6 @@
                 "summary": "快递列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "q[name_cont]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[code_cont]",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "name": "total",
                         "in": "query"
@@ -779,6 +774,16 @@
                     {
                         "type": "string",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[name_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[code_cont]",
                         "in": "query"
                     }
                 ],
@@ -948,6 +953,95 @@
                 }
             }
         },
+        "/admin_api/v1/logistics": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台物流管理"
+                ],
+                "summary": "物流列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[express_company_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[express_no_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/logistics/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台物流管理"
+                ],
+                "summary": "物流详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "logistic id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin_api/v1/orders": {
             "get": {
                 "security": [
@@ -965,22 +1059,22 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
                         "in": "query"
                     },
                     {
@@ -1124,11 +1218,6 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "page",
                         "in": "query"
                     },
@@ -1140,6 +1229,11 @@
                     {
                         "type": "string",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -1321,6 +1415,11 @@
                 "summary": "产品列表",
                 "parameters": [
                     {
+                        "type": "number",
+                        "name": "q[price_lteq]",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "per_page",
                         "in": "query"
@@ -1336,6 +1435,11 @@
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "name": "q[is_online_eq]",
                         "in": "query"
@@ -1348,16 +1452,6 @@
                     {
                         "type": "number",
                         "name": "q[price_gteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "q[price_lteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
                         "in": "query"
                     }
                 ],
@@ -1493,6 +1587,39 @@
                     {
                         "type": "integer",
                         "description": "product id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/products/{id}/goodses": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台产品管理"
+                ],
+                "summary": "SKU列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "product_id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1969,6 +2096,11 @@
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "q[open_id_eq]",
                         "in": "query"
@@ -1986,11 +2118,6 @@
                     {
                         "type": "string",
                         "name": "q[created_at_lteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
                         "in": "query"
                     }
                 ],
@@ -2402,7 +2529,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.WxpaySettingParams"
+                            "$ref": "#/definitions/entities.WxpaySettingParams"
                         }
                     }
                 ],
@@ -2707,16 +2834,6 @@
                 "summary": "获取订单列表",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "sort",
                         "in": "query"
@@ -2724,6 +2841,16 @@
                     {
                         "type": "integer",
                         "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
                         "in": "query"
                     },
                     {
@@ -2956,11 +3083,6 @@
                 "summary": "获取产品列表",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "sort",
                         "in": "query"
@@ -2973,6 +3095,11 @@
                     {
                         "type": "integer",
                         "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
                         "in": "query"
                     },
                     {
@@ -3713,6 +3840,38 @@
                 }
             }
         },
+        "entities.WxpaySettingParams": {
+            "type": "object",
+            "properties": {
+                "api_client_cert": {
+                    "type": "string"
+                },
+                "apikey": {
+                    "type": "string"
+                },
+                "app_name": {
+                    "type": "string"
+                },
+                "app_secret": {
+                    "type": "string"
+                },
+                "mchid": {
+                    "type": "string"
+                },
+                "notify_url": {
+                    "type": "string"
+                },
+                "wxapp_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.JSON": {
+            "type": "array",
+            "items": {
+                "type": "integer"
+            }
+        },
         "utils.HTTPError": {
             "type": "object",
             "properties": {
@@ -3753,8 +3912,8 @@
                 "is_default",
                 "phone",
                 "province_id",
-                "region_id",
-                "user_id"
+                "receiver",
+                "region_id"
             ],
             "properties": {
                 "city_id": {
@@ -3771,6 +3930,9 @@
                 },
                 "province_id": {
                     "type": "integer"
+                },
+                "receiver": {
+                    "type": "string"
                 },
                 "region_id": {
                     "type": "integer"
@@ -3884,9 +4046,6 @@
                     "description": "续件/续重",
                     "type": "number"
                 },
-                "express_id": {
-                    "type": "integer"
-                },
                 "first": {
                     "description": "首件/首重",
                     "type": "number"
@@ -3897,12 +4056,13 @@
                 "id": {
                     "type": "integer"
                 },
+                "position": {
+                    "type": "integer"
+                },
                 "region": {
                     "description": "可配送区域(省id集)",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
+                    "type": "object",
+                    "$ref": "#/definitions/models.JSON"
                 }
             }
         },
@@ -3945,7 +4105,7 @@
                 "id": {
                     "type": "integer"
                 },
-                "images": {
+                "image": {
                     "type": "string"
                 },
                 "line_price": {
@@ -4001,8 +4161,7 @@
             "type": "object",
             "required": [
                 "address_id",
-                "express_id",
-                "item_ids"
+                "express_id"
             ],
             "properties": {
                 "address_id": {
@@ -4013,12 +4172,6 @@
                 },
                 "express_id": {
                     "type": "integer"
-                },
-                "item_ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
                 }
             }
         },
@@ -4039,17 +4192,15 @@
         "v1.ProductGroupParams": {
             "type": "object",
             "properties": {
-                "image": {
+                "key": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
                 },
-                "parent_id": {
-                    "type": "integer"
-                },
-                "position": {
-                    "type": "integer"
+                "product_ids": {
+                    "type": "object",
+                    "$ref": "#/definitions/models.JSON"
                 },
                 "remark": {
                     "type": "string"
@@ -4059,10 +4210,19 @@
         "v1.ProductParams": {
             "type": "object",
             "properties": {
+                "category_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
                 "content": {
                     "type": "string"
                 },
                 "deduct_stock_type": {
+                    "type": "integer"
+                },
+                "delivery_id": {
                     "type": "integer"
                 },
                 "goodses": {
@@ -4074,6 +4234,10 @@
                 "is_online": {
                     "type": "boolean"
                 },
+                "main_pictures": {
+                    "type": "object",
+                    "$ref": "#/definitions/models.JSON"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -4083,11 +4247,17 @@
                 "price": {
                     "type": "number"
                 },
-                "product_id": {
-                    "type": "integer"
-                },
                 "sales_initial": {
                     "type": "integer"
+                },
+                "serial_no": {
+                    "type": "string"
+                },
+                "share_cover": {
+                    "type": "string"
+                },
+                "share_desc": {
+                    "type": "string"
                 }
             }
         },
@@ -4205,6 +4375,9 @@
                 "q[name]": {
                     "type": "string"
                 },
+                "q[parent_id_eq]": {
+                    "type": "integer"
+                },
                 "sort": {
                     "type": "string"
                 },
@@ -4246,6 +4419,29 @@
                     "type": "string"
                 },
                 "q[name_cont]": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "v1.QueryLogisticParams": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer"
+                },
+                "per_page": {
+                    "type": "integer"
+                },
+                "q[express_company_cont]": {
+                    "type": "string"
+                },
+                "q[express_no_cont]": {
                     "type": "string"
                 },
                 "sort": {
@@ -4374,6 +4570,9 @@
         "v1.ShipOrderParams": {
             "type": "object",
             "properties": {
+                "express_company": {
+                    "type": "string"
+                },
                 "express_no": {
                     "type": "string"
                 }
@@ -4432,7 +4631,8 @@
                     "type": "string"
                 },
                 "page_data": {
-                    "type": "string"
+                    "type": "object",
+                    "$ref": "#/definitions/models.JSON"
                 },
                 "share_background_cover": {
                     "type": "string"
@@ -4441,42 +4641,6 @@
                     "type": "string"
                 },
                 "share_sentence": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.WxpaySettingParams": {
-            "type": "object",
-            "required": [
-                "api_key",
-                "app_id",
-                "app_name",
-                "app_secret",
-                "mchid"
-            ],
-            "properties": {
-                "api_client_cert": {
-                    "type": "string"
-                },
-                "api_key": {
-                    "type": "string"
-                },
-                "app_id": {
-                    "type": "string"
-                },
-                "app_name": {
-                    "type": "string"
-                },
-                "app_secret": {
-                    "type": "string"
-                },
-                "mchid": {
-                    "type": "string"
-                },
-                "notify_url": {
-                    "type": "string"
-                },
-                "sevice_phone": {
                     "type": "string"
                 }
             }

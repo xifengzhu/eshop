@@ -36,7 +36,7 @@ func InitAdminAPI(r *gin.Engine) {
 	}
 
 	{
-		admin_apiv1.POST("/categories", v1.AddProductGroup)
+		admin_apiv1.POST("/categories", v1.AddCategory)
 		admin_apiv1.GET("/categories/:id", v1.GetCategory)
 		admin_apiv1.DELETE("/categories/:id", v1.DeleteCategory)
 		admin_apiv1.GET("/categories", v1.GetCategories)
@@ -76,6 +76,7 @@ func InitAdminAPI(r *gin.Engine) {
 	{
 		admin_apiv1.POST("/products", v1.AddProduct)
 		admin_apiv1.GET("/products/:id", v1.GetProduct)
+		admin_apiv1.GET("/products/:id/goodses", v1.GetGoodses)
 		admin_apiv1.DELETE("/products/:id", v1.DeleteProduct)
 		admin_apiv1.GET("/products", v1.GetProductes)
 		admin_apiv1.PUT("/products/:id", v1.UpdateProduct)
@@ -124,5 +125,10 @@ func InitAdminAPI(r *gin.Engine) {
 		admin_apiv1.GET("/provinces", v1.GetProvinces)
 		admin_apiv1.GET("/cities", v1.GetCities)
 		admin_apiv1.GET("/regions", v1.GetRegions)
+	}
+
+	{
+		admin_apiv1.GET("/logistics", v1.GetLogistics)
+		admin_apiv1.GET("/logistics/:id", v1.GetLogistic)
 	}
 }

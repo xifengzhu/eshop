@@ -14,13 +14,14 @@ import (
 )
 
 type AddressParams struct {
-	UserID     int    `json:"user_id" binding:"required"`
+	UserID     int    `json:"user_id"`
 	RegionID   int    `json:"region_id" binding:"required"`
 	ProvinceID int    `json:"province_id" binding:"required"`
 	CityID     int    `json:"city_id" binding:"required"`
 	Detail     string `json:"detail" binding:"required"`
 	isDefault  bool   `json:"is_default" binding:"required"`
 	Phone      string `json:"phone" binding:"required"`
+	Receiver   string `json:"receiver" binding:"required"`
 }
 
 // @Summary 新增地址
@@ -36,6 +37,7 @@ func AddAddress(c *gin.Context) {
 	addressParams.UserID = user.ID
 	if err := c.ShouldBindJSON(&addressParams); err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		return
 	}
 
 	var address models.Address

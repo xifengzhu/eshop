@@ -24,9 +24,9 @@ type Order struct {
 	OuterPayId         string      `gorm:"type: varchar(60); " json:"outer_pay_id"`
 	PayAt              *time.Time  `gorm:"type: datetime; " json:"pay_at"`
 	ExpressID          int         `gorm:"type: int;" json:"express_id"`
-	ExpressAmount      float32     `gorm:"type: decimal(10,2);" json:"express_amount"`
+	ExpressFee         float32     `gorm:"type: decimal(10,2);" json:"express_fee"`
+	ProductAmount      float32     `gorm:"type: decimal(10,2);" json:"product_amount"`
 	PayAmount          float32     `gorm:"type: decimal(10,2);" json:"pay_amount"`
-	TotalAmount        float32     `gorm:"type: decimal(10,2);" json:"total_amount"`
 	UserID             int         `gorm:"type: int; " json:"user_id"`
 	BuyerMessage       string      `gorm:"type: varchar(120); " json:"buyer_message"`
 	OrderItems         []OrderItem `json:"order_items"`
@@ -138,8 +138,9 @@ func (order *Order) BeforeCreate() (err error) {
 
 func (order *Order) AfterCreate(tx *gorm.DB) (err error) {
 	fmt.Println("=======order after save=============")
-	order.caculateExpressAmount(tx)
-	order.caculateTotalAmount(tx)
+	order.caculateExpressFee(tx)
+	order.caculateProductAmount(tx)
+	order.caculatePayAmount(tx)
 	order.enqueueCloseOrderJob()
 
 	err = reductStock()
@@ -187,25 +188,22 @@ func (order *Order) generateNo() {
 	order.OrderNo = orderNo
 }
 
-// TODO: 计算总金额
-func (order *Order) caculateTotalAmount(tx *gorm.DB) {
+// 计算支付金额
+func (order *Order) caculatePayAmount(tx *gorm.DB) {
 	var totalAmount float32
-	for _, orderItem := range order.OrderItems {
-		totalAmount += orderItem.TotalAmount
-	}
-	totalAmount += order.ExpressAmount
-	tx.Model(order).Updates(Order{TotalAmount: totalAmount, PayAmount: totalAmount})
+	totalAmount = order.ExpressFee + order.ProductAmount
+	tx.Model(order).Updates(Order{PayAmount: totalAmount})
 	return
 }
 
-func findMaxRuleFirst(rules []DeliveryRule) (max DeliveryRule) {
-	max = rules[0]
-	for _, rule := range rules {
-		if rule.First > max.First {
-			max = rule
-		}
+// 计算商品金额
+func (order *Order) caculateProductAmount(tx *gorm.DB) {
+	var productAmount float32
+	for _, orderItem := range order.OrderItems {
+		productAmount += orderItem.TotalAmount
 	}
-	return max
+	tx.Model(order).Updates(Order{ProductAmount: productAmount})
+	return
 }
 
 // 前提条件
@@ -222,8 +220,27 @@ func findMaxRuleFirst(rules []DeliveryRule) (max DeliveryRule) {
 
 // case 3
 // 当我同时购买2件商品A和2kg商品D，商品A按照件数计算运费，商品D按照重量计算运费，则淘宝会比较这两款商品中首件（首公斤）的运费，选择首件（首公斤）运费最大的费用作为首件（首公斤）费用（商品D首公斤运费12元），然后忽略商品A的首件运费，商品A全部按照该商品的续件费用进行计算运费。系统计算的运费应该为： 12元+5元+3元+3元=23元
-func (order *Order) caculateExpressAmount(tx *gorm.DB) {
-	var expressAmount float32
+func (order *Order) caculateExpressFee(tx *gorm.DB) {
+	var expressFee float32
+	eligible := order.eligibleShopFreeFreightSetting()
+	if eligible {
+		expressFee = 0
+	} else {
+		expressFee = order.freightWithDeliveryRule()
+	}
+	tx.Model(order).Update("express_fee", expressFee)
+	return
+}
+
+// TODO:
+func (order *Order) eligibleShopFreeFreightSetting() bool {
+	var setting GlobalSetting
+	setting.Current()
+	return order.ProductAmount >= setting.FreeFreightAmount
+}
+
+func (order *Order) freightWithDeliveryRule() float32 {
+	var expressFee float32
 	var rules []DeliveryRule
 	m := make(map[int][]OrderItem)
 	for _, orderItem := range order.OrderItems {
@@ -239,7 +256,7 @@ func (order *Order) caculateExpressAmount(tx *gorm.DB) {
 	}
 	firstRule := findMaxRuleFirst(rules)
 	// 首重/首件 费用
-	expressAmount += firstRule.FirstFee
+	expressFee += firstRule.FirstFee
 	var additionalAmount float32
 	for ruleID, orderItems := range m {
 		var currentRule DeliveryRule
@@ -278,10 +295,19 @@ func (order *Order) caculateExpressAmount(tx *gorm.DB) {
 				additionalAmount = 0
 			}
 		}
-		expressAmount += additionalAmount
-		tx.Model(order).Update("express_amount", expressAmount)
-		return
 	}
+	expressFee += additionalAmount
+	return expressFee
+}
+
+func findMaxRuleFirst(rules []DeliveryRule) (max DeliveryRule) {
+	max = rules[0]
+	for _, rule := range rules {
+		if rule.First > max.First {
+			max = rule
+		}
+	}
+	return max
 }
 
 // Model helper method
@@ -306,7 +332,7 @@ func (order Order) RequestPayment() (map[string]string, error) {
 	params := make(wxpay.Params)
 	params.SetString("body", "eshop 测试订单").
 		SetString("out_trade_no", order.OrderNo).
-		SetInt64("total_fee", int64(order.TotalAmount*100)).
+		SetInt64("total_fee", int64(order.ProductAmount*100)).
 		SetString("spbill_create_ip", "127.0.0.1").
 		SetString("notify_url", "http://notify.objcoding.com/notify").
 		SetString("trade_type", "JSAPI").

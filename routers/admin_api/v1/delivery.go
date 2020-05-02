@@ -13,14 +13,14 @@ import (
 )
 
 type DeliveryRuleParams struct {
-	ID            int     `json:"id,omitempty"`
-	First         float32 `json:"first" ` // 首件/首重
-	FirstFee      float32 `json:"first_fee" `
-	Additional    float32 `json:"additional" `     // 续件/续重
-	AdditionalFee float32 `json:"additional_fee" ` // 续件/续重
-	Region        []int   `json:"region" `         // 可配送区域(省id集)
-	ExpressID     int     `json:"express_id" `
-	Destroy       bool    `json:"_destroy,omitempty"`
+	ID            int         `json:"id,omitempty"`
+	First         float32     `json:"first" ` // 首件/首重
+	FirstFee      float32     `json:"first_fee" `
+	Additional    float32     `json:"additional" `     // 续件/续重
+	AdditionalFee float32     `json:"additional_fee" ` // 续件/续重
+	Region        models.JSON `json:"region" `         // 可配送区域(省id集)
+	Destroy       bool        `json:"_destroy,omitempty"`
+	Position      int         `json:"position"`
 }
 
 type DeliveryParams struct {
@@ -47,6 +47,7 @@ func AddDelivery(c *gin.Context) {
 	var deliveryParams DeliveryParams
 	if err = c.ShouldBindJSON(&deliveryParams); err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		return
 	}
 
 	var delivery models.Delivery

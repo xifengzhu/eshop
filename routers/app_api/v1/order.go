@@ -21,7 +21,6 @@ type QueryOrderParams struct {
 }
 
 type OrderParams struct {
-	CartItemIDs  []int  `json:"item_ids" binding:"required,gt=0"`
 	AddressID    int    `json:"address_id" binding:"required"`
 	ExpressID    int    `json:"express_id" binding:"required"`
 	BuyerMessage string `json:"buyer_message"`
@@ -114,12 +113,10 @@ func CreateOrder(c *gin.Context) {
 	}
 
 	var orderItems []models.OrderItem
-	for _, itemId := range orderParams.CartItemIDs {
-		item, err := user.GetShoppingCartItemByID(itemId)
-		if err != nil {
-			apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("资源不存在"))
-			return
-		}
+
+	carItems, _ := user.GetCheckedShoppingCartItems()
+
+	for _, item := range carItems {
 		var goods models.Goods
 		goods.ID = item.GoodsID
 		err = models.FindResource(&goods, Query{})
@@ -128,7 +125,7 @@ func CreateOrder(c *gin.Context) {
 			apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, errors.New("商品不存在或被下架"))
 			return
 		}
-		orderItem := models.OrderItem{GoodsName: goods.Name, GoodsPrice: goods.Price, LinePrice: goods.LinePrice, GoodsWeight: goods.Weight, GoodsAttr: goods.PropertiesText(), TotalNum: item.Quantity, DeductStockType: 10, GoodsID: item.GoodsID}
+		orderItem := models.OrderItem{GoodsName: goods.Name, GoodsPrice: goods.Price, LinePrice: goods.LinePrice, GoodsWeight: goods.Weight, GoodsAttr: goods.PropertiesText, TotalNum: item.Quantity, DeductStockType: 10, GoodsID: item.GoodsID}
 		orderItems = append(orderItems, orderItem)
 	}
 

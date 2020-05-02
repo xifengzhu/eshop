@@ -143,21 +143,22 @@ func queryConditionTranslator(q map[string]string) []interface{} {
 		value = values
 
 		predicates := map[string]string{
-			"_gteq": ">=",
-			"_lteq": "<=",
-			"_cont": "like",
-			"_in":   "in",
-			"_eq":   "=",
-			"_gt":   ">",
-			"_lt":   "<",
-			"_not":  "!=",
+			"_gteq":  ">=",
+			"_lteq":  "<=",
+			"_cont":  "like",
+			"_in":    "in",
+			"_notin": "notin",
+			"_eq":    "=",
+			"_gt":    ">",
+			"_lt":    "<",
+			"_not":   "!=",
 		}
 
 		for pred, op := range predicates {
 			if strings.HasSuffix(key, pred) {
 				column = strings.Split(key, pred)[0]
 				operator = op
-				if pred == "_in" {
+				if strings.Index(" _in _notin ", pred) > -1 {
 					value = strings.Split(values, ",")
 				}
 				if pred == "_cont" {
@@ -171,9 +172,9 @@ func queryConditionTranslator(q map[string]string) []interface{} {
 			}
 		}
 
-		if !reflect.DeepEqual(value, reflect.Zero(reflect.TypeOf(value)).Interface()) {
-			conditions = append(conditions, []interface{}{column, operator, value})
-		}
+		// if !reflect.DeepEqual(value, reflect.Zero(reflect.TypeOf(value)).Interface()) {
+		conditions = append(conditions, []interface{}{column, operator, value})
+		// }
 	}
 	return conditions
 }
@@ -227,10 +228,9 @@ func BuildWhere(db *gorm.DB, where interface{}) (*gorm.DB, error) {
 					if strings.Index(" in notin ", _opt) > -1 {
 						// val 是数组类型
 						column = columnstr + " " + opt + " (?)"
-					} else if strings.Index(" = < > <= >= <> != <=> like likebinary notlike ilike rlike regexp notregexp", _opt) > -1 {
+					} else if strings.Index(" = < > <= >= <> != <=> like likebinary notlike ilike rlike regexp notregexp ", _opt) > -1 {
 						column = columnstr + " " + opt + " ?"
 					}
-
 					if cond == "and" {
 						db = db.Where(column, val)
 					} else {
@@ -264,9 +264,6 @@ func BuildWhere(db *gorm.DB, where interface{}) (*gorm.DB, error) {
 
 func IsBoolValue(value interface{}) bool {
 	valStr, _ := value.(string)
-	boolStr := []string{"1", "t", "T",
-		"TRUE", "true", "True",
-		"0", "f", "F",
-		"FALSE", "false", "False"}
+	boolStr := []string{"t", "T", "TRUE", "true", "True", "f", "F", "FALSE", "false", "False"}
 	return utils.ContainsString(boolStr, valStr)
 }

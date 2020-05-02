@@ -13,7 +13,8 @@ import (
 )
 
 type ShipOrderParams struct {
-	ExpressNo string `json:"express_no" binding:"required`
+	ExpressNo      string `json:"express_no" binding:"required`
+	ExpressCompany string `json:"express_company" binding:"required`
 }
 
 type QueryOrderParams struct {
@@ -38,7 +39,7 @@ func ShipOrder(c *gin.Context) {
 	var err error
 	order.ID, _ = strconv.Atoi(c.Param("id"))
 
-	err = models.FindResource(&order, Query{Preloads: []string{"Express"}})
+	err = models.FindResource(&order, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -52,8 +53,7 @@ func ShipOrder(c *gin.Context) {
 
 	logistic := models.Logistic{
 		OrderID:        order.ID,
-		ExpressCompany: order.Express.Name,
-		ExpressCode:    order.Express.Code,
+		ExpressCompany: ship.ExpressCompany,
 		ExpressNo:      ship.ExpressNo,
 	}
 

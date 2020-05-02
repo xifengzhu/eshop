@@ -1,10 +1,9 @@
 package models
 
 import (
-	"strconv"
-	"strings"
-
+	"encoding/json"
 	"github.com/xifengzhu/eshop/helpers/utils"
+	"strings"
 )
 
 type DeliveryRule struct {
@@ -15,29 +14,39 @@ type DeliveryRule struct {
 	FirstFee      float32   `gorm:"type: decimal(10,2); " json:"first_fee"`
 	Additional    float32   `gorm:"type: decimal(10,2);" json:"additional"`     // 续件/续重
 	AdditionalFee float32   `gorm:"type: decimal(10,2);" json:"additional_fee"` // 续件/续重
-	Region        string    `sql:"type: json;" json:"region,omitempty"`         // 可配送区域(省id集)
+	Region        JSON      `sql:"type: json;" json:"region,omitempty"`         // 可配送区域(省id集)
 	DeliveryID    int       `gorm:"type: int;" json:"delivery_id"`
-	ExpressID     int       `gorm:"type: int; not null" json:"express_id"`
 	Delivery      *Delivery `json:"delivery,omitempty"`
 	Destroy       bool      `sql:"-" json:"_destroy,omitempty"`
+	Position      int       `gorm:"type: int; " json:"position"`
+	RegionName    string    `sql:"-" json:"region_names,omitempty"`
 }
 
-func (rule DeliveryRule) SuitableProvinceIDs() (provinceIDs []int) {
-	ids := strings.Split(rule.Region, ",")
-	for _, id := range ids {
-		intID, _ := strconv.Atoi(id)
-		provinceIDs = append(provinceIDs, intID)
+func (rule *DeliveryRule) AfterFind() (err error) {
+	rule.SetRegionNames()
+	return
+}
+
+func (rule *DeliveryRule) SetRegionNames() {
+	var names []string
+	regions := rule.regionIDs()
+	if len(regions) > 0 {
+		db.Model(&Province{}).Where("id IN (?)", regions).Pluck("name", &names)
+		rule.RegionName = strings.Join(names[:], ",")
 	}
-	return
-}
-
-func (rule DeliveryRule) SuitableProvince() (provinces []string) {
-	ids := rule.SuitableProvinceIDs()
-	db.Select("name").Where("id = ?", ids).Find(&provinces)
-	return
 }
 
 func (rule DeliveryRule) Hit(provinceId int) bool {
-	ids := rule.SuitableProvinceIDs()
-	return utils.ContainsInt(ids, provinceId)
+	regions := rule.regionIDs()
+	return utils.ContainsInt(regions, provinceId)
+}
+
+func (rule DeliveryRule) regionIDs() (regions []int) {
+	if rule.Region == nil {
+		return
+	}
+	if err := json.Unmarshal(rule.Region, &regions); err != nil {
+		panic(err)
+	}
+	return
 }

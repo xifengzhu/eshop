@@ -9,18 +9,19 @@ import (
 type Goods struct {
 	BaseModel
 
-	WxappId    string  `gorm:"type: varchar(50); not null" json:"wxapp_id"`
-	Name       string  `gorm:"type: varchar(120); not null" json:"name"`
-	Properties string  `gorm:"type: varchar(255); not null" json:"properties"`
-	Images     string  `gorm:"type: text; " json:"images"`
-	SkuNo      string  `gorm:"type: varchar(50); not null" json:"sku_no"`
-	StockNum   int     `gorm:"type: int; default 1" json:"stock_num"`
-	Position   int     `gorm:"type: int; " json:"position"`
-	Price      float32 `gorm:"type: decimal(10,2); " json:"price"`
-	LinePrice  float32 `gorm:"type: decimal(10,2); " json:"line_price"`
-	Weight     float32 `gorm:"type: double; " json:"weight"`
-	ProductID  int     `gorm:"type: int; " json:"product_id"`
-	Destroy    bool    `sql:"-" json:"_destroy,omitempty"`
+	WxappId        string  `gorm:"type: varchar(50); not null" json:"wxapp_id"`
+	Name           string  `gorm:"type: varchar(120); not null" json:"name"`
+	Properties     string  `gorm:"type: varchar(255); not null" json:"properties"`
+	Image          string  `gorm:"type: varchar(255); " json:"image"`
+	SkuNo          string  `gorm:"type: varchar(50); not null; unique" json:"sku_no"`
+	StockNum       int     `gorm:"type: int; default 1" json:"stock_num"`
+	Position       int     `gorm:"type: int; " json:"position"`
+	Price          float32 `gorm:"type: decimal(10,2); " json:"price"`
+	LinePrice      float32 `gorm:"type: decimal(10,2); " json:"line_price"`
+	Weight         float32 `gorm:"type: double; " json:"weight"`
+	ProductID      int     `gorm:"type: int; " json:"product_id"`
+	Destroy        bool    `sql:"-" json:"_destroy,omitempty"`
+	PropertiesText string  `gorm:"type: varchar(100); " json:"properties_text"`
 }
 
 func (Goods) TableName() string {
@@ -34,19 +35,21 @@ func (goods *Goods) IsExist() bool {
 	return true
 }
 
-func (goods *Goods) PropertiesText() string {
+func (goods *Goods) GetPropertiesText() string {
 	var text string
 	properties := strings.Split(goods.Properties, ";")
-	for _, property := range properties {
-		values := strings.Split(property, ":")
+	if len(properties) > 1 {
+		for _, property := range properties {
+			values := strings.Split(property, ":")
 
-		var pvalue PropertyValue
-		pvID, _ := strconv.Atoi(values[1])
-		pvalue.ID = pvID
+			var pvalue PropertyValue
+			pvID, _ := strconv.Atoi(values[1])
+			pvalue.ID = pvID
 
-		FindResource(&pvalue, Options{})
+			FindResource(&pvalue, Options{})
 
-		text += pvalue.Value + " "
+			text += pvalue.Value + " "
+		}
 	}
 	return strings.Trim(text, "\t \n")
 }
@@ -63,13 +66,14 @@ func (goods *Goods) PVIDs() (pids []int, vids []int) {
 	return pids, vids
 }
 
-func (goods *Goods) AfterFind() (err error) {
-	return
-}
-
 func (goods Goods) DeliveryRule(expressID int, provinceID int) (rule DeliveryRule) {
 	var product Product
 	db.Where("id = ?", goods.ProductID).Find(&product)
 	rule = product.DeliveryRule(expressID, provinceID)
+	return
+}
+
+func (goods *Goods) BeforeSave() (err error) {
+	goods.PropertiesText = goods.GetPropertiesText()
 	return
 }

@@ -2,6 +2,7 @@ package v1
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
@@ -16,7 +17,7 @@ type GoodsParams struct {
 	ID         int     `json:"id,omitempty"`
 	Name       string  `json:"name"`
 	Properties string  `json:"properties"`
-	Images     string  `json:"images"`
+	Image      string  `json:"image"`
 	SkuNo      string  `json:"sku_no"`
 	StockNum   int     `json:"stock_num"`
 	Position   int     `json:"position"`
@@ -34,8 +35,13 @@ type ProductParams struct {
 	Position        int           `json:"position"`
 	Price           float32       `json:"price"`
 	IsOnline        bool          `json:"is_online"`
-	DeliveryID      int           `json:"product_id"`
+	DeliveryID      int           `json:"delivery_id"`
 	Goodses         []GoodsParams `json:"goodses"`
+	CategoryIDs     []int         `json:"category_ids"`
+	SerialNo        string        `json:"serial_no"`
+	MainPictures    models.JSON   `json:"main_pictures"`
+	ShareDesc       string        `json:"share_desc"`
+	ShareCover      string        `json:"share_cover"`
 }
 
 type QueryProductParams struct {
@@ -65,6 +71,14 @@ func AddProduct(c *gin.Context) {
 	copier.Copy(&product, &productParams)
 
 	err = models.SaveResource(&product)
+
+	// update categories
+	var categories []models.Category
+	models.WhereResources(&categories, Query{Conditions: productParams.CategoryIDs})
+	fmt.Println("========categories=======", categories)
+
+	product.UpdateCatgories(categories)
+
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -124,13 +138,33 @@ func GetProduct(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	product.ID = id
 
-	err := models.FindResource(&product, Query{Preloads: []string{"Goodses", "Delivery"}})
+	err := models.FindResource(&product, Query{Preloads: []string{"Goodses", "Delivery", "Categories"}})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
 	}
 
 	apiHelpers.ResponseSuccess(c, product)
+}
+
+// @Summary SKU列表
+// @Produce  json
+// @Tags 后台产品管理
+// @Param id path int true "product_id"
+// @Success 200 {object} apiHelpers.Response
+// @Router /admin_api/v1/products/{id}/goodses [get]
+// @Security ApiKeyAuth
+func GetGoodses(c *gin.Context) {
+	var goodses []models.Goods
+	fmt.Println("=======id======", c.Param("id"))
+	parmMap := map[string]interface{}{"product_id": c.Param("id")}
+	err := models.WhereResources(&goodses, Query{Conditions: parmMap})
+	if err != nil {
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		return
+	}
+
+	apiHelpers.ResponseSuccess(c, goodses)
 }
 
 // @Summary 更新产品
@@ -152,6 +186,8 @@ func UpdateProduct(c *gin.Context) {
 		return
 	}
 
+	fmt.Println("======productParams======", productParams)
+
 	var product models.Product
 
 	id, _ := strconv.Atoi(c.Param("id"))
@@ -172,6 +208,12 @@ func UpdateProduct(c *gin.Context) {
 	copier.Copy(&product.Goodses, &productParams.Goodses)
 
 	err = product.NestUpdate()
+
+	var categories []models.Category
+	models.WhereResources(&categories, Query{Conditions: productParams.CategoryIDs})
+	fmt.Println("========categories=======", categories)
+	product.UpdateCatgories(categories)
+
 	models.FindResource(&product, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)

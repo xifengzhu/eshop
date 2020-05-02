@@ -14,11 +14,10 @@ import (
 )
 
 type ProductGroupParams struct {
-	Name     string `json:"name"`
-	Remark   string `json:"remark"`
-	Position int    `json:"position"`
-	ParentID int    `json:"parent_id"`
-	Image    string `json:"image"`
+	Name       string      `json:"name"`
+	Remark     string      `json:"remark"`
+	ProductIDs models.JSON `json:"product_ids"`
+	Key        string      `json:"key"`
 }
 
 type QueryProductGroupParams struct {
