@@ -17,13 +17,17 @@ import (
 
 type QueryOrderParams struct {
 	utils.Pagination
-	status string `json:"q[status]"`
+	state string `json:"q[state]"`
 }
 
 type OrderParams struct {
 	AddressID    int    `json:"address_id" binding:"required"`
-	ExpressID    int    `json:"express_id" binding:"required"`
+	ExpressID    int    `json:"express_id"`
 	BuyerMessage string `json:"buyer_message"`
+}
+
+type OrderIDParams struct {
+	OrderID int `json:"order_id" binding:"required"`
 }
 
 // @Summary 获取订单列表
@@ -44,9 +48,9 @@ func GetOrders(c *gin.Context) {
 	condition := c.QueryMap("q")
 	condition["user_id"] = strconv.Itoa(user.ID)
 
-	models.SearchResourceQuery(&model, orders, pagination, condition)
+	models.Search(&model, &Search{Pagination: pagination, Conditions: condition, Preloads: []string{"OrderItems"}}, orders)
 
-	orderEntities := transferOrderToEntity(*orders)
+	orderEntities := transferOrdersToEntity(*orders)
 
 	response := apiHelpers.Collection{Pagination: pagination, List: orderEntities}
 
@@ -64,15 +68,15 @@ func GetOrder(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
 	orderID, _ := strconv.Atoi(c.Param("id"))
 
-	var userOrders []models.Order
-	parmMap := map[string]interface{}{"id": orderID, "user_id": user.ID}
-	err := models.WhereResources(&userOrders, Query{Conditions: parmMap, Preloads: []string{"OrderItems"}})
-
+	order, err := user.GetOrder(orderID)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
 	}
-	apiHelpers.ResponseSuccess(c, userOrders[0])
+
+	orderEntity := transferOrderToEntity(order)
+
+	apiHelpers.ResponseSuccess(c, orderEntity)
 }
 
 // @Summary 下单预检查(待实现)
@@ -83,7 +87,45 @@ func GetOrder(c *gin.Context) {
 // @Router /app_api/v1/orders/pre_check [post]
 // @Security ApiKeyAuth
 func PreOrder(c *gin.Context) {
-	var order models.Order
+	user := appApiHelper.CurrentUser(c)
+	var orderItems []models.OrderItem
+	carItems, _ := user.GetCheckedShoppingCartItems()
+
+	var err error
+	for _, item := range carItems {
+		var goods models.Goods
+		goods.ID = item.GoodsID
+		err = models.Find(&goods, Query{})
+		log.Println("===goods.Find:===", goods)
+		if err != nil {
+			apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, errors.New("商品不存在或被下架"))
+			return
+		}
+		orderItem := models.OrderItem{GoodsName: goods.Name, GoodsPrice: goods.Price, LinePrice: goods.LinePrice, GoodsWeight: goods.Weight, GoodsAttr: goods.PropertiesText, TotalNum: item.Quantity, DeductStockType: 10, GoodsID: item.GoodsID, Cover: goods.Image}
+		orderItems = append(orderItems, orderItem)
+	}
+
+	order := models.Order{
+		WxappId:    "001",
+		UserID:     user.ID,
+		OrderItems: orderItems,
+	}
+
+	var orderParams OrderParams
+	err = c.ShouldBindJSON(&orderParams)
+
+	if orderParams.AddressID != 0 {
+		address, _ := user.GetAddressByID(orderParams.AddressID)
+		order.AddressID = orderParams.AddressID
+		order.Address = &address
+	}
+
+	for index, _ := range order.OrderItems {
+		order.OrderItems[index].BeforeSave()
+	}
+
+	order.PreOrder()
+
 	apiHelpers.ResponseSuccess(c, order)
 }
 
@@ -99,14 +141,12 @@ func CreateOrder(c *gin.Context) {
 
 	var orderParams OrderParams
 	if err := c.ShouldBindJSON(&orderParams); err != nil {
-		log.Println("===orderParans bind===", err)
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
 	}
 
 	address, err := user.GetAddressByID(orderParams.AddressID)
-	receiverProperties := address.DisplayString()
-	log.Println("===receiverProperties===", receiverProperties)
+	receiverProperties := address.ToJSON()
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -119,28 +159,26 @@ func CreateOrder(c *gin.Context) {
 	for _, item := range carItems {
 		var goods models.Goods
 		goods.ID = item.GoodsID
-		err = models.FindResource(&goods, Query{})
-		log.Println("===goods.Find:===", goods)
+		err = models.Find(&goods, Query{})
 		if err != nil {
 			apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, errors.New("商品不存在或被下架"))
 			return
 		}
-		orderItem := models.OrderItem{GoodsName: goods.Name, GoodsPrice: goods.Price, LinePrice: goods.LinePrice, GoodsWeight: goods.Weight, GoodsAttr: goods.PropertiesText, TotalNum: item.Quantity, DeductStockType: 10, GoodsID: item.GoodsID}
+		orderItem := models.OrderItem{GoodsName: goods.Name, GoodsPrice: goods.Price, LinePrice: goods.LinePrice, GoodsWeight: goods.Weight, GoodsAttr: goods.PropertiesText, TotalNum: item.Quantity, DeductStockType: 10, GoodsID: item.GoodsID, Cover: goods.Image}
 		orderItems = append(orderItems, orderItem)
 	}
 
-	log.Println("===orderIten===", orderItems)
 	order := models.Order{
 		WxappId:            "001",
 		UserID:             user.ID,
 		AddressID:          orderParams.AddressID,
 		ExpressID:          orderParams.ExpressID,
-		ReceiverProperties: address.DisplayString(),
+		ReceiverProperties: receiverProperties,
 		BuyerMessage:       orderParams.BuyerMessage,
 		OrderItems:         orderItems,
 	}
 
-	err = models.CreateResource(&order)
+	err = models.Create(&order)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -152,14 +190,18 @@ func CreateOrder(c *gin.Context) {
 // @Summary 请求支付参数
 // @Produce  json
 // @Tags 订单
-// @Param order_id query integer true "订单ID"
+// @Param params body OrderIDParams true "订单ID"
 // @Success 200 {object} apiHelpers.Response
-// @Router /app_api/v1/orders/payment_params [post]
+// @Router /app_api/v1/orders/request_payment [post]
 // @Security ApiKeyAuth
 func RequestPayment(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
-	orderID, _ := strconv.Atoi(c.Query("order_id"))
-	order, err := user.GetOrder(orderID)
+	var params OrderIDParams
+	if err := c.BindJSON(&params); err != nil {
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		return
+	}
+	order, err := user.GetOrder(params.OrderID)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, errors.New("订单不存在或已过期"))
 		return
@@ -185,16 +227,44 @@ func DeleteOrder(c *gin.Context) {
 
 	var order models.Order
 	parmMap := map[string]interface{}{"id": orderID, "user_id": user.ID}
-	err := models.FirstResource(&order, Query{Conditions: parmMap})
+	err := models.Find(&order, Query{Conditions: parmMap})
 
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, errors.New("资源不存在"))
 		return
 	}
 
-	models.DestroyResource(&order, Query{Callbacks: []func(){order.DestroyOrderItems}})
+	models.DestroyWithCallbacks(&order, Query{Callbacks: []func(){order.DestroyOrderItems}})
 
-	models.DestroyResource(order, Query{})
+	models.Destroy(order)
+	apiHelpers.ResponseOK(c)
+}
+
+// @Summary 取消订单
+// @Produce  json
+// @Tags 订单
+// @Param params body OrderIDParams true "订单id"
+// @Success 200 {object} apiHelpers.Response
+// @Router /app_api/v1/orders/close [post]
+// @Security ApiKeyAuth
+func CloseOrder(c *gin.Context) {
+	user := appApiHelper.CurrentUser(c)
+
+	var params OrderIDParams
+	if err := c.BindJSON(&params); err != nil {
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		return
+	}
+
+	order, err := user.GetOrder(params.OrderID)
+
+	err = order.Close()
+
+	if err != nil {
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		return
+	}
+
 	apiHelpers.ResponseOK(c)
 }
 
@@ -225,11 +295,16 @@ func RefundNotify(c *gin.Context) {
 	log.Println("refund notify params:", params)
 }
 
-func transferOrderToEntity(orders []models.Order) (orderEntities []entities.OrderEntity) {
+func transferOrdersToEntity(orders []models.Order) (orderEntities []entities.OrderEntity) {
 	for _, d_order := range orders {
 		var orderEntity entities.OrderEntity
 		copier.Copy(&orderEntity, &d_order)
 		orderEntities = append(orderEntities, orderEntity)
 	}
+	return
+}
+
+func transferOrderToEntity(order models.Order) (orderEntity entities.OrderEntity) {
+	copier.Copy(&orderEntity, &order)
 	return
 }

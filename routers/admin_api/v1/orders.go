@@ -39,7 +39,7 @@ func ShipOrder(c *gin.Context) {
 	var err error
 	order.ID, _ = strconv.Atoi(c.Param("id"))
 
-	err = models.FindResource(&order, Query{})
+	err = models.Find(&order, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -57,7 +57,7 @@ func ShipOrder(c *gin.Context) {
 		ExpressNo:      ship.ExpressNo,
 	}
 
-	err = models.SaveResource(&logistic)
+	err = models.Save(&logistic)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -96,7 +96,7 @@ func GetOrder(c *gin.Context) {
 	var order models.Order
 	order.ID, _ = strconv.Atoi(c.Param("id"))
 
-	err := models.FindResource(&order, Query{Preloads: []string{"OrderItems", "User", "Express"}})
+	err := models.Find(&order, Query{Preloads: []string{"OrderItems", "User", "Express"}})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -116,7 +116,7 @@ func PayOrder(c *gin.Context) {
 	var order models.Order
 	order.ID, _ = strconv.Atoi(c.Param("id"))
 
-	err := models.FindResource(&order, Query{})
+	err := models.Find(&order, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -127,6 +127,6 @@ func PayOrder(c *gin.Context) {
 		return
 	}
 	// reload
-	models.FindResource(&order, Query{})
+	models.Find(&order, Query{})
 	apiHelpers.ResponseSuccess(c, order)
 }

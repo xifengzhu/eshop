@@ -18,93 +18,82 @@ type Options struct {
 	Preloads   []string
 	Callbacks  []func()
 	Conditions interface{}
+	Select     string
 }
 
-func SaveResource(value Resource) (err error) {
-	_, ok := value.(Resource)
-	if !ok {
-		return errors.New("value doesn't implement Resource")
-	}
-
-	err = db.Save(value).Error
-	return err
+type SearchParams struct {
+	Pagination *utils.Pagination
+	Conditions map[string]string
+	Preloads   []string
 }
 
-func UpdateResource(value Resource) (err error) {
-	_, ok := value.(Resource)
-	if !ok {
-		return errors.New("value doesn't implement Resource")
-	}
-	err = db.Model(value).Updates(value).Error
-	return err
+func Where(options Options) *gorm.DB {
+	return preloadQuery(options.Preloads).Where(options.Conditions)
 }
 
-func FindResource(value Resource, options Options) (err error) {
-	_, ok := value.(Resource)
-	if !ok {
-		return errors.New("value doesn't implement Resource")
-	}
-	cdb := preloadQuery(options.Preloads)
-	err = cdb.First(value).Error
-	return
+func Create(model interface{}) error {
+	return db.Create(model).Error
 }
 
-func FirstResource(value Resource, options Options) (err error) {
-	cdb := preloadQuery(options.Preloads)
-	err = cdb.Where(options.Conditions).First(value).Error
-	return
+func Save(model interface{}) error {
+	return db.Save(model).Error
 }
 
-func ExistResource(value Resource, options Options) bool {
-	if db.Where(options.Conditions).Take(value).RecordNotFound() {
+func Exist(model interface{}, options Options) bool {
+	if db.Where(options.Conditions).Take(model).RecordNotFound() {
 		return false
 	}
 	return true
 }
 
-func preloadQuery(preloads []string) *gorm.DB {
-	cdb := db
-	for _, preload := range preloads {
-		cdb = cdb.Preload(preload)
-	}
-	return cdb
+func Find(model interface{}, options Options) error {
+	return preloadQuery(options.Preloads).Select(selectColumns(options.Select)).First(model).Error
 }
 
-func DestroyResource(value Resource, options Options) (err error) {
-	_, ok := value.(Resource)
-	if !ok {
-		return errors.New("value doesn't implement Resource")
-	}
-	err = db.Delete(value).Error
+func First(model interface{}, options Options) error {
+	return preloadQuery(options.Preloads).Select(selectColumns(options.Select)).First(model).Error
+}
+
+func Update(model interface{}, changedAttrs interface{}) error {
+	return db.Model(model).Updates(changedAttrs).Error
+}
+
+func All(model interface{}, options Options) (err error) {
+	cdb := preloadQuery(options.Preloads)
+	err = cdb.Find(model).Error
+	return
+}
+
+func Destroy(model interface{}) error {
+	return db.Delete(model).Error
+}
+
+func DestroyWithCallbacks(value interface{}, options Options) error {
+	err := db.Delete(value).Error
 	for _, callback := range options.Callbacks {
 		callback()
 	}
-	return
+	return err
 }
 
-func CreateResource(value Resource) (err error) {
-	_, ok := value.(Resource)
-	if !ok {
-		return errors.New("value doesn't implement Resource")
+func Search(model interface{}, search *SearchParams, result interface{}) {
+	cdb := preloadQuery(search.Preloads)
+	query := queryConditionTranslator(search.Conditions)
+	baseQuery := cdb.Model(model)
+	baseQuery, _ = BuildWhere(baseQuery, query)
+
+	if search.Pagination != nil {
+		pagination := search.Pagination
+		offset := (pagination.Page - 1) * pagination.PerPage
+		baseQuery.Count(&pagination.Total)
+		baseQuery.Offset(offset).Limit(pagination.PerPage).Order(pagination.Sort).Find(result)
+	} else {
+		baseQuery.Find(result)
 	}
-	err = db.Create(value).Error
-	return
-}
-
-func WhereResources(values interface{}, options Options) (err error) {
-	cdb := preloadQuery(options.Preloads)
-	err = cdb.Where(options.Conditions).Find(values).Error
-	return
 }
 
 func DestroyAll(values interface{}, options Options) (err error) {
 	err = db.Where(options.Conditions).Delete(values).Error
-	return
-}
-
-func AllResource(values interface{}, options Options) (err error) {
-	cdb := preloadQuery(options.Preloads)
-	err = cdb.Find(values).Error
 	return
 }
 
@@ -133,9 +122,25 @@ func SearchResourceWithPreloadQuery(model interface{}, result interface{}, pagin
 	baseQuery.Offset(offset).Limit(pagination.PerPage).Order(pagination.Sort).Find(result)
 }
 
+func preloadQuery(preloads []string) *gorm.DB {
+	cdb := db
+	for _, preload := range preloads {
+		cdb = cdb.Preload(preload)
+	}
+	return cdb
+}
+
+func selectColumns(selectStr string) string {
+	if selectStr == "" {
+		return "*"
+	} else {
+		return selectStr
+	}
+}
+
 func queryConditionTranslator(q map[string]string) []interface{} {
 	conditions := []interface{}{}
-
+	fmt.Println("=====queryConditionTranslator params=======", q)
 	for key, values := range q {
 		operator := "="
 		column := key
@@ -176,6 +181,7 @@ func queryConditionTranslator(q map[string]string) []interface{} {
 		conditions = append(conditions, []interface{}{column, operator, value})
 		// }
 	}
+	fmt.Println("=====search conditions=======", conditions)
 	return conditions
 }
 

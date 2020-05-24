@@ -15,7 +15,7 @@ import (
 // @Router /admin_api/v1/addresses [get]
 func GetProvinces(c *gin.Context) {
 	var provinces []models.Province
-	models.AllResource(&provinces, Query{})
+	models.All(&provinces, Query{})
 	response := apiHelpers.Collection{List: provinces}
 	apiHelpers.ResponseSuccess(c, response)
 }
@@ -30,7 +30,7 @@ func GetUserAdddresses(c *gin.Context) {
 	userID := c.Query("user_id")
 	var addresses []models.Address
 	parmMap := map[string]interface{}{"user_id": userID}
-	models.WhereResources(&addresses, Query{Conditions: parmMap, Preloads: []string{"Province", "City", "Region"}})
+	models.Where(Query{Conditions: parmMap}).Find(&addresses)
 	apiHelpers.ResponseSuccess(c, addresses)
 }
 
@@ -45,7 +45,7 @@ func GetCities(c *gin.Context) {
 	checkEmptyParams(provinceID, c)
 	var cities []models.City
 	parmMap := map[string]interface{}{"province_id": provinceID}
-	models.WhereResources(&cities, Query{Conditions: parmMap})
+	models.Where(Query{Conditions: parmMap}).Find(&cities)
 	apiHelpers.ResponseSuccess(c, cities)
 }
 
@@ -60,7 +60,7 @@ func GetRegions(c *gin.Context) {
 	checkEmptyParams(cityID, c)
 	var regions []models.Region
 	parmMap := map[string]interface{}{"city_id": cityID}
-	models.WhereResources(&regions, Query{Conditions: parmMap})
+	models.Where(Query{Conditions: parmMap}).Find(&regions)
 
 	apiHelpers.ResponseSuccess(c, regions)
 }

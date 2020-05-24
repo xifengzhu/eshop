@@ -10,6 +10,7 @@ type User struct {
 
 	WxappId   string    `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	Username  string    `json:"username"`
+	Gender    int       `json:"gender"`
 	Avatar    string    `json:"avatar"`
 	OpenId    string    `gorm:"type: varchar(50); unique_index; not null"json:"open_id"`
 	Addresses []Address `json:"addresses"`
@@ -124,6 +125,6 @@ func (user User) FindShoppingCartItemByGoodsID(goodsID int) (cartItem CarItem, e
 
 // =======  order ============
 func (user User) GetOrder(orderID int) (order Order, err error) {
-	err = db.Preload("OrderItems").Where("user_id = ? AND id = ?", user.ID, orderID).First(&order).Error
+	err = db.Preload("OrderItems").Preload("User").Where("id = ? AND user_id = ? ", orderID, user.ID).First(&order).Error
 	return
 }

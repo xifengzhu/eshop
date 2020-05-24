@@ -46,7 +46,7 @@ func AddCategory(c *gin.Context) {
 	var category models.Category
 	copier.Copy(&category, &categoryParams)
 
-	err = models.SaveResource(&category)
+	err = models.Save(&category)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -68,7 +68,7 @@ func DeleteCategory(c *gin.Context) {
 
 	var callbacks []func()
 	callbacks = append(callbacks, category.RemoveChildrenRefer)
-	err := models.DestroyResource(&category, Query{Callbacks: callbacks})
+	err := models.DestroyWithCallbacks(&category, Query{Callbacks: callbacks})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -87,7 +87,7 @@ func GetCategory(c *gin.Context) {
 	var category models.Category
 	id, _ := strconv.Atoi(c.Param("id"))
 	category.ID = id
-	err := models.FindResource(&category, Query{Preloads: []string{"Parent", "Children"}})
+	err := models.Find(&category, Query{Preloads: []string{"Parent", "Children"}})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -141,7 +141,7 @@ func UpdateCategory(c *gin.Context) {
 	var category models.Category
 	id, _ := strconv.Atoi(c.Param("id"))
 	category.ID = id
-	err = models.FindResource(&category, Query{})
+	err = models.Find(&category, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -149,7 +149,7 @@ func UpdateCategory(c *gin.Context) {
 
 	copier.Copy(&category, &categoryParams)
 
-	err = models.SaveResource(&category)
+	err = models.Save(&category)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return

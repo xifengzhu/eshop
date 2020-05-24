@@ -49,7 +49,7 @@ func GetUser(c *gin.Context) {
 	var user models.User
 	user.ID, _ = strconv.Atoi(c.Param("id"))
 
-	err := models.FindResource(&user, Query{Preloads: []string{"Orders"}})
+	err := models.Find(&user, Query{Preloads: []string{"Orders"}})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return

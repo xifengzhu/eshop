@@ -10,13 +10,13 @@ import (
 // @Summary 获取微信自定义页面
 // @Produce  json
 // @Tags 微信页面
-// @Param title query string true "page title"
+// @Param key query string true "page key"
 // @Success 200 {object} apiHelpers.Response
 // @Router /app_api/v1/wxapp_page [get]
 func GetWxappPage(c *gin.Context) {
 	var wxappPage models.WxappPage
-	parmMap := map[string]interface{}{"name": c.Query("name")}
-	err := models.FirstResource(&wxappPage, Query{Conditions: parmMap})
+	parmMap := map[string]interface{}{"key": c.Query("key")}
+	err := models.Where(Query{Conditions: parmMap}).Find(&wxappPage).Error
 
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)

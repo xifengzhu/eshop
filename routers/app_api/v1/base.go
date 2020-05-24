@@ -5,3 +5,4 @@ import (
 )
 
 type Query = models.Options
+type Search = models.SearchParams

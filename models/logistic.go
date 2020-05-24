@@ -23,7 +23,7 @@ func (Logistic) TableName() string {
 func (logistic *Logistic) AfterCreate(tx *gorm.DB) (err error) {
 	var order Order
 	order.ID = logistic.OrderID
-	err = FindResource(&order, Options{})
+	err = Find(&order, Options{})
 	if err == nil {
 		err = order.Ship(tx)
 		if err != nil {

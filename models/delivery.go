@@ -31,7 +31,7 @@ func (delivery Delivery) DestroyRules() {
 }
 
 func (delivery *Delivery) Reload() (err error) {
-	err = FindResource(delivery, Options{})
+	err = Find(delivery, Options{})
 	return
 }
 

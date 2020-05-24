@@ -43,7 +43,7 @@ func AddPropertyName(c *gin.Context) {
 
 	log.Println("=====add propertyName params===", propertyName)
 
-	err = models.CreateResource(&propertyName)
+	err = models.Create(&propertyName)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -63,7 +63,7 @@ func DeletePropertyName(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	propertyName.ID = id
 
-	err := models.DestroyResource(propertyName, Query{Callbacks: []func(){propertyName.RemovePropertyValues}})
+	err := models.DestroyWithCallbacks(propertyName, Query{Callbacks: []func(){propertyName.RemovePropertyValues}})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -83,7 +83,7 @@ func GetPropertyName(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	pn.ID = id
 
-	err := models.FindResource(&pn, Query{Preloads: []string{"PropertyValues"}})
+	err := models.Find(&pn, Query{Preloads: []string{"PropertyValues"}})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -104,6 +104,8 @@ func GetPropertyNames(c *gin.Context) {
 
 	var model models.PropertyName
 	result := &[]models.PropertyName{}
+
+	// result := models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q"), Preloads: []string{"PropertyValues"}})
 
 	models.SearchResourceWithPreloadQuery(&model, result, pagination, c.QueryMap("q"), []string{"PropertyValues"})
 
@@ -137,7 +139,7 @@ func UpdatePropertyName(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	propertyName.ID = id
 
-	err = models.FindResource(&propertyName, Query{})
+	err = models.Find(&propertyName, Query{})
 
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
@@ -152,7 +154,7 @@ func UpdatePropertyName(c *gin.Context) {
 	copier.Copy(&propertyName.PropertyValues, &propertyParams.PropertyValues)
 
 	err = propertyName.NestUpdate()
-	models.FindResource(&propertyName, Query{})
+	models.Find(&propertyName, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return

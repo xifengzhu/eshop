@@ -16,7 +16,7 @@ type CartItemParams struct {
 }
 
 type CartItemIDParams struct {
-	ItemIDs []int `json:"item_id" binding:"required,gt=0"`
+	ItemIDs []int `json:"item_ids" binding:"required,gt=0"`
 }
 
 type CartItemQtyParams struct {
@@ -28,22 +28,17 @@ type CartItemQtyParams struct {
 // @Produce  json
 // @Tags 购物车
 // @Success 200 {object} apiHelpers.Response
-// @Router /app_api/v1/shopping_cart [get]
+// @Router /app_api/v1/shopping_cart/my [get]
 // @Security ApiKeyAuth
 func GetCartItems(c *gin.Context) {
-
 	user := appApiHelper.CurrentUser(c)
-
-	pagination := apiHelpers.SetDefaultPagination(c)
 
 	var items []models.CarItem
 	parmMap := map[string]interface{}{"user_id": user.ID}
 
-	models.AllResource(&items, Query{Conditions: parmMap, Preloads: []string{"Goods"}})
+	models.Where(Query{Conditions: parmMap, Preloads: []string{"Goods"}}).Find(&items)
 
-	response := apiHelpers.Collection{Pagination: pagination, List: items}
-
-	apiHelpers.ResponseSuccess(c, response)
+	apiHelpers.ResponseSuccess(c, items)
 
 }
 
@@ -78,14 +73,14 @@ func AddCartItem(c *gin.Context) {
 	if err != nil {
 		copier.Copy(&item, &cartItem)
 		item.UserID = user.ID
-		err := models.CreateResource(&item)
+		err := models.Create(&item)
 		if err != nil {
 			apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 			return
 		}
 	} else {
 		item.Quantity += cartItem.Quantity
-		models.SaveResource(&item)
+		models.Save(&item)
 	}
 
 	apiHelpers.ResponseOK(c)
@@ -94,7 +89,7 @@ func AddCartItem(c *gin.Context) {
 // @Summary 勾选购物车项
 // @Produce  json
 // @Tags 购物车
-// @Param item_ids body CartItemIDParams true "items_ids"
+// @Param params body CartItemIDParams true "items_ids"
 // @Success 200 {object} apiHelpers.Response
 // @Router /app_api/v1/shopping_cart/check [put]
 // @Security ApiKeyAuth
@@ -108,9 +103,9 @@ func CheckCartItem(c *gin.Context) {
 	}
 
 	items, _ := user.GetShoppingCartItemByIDs(itemID.ItemIDs)
+	changedAttrs := map[string]interface{}{"checked": true}
 	for _, item := range items {
-		item.Checked = true
-		models.SaveResource(&item)
+		models.Update(&item, changedAttrs)
 	}
 	apiHelpers.ResponseOK(c)
 }
@@ -118,13 +113,12 @@ func CheckCartItem(c *gin.Context) {
 // @Summary 取消购物车项
 // @Produce  json
 // @Tags 购物车
-// @Param item_ids body CartItemIDParams true "items_ids"
+// @Param params body CartItemIDParams true "items_ids"
 // @Success 200 {object} apiHelpers.Response
 // @Router /app_api/v1/shopping_cart/uncheck [put]
 // @Security ApiKeyAuth
 func UnCheckCartItem(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
-	// check params
 	var itemID CartItemIDParams
 	if err := c.ShouldBindJSON(&itemID); err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
@@ -132,9 +126,9 @@ func UnCheckCartItem(c *gin.Context) {
 	}
 
 	items, _ := user.GetShoppingCartItemByIDs(itemID.ItemIDs)
+	changedAttrs := map[string]interface{}{"checked": false}
 	for _, item := range items {
-		item.Checked = false
-		models.SaveResource(&item)
+		models.Update(&item, changedAttrs)
 	}
 	apiHelpers.ResponseOK(c)
 }
@@ -142,9 +136,9 @@ func UnCheckCartItem(c *gin.Context) {
 // @Summary 删除商品
 // @Produce  json
 // @Tags 购物车
-// @Param item_ids body CartItemIDParams true "items_ids"
+// @Param params body CartItemIDParams true "items_ids"
 // @Success 200 {object} apiHelpers.Response
-// @Router /app_api/v1/shopping_cart/remove [delete]
+// @Router /app_api/v1/shopping_cart/delete [delete]
 // @Security ApiKeyAuth
 func DeleteCartItem(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
@@ -192,8 +186,9 @@ func UpdateCartItemQty(c *gin.Context) {
 		return
 	}
 
-	item.Quantity = itemParams.Quantity
-	err = models.SaveResource(&item)
+	changedAttrs := models.CarItem{Quantity: itemParams.Quantity}
+
+	err = models.Update(&item, &changedAttrs)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return

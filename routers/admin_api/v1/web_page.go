@@ -34,7 +34,7 @@ func AddWebPage(c *gin.Context) {
 	var webPage models.WebPage
 	copier.Copy(&webPage, &wpParams)
 
-	err = models.SaveResource(&webPage)
+	err = models.Save(&webPage)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -54,7 +54,7 @@ func DeleteWebPage(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	webPage.ID = id
 
-	err := models.DestroyResource(&webPage, Query{})
+	err := models.Destroy(&webPage)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -73,7 +73,7 @@ func GetWebPage(c *gin.Context) {
 	var webPage models.WebPage
 	id, _ := strconv.Atoi(c.Param("id"))
 	webPage.ID = id
-	err := models.FindResource(&webPage, Query{})
+	err := models.Find(&webPage, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -124,7 +124,7 @@ func UpdateWebPage(c *gin.Context) {
 	var webPage models.WebPage
 	id, _ := strconv.Atoi(c.Param("id"))
 	webPage.ID = id
-	err = models.FindResource(&webPage, Query{})
+	err = models.Find(&webPage, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -132,7 +132,7 @@ func UpdateWebPage(c *gin.Context) {
 
 	copier.Copy(&webPage, &webPageParams)
 
-	err = models.SaveResource(&webPage)
+	err = models.Save(&webPage)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return

@@ -4,13 +4,13 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"strconv"
-
+	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
 	"github.com/xifengzhu/eshop/helpers/utils"
 	"github.com/xifengzhu/eshop/helpers/wechat"
 	"github.com/xifengzhu/eshop/models"
 	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+	"strconv"
 )
 
 // Binding from JSON
@@ -19,9 +19,16 @@ type Login struct {
 	Password string `json:"password" binding:"required"`
 }
 
+type AuthParams struct {
+	Code          string `json:"code" binding:"required"`
+	EncryptedData string `json:"encrypted_data" binding:"required"`
+	IV            string `json:"iv" binding:"required"`
+}
+
 type UserInfo struct {
-	Username string `json:"username"`
+	Username string `json:"nickname"`
 	Avatar   string `json:"avatar"`
+	Gender   int    `json:"gender"`
 }
 
 // @Summary 通过当前登录用户信息
@@ -31,7 +38,7 @@ type UserInfo struct {
 // @Router /app_api/v1/users/mine [get]
 // @Security ApiKeyAuth
 func GetUser(c *gin.Context) {
-	currentUser, _ := c.Get("currentUser")
+	currentUser, _ := c.Get("resource")
 	apiHelpers.ResponseSuccess(c, currentUser)
 }
 
@@ -44,16 +51,19 @@ func GetUser(c *gin.Context) {
 // @Security ApiKeyAuth
 func EditUser(c *gin.Context) {
 	var userInfo UserInfo
-	currentUser, _ := c.Get("currentUser")
+	currentUser, _ := c.Get("resource")
 	user := currentUser.(models.User)
 	if err := c.BindJSON(&userInfo); err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
-	} else {
-		data := utils.StructToMap(userInfo)
-		models.EditUser(int(user.ID), data)
-		newUser, _ := models.GetUserById(int(user.ID))
-		apiHelpers.ResponseSuccess(c, newUser)
+		return
 	}
+
+	changedAttrs := models.User{}
+	copier.Copy(&changedAttrs, &userInfo)
+
+	models.Update(&user, &changedAttrs)
+
+	apiHelpers.ResponseSuccess(c, user)
 }
 
 // @Summary 用户通过微信的code获取auth token
@@ -61,14 +71,20 @@ func EditUser(c *gin.Context) {
 // @Description 用户获取token
 // @Accept  json
 // @Produce  json
+// @Param params body AuthParams true "wechat auth params"
 // @Param code query string true "wechat code"
 // @Success 200 {object} apiHelpers.Response
 // @Failure 400 {object} utils.HTTPError
 // @Failure 404 {object} utils.HTTPError
 // @Failure 500 {object} utils.HTTPError
-// @Router /app_api/v1/user/auth [get]
+// @Router /app_api/v1/user/auth [post]
 func AuthWithWechat(c *gin.Context) {
-	code := c.Query("code")
+	var auth AuthParams
+	if err := c.BindJSON(&auth); err != nil {
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		return
+	}
+	code := auth.Code
 	result, err := wechat.CodeToSession(code)
 	openId := result["openid"].(string)
 	var data interface{}
@@ -102,7 +118,6 @@ func AuthWithWechat(c *gin.Context) {
 // @Router /app_api/v1/user/fake_token [get]
 func GetToken(c *gin.Context) {
 	userID, _ := strconv.Atoi(c.Query("user_id"))
-
 	params := make(map[string]interface{})
 	params["id"] = userID
 	params["resource"] = "user"

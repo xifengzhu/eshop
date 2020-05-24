@@ -3,25 +3,30 @@ package v1
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"strconv"
-
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
+	"github.com/xifengzhu/eshop/helpers/utils"
 	"github.com/xifengzhu/eshop/models"
 	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
 	appApiHelper "github.com/xifengzhu/eshop/routers/app_api/api_helpers"
+	// "log"
+	"net/http"
+	"strconv"
 )
 
 type AddressParams struct {
-	UserID     int    `json:"user_id"`
-	RegionID   int    `json:"region_id" binding:"required"`
-	ProvinceID int    `json:"province_id" binding:"required"`
-	CityID     int    `json:"city_id" binding:"required"`
-	Detail     string `json:"detail" binding:"required"`
-	isDefault  bool   `json:"is_default" binding:"required"`
-	Phone      string `json:"phone" binding:"required"`
-	Receiver   string `json:"receiver" binding:"required"`
+	UserID    int    `json:"user_id"`
+	Region    string `json:"region" binding:"required"`
+	Province  string `json:"province" binding:"required"`
+	City      string `json:"city" binding:"required"`
+	Detail    string `json:"detail" binding:"required"`
+	isDefault bool   `json:"is_default" binding:"required"`
+	Phone     string `json:"phone" binding:"required"`
+	Receiver  string `json:"receiver" binding:"required"`
+}
+
+type AddressQueryParams struct {
+	utils.Pagination
 }
 
 // @Summary 新增地址
@@ -43,7 +48,7 @@ func AddAddress(c *gin.Context) {
 	var address models.Address
 	copier.Copy(&address, &addressParams)
 
-	err := models.SaveResource(&address)
+	err := models.Save(&address)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -76,10 +81,11 @@ func EditAddress(c *gin.Context) {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 	}
 
-	copier.Copy(&address, &addressParams)
-	address.ID = addressID
+	changedAttrs := models.Address{}
+	copier.Copy(&changedAttrs, &addressParams)
 
-	err := models.SaveResource(&address)
+	err := models.Update(&address, changedAttrs)
+
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 	}
@@ -89,15 +95,23 @@ func EditAddress(c *gin.Context) {
 // @Summary 获取用户的收获地址
 // @Produce  json
 // @Tags 地址
+// @Param params body AddressQueryParams true "address pagination"
 // @Success 200 {object} apiHelpers.Response
 // @Router /app_api/v1/addresses [get]
 // @Security ApiKeyAuth
 func GetAddresses(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
-	var addresses []models.Address
-	parmMap := map[string]interface{}{"user_id": user.ID}
-	models.WhereResources(&addresses, Query{Conditions: parmMap})
-	apiHelpers.ResponseSuccess(c, addresses)
+	pagination := apiHelpers.SetDefaultPagination(c)
+	var model models.Address
+	result := &[]models.Address{}
+
+	userIDStr := strconv.Itoa(user.ID)
+	parmMap := map[string]string{"user_id": userIDStr}
+	models.Search(&model, &Search{Pagination: pagination, Conditions: parmMap}, result)
+
+	response := apiHelpers.Collection{Pagination: pagination, List: result}
+
+	apiHelpers.ResponseSuccess(c, response)
 }
 
 // @Summary 通过id获取地址
@@ -111,14 +125,12 @@ func GetAddress(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
 	ID, _ := strconv.Atoi(c.Param("id"))
 
-	var addresses []models.Address
-	parmMap := map[string]interface{}{"id": ID, "user_id": user.ID}
-	err := models.WhereResources(&addresses, Query{Conditions: parmMap})
+	addresses, err := user.GetAddressByID(ID)
 
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 	} else {
-		apiHelpers.ResponseSuccess(c, addresses[0])
+		apiHelpers.ResponseSuccess(c, addresses)
 	}
 }
 
@@ -139,7 +151,7 @@ func DeleteAddress(c *gin.Context) {
 		return
 	}
 
-	models.DestroyResource(&address, Query{})
+	models.Destroy(&address)
 	apiHelpers.ResponseSuccess(c, nil)
 }
 
@@ -150,7 +162,7 @@ func DeleteAddress(c *gin.Context) {
 // @Router /app_api/v1/provinces [get]
 func GetProvinces(c *gin.Context) {
 	var provinces []models.Province
-	models.AllResource(&provinces, Query{})
+	models.All(&provinces, Query{})
 	response := apiHelpers.Collection{List: provinces}
 	apiHelpers.ResponseSuccess(c, response)
 }
@@ -166,7 +178,7 @@ func GetCities(c *gin.Context) {
 	checkEmptyParams(provinceID, c)
 	var cities []models.City
 	parmMap := map[string]interface{}{"province_id": provinceID}
-	models.WhereResources(&cities, Query{Conditions: parmMap})
+	models.Where(Query{Conditions: parmMap}).Find(&cities)
 	apiHelpers.ResponseSuccess(c, cities)
 }
 
@@ -181,7 +193,7 @@ func GetRegions(c *gin.Context) {
 	checkEmptyParams(cityID, c)
 	var regions []models.Region
 	parmMap := map[string]interface{}{"city_id": cityID}
-	models.WhereResources(&regions, Query{Conditions: parmMap})
+	models.Where(Query{Conditions: parmMap}).Find(&regions)
 
 	apiHelpers.ResponseSuccess(c, regions)
 }

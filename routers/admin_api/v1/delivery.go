@@ -53,7 +53,7 @@ func AddDelivery(c *gin.Context) {
 	var delivery models.Delivery
 	copier.Copy(&delivery, &deliveryParams)
 
-	err = models.SaveResource(&delivery)
+	err = models.Save(&delivery)
 
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
@@ -76,7 +76,7 @@ func DeleteDelivery(c *gin.Context) {
 
 	var callbacks []func()
 	callbacks = append(callbacks, delivery.DestroyRules)
-	err := models.DestroyResource(&delivery, Query{Callbacks: callbacks})
+	err := models.DestroyWithCallbacks(&delivery, Query{Callbacks: callbacks})
 
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
@@ -97,7 +97,7 @@ func GetDelivery(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	delivery.ID = int(id)
 
-	err := models.FindResource(&delivery, Query{Preloads: []string{"DeliveryRules"}})
+	err := models.Find(&delivery, Query{Preloads: []string{"DeliveryRules"}})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -152,7 +152,7 @@ func UpdateDelivery(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	delivery.ID = id
 
-	err = models.FindResource(&delivery, Query{})
+	err = models.Find(&delivery, Query{})
 
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)

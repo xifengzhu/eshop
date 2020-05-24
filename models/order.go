@@ -11,6 +11,7 @@ import (
 	"log"
 	"math"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -20,7 +21,7 @@ type Order struct {
 	WxappId            string      `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	OrderNo            string      `gorm:"type: varchar(50); not null; unique_index" json:"order_no"`
 	AddressID          int         `gorm:"-" json:"address_id"`
-	ReceiverProperties string      `gorm:"type: varchar(255); " json:"receiver_properties"`
+	ReceiverProperties JSON        `gorm:"type: json; " json:"receiver_properties"`
 	OuterPayId         string      `gorm:"type: varchar(60); " json:"outer_pay_id"`
 	PayAt              *time.Time  `gorm:"type: datetime; " json:"pay_at"`
 	ExpressID          int         `gorm:"type: int;" json:"express_id"`
@@ -32,6 +33,8 @@ type Order struct {
 	OrderItems         []OrderItem `json:"order_items"`
 	User               *User       `json:"user"`
 	Express            *Express    `json:"express,omitempty"`
+	Address            *Address    `json:"address,omitempty"`
+	LatestPaymentTime  *time.Time  `gorm:"type: datetime;" json:"latest_payment_time"`
 	transition.Transition
 }
 
@@ -42,6 +45,7 @@ func (Order) TableName() string {
 var (
 	WxpayClient *wxpay.Client
 	OrderFSM    = transition.New(&Order{})
+	RemainTime  = time.Minute * 15
 )
 
 func init() {
@@ -51,10 +55,12 @@ func init() {
 
 func initWechatAccount() {
 	account := wxpay.NewAccount(setting.WechatAppId, setting.MchID, setting.MchKey, false)
-	WxpayClient = wxpay.NewClient(account)
 
 	// 设置证书
-	// WxpayClient.certData = AppSetting.ApiClientCertData
+	account.SetCertData("./uploads/apiclient_cert.p12")
+
+	// new client
+	WxpayClient = wxpay.NewClient(account)
 
 	// 设置http请求超时时间
 	WxpayClient.SetHttpConnectTimeoutMs(2000)
@@ -64,6 +70,8 @@ func initWechatAccount() {
 
 	// 更改签名类型
 	WxpayClient.SetSignType("MD5")
+
+	WxpayClient.SetAccount(account)
 }
 
 func defineState() {
@@ -104,10 +112,10 @@ func defineState() {
 			return nil
 		})
 	OrderFSM.Event("finish").To("trade_finished").From("buyer_confirm_goods")
-	OrderFSM.Event("cancel").To("wait_buyer_pay").From("canceled")
+	OrderFSM.Event("cancel").To("canceled").From("wait_buyer_pay")
 	OrderFSM.Event("refund").To("refunding").From("wait_seller_send_goods")
 	OrderFSM.Event("drawback").To("refunded").From("refunding")
-	OrderFSM.Event("close").To("wait_buyer_pay").From("trade_closed")
+	OrderFSM.Event("close").To("trade_closed").From("wait_buyer_pay")
 
 }
 
@@ -130,29 +138,33 @@ func (order *Order) Create() (err error) {
 
 // Callbacks
 func (order *Order) BeforeCreate() (err error) {
-	fmt.Println("=======order before save=============")
+	fmt.Println("=======order before create=============")
 	order.setOrderNo()    // 生成订单号
 	order.setOrderState() // 设置默认订单状态
-	return nil
+	return
 }
 
 func (order *Order) AfterCreate(tx *gorm.DB) (err error) {
-	fmt.Println("=======order after save=============")
-	order.caculateExpressFee(tx)
-	order.caculateProductAmount(tx)
-	order.caculatePayAmount(tx)
+	fmt.Println("=======order AfterCreate =============")
+	order.setExpressFee(tx)
+	order.setProductAmount(tx)
+	order.setPayAmount(tx)
+	order.setLatestPaymentTime(tx)
 	order.enqueueCloseOrderJob()
+
+	removeFromCartItem()
 
 	err = reductStock()
 	if err != nil {
 		return
 	}
-
-	err = removeFromCartItem()
-	if err != nil {
-		return
-	}
 	return
+}
+
+func (order *Order) PreOrder() {
+	order.caculateExpressFee()
+	order.caculateProductAmount()
+	order.caculatePayAmount()
 }
 
 // Private method
@@ -163,6 +175,12 @@ func (order *Order) setOrderNo() {
 			break
 		}
 	}
+}
+
+func (order *Order) setLatestPaymentTime(tx *gorm.DB) {
+	DeadLine := order.CreatedAt.Add(RemainTime)
+	tx.Model(order).Updates(Order{LatestPaymentTime: &DeadLine})
+	return
 }
 
 // TODO: 减库存
@@ -189,19 +207,30 @@ func (order *Order) generateNo() {
 }
 
 // 计算支付金额
-func (order *Order) caculatePayAmount(tx *gorm.DB) {
-	var totalAmount float32
-	totalAmount = order.ExpressFee + order.ProductAmount
+func (order *Order) caculatePayAmount() (payAmount float32) {
+	payAmount = order.ExpressFee + order.ProductAmount
+	order.PayAmount = payAmount
+	return payAmount
+}
+
+func (order *Order) setPayAmount(tx *gorm.DB) {
+	totalAmount := order.caculatePayAmount()
 	tx.Model(order).Updates(Order{PayAmount: totalAmount})
 	return
 }
 
 // 计算商品金额
-func (order *Order) caculateProductAmount(tx *gorm.DB) {
+func (order *Order) caculateProductAmount() float32 {
 	var productAmount float32
 	for _, orderItem := range order.OrderItems {
 		productAmount += orderItem.TotalAmount
 	}
+	order.ProductAmount = productAmount
+	return productAmount
+}
+
+func (order *Order) setProductAmount(tx *gorm.DB) {
+	productAmount := order.caculateProductAmount()
 	tx.Model(order).Updates(Order{ProductAmount: productAmount})
 	return
 }
@@ -220,7 +249,7 @@ func (order *Order) caculateProductAmount(tx *gorm.DB) {
 
 // case 3
 // 当我同时购买2件商品A和2kg商品D，商品A按照件数计算运费，商品D按照重量计算运费，则淘宝会比较这两款商品中首件（首公斤）的运费，选择首件（首公斤）运费最大的费用作为首件（首公斤）费用（商品D首公斤运费12元），然后忽略商品A的首件运费，商品A全部按照该商品的续件费用进行计算运费。系统计算的运费应该为： 12元+5元+3元+3元=23元
-func (order *Order) caculateExpressFee(tx *gorm.DB) {
+func (order *Order) caculateExpressFee() float32 {
 	var expressFee float32
 	eligible := order.eligibleShopFreeFreightSetting()
 	if eligible {
@@ -228,6 +257,12 @@ func (order *Order) caculateExpressFee(tx *gorm.DB) {
 	} else {
 		expressFee = order.freightWithDeliveryRule()
 	}
+	order.ExpressFee = expressFee
+	return expressFee
+}
+
+func (order *Order) setExpressFee(tx *gorm.DB) {
+	expressFee := order.caculateExpressFee()
 	tx.Model(order).Update("express_fee", expressFee)
 	return
 }
@@ -246,7 +281,7 @@ func (order *Order) freightWithDeliveryRule() float32 {
 	for _, orderItem := range order.OrderItems {
 		var goods Goods
 		goods.ID = orderItem.GoodsID
-		FindResource(&goods, Options{})
+		Find(&goods, Options{})
 		rule := goods.DeliveryRule(order.ExpressID, order.AddressID)
 		rules = append(rules, rule)
 		if _, ok := m[rule.ID]; ok {
@@ -320,24 +355,48 @@ func (order Order) OrderNoIsTaken() bool {
 
 func (order Order) enqueueCloseOrderJob() {
 	enqueuer := work.NewEnqueuer(setting.RedisNamespace, utils.RedisPool)
-	enqueuer.EnqueueIn("close_order", 900, work.Q{"order_id": order.ID})
+	enqueuer.EnqueueIn("close_order", 60*15, work.Q{"order_id": order.ID})
 }
 
-// func (order Order) User() (user User) {
-// 	user, _ = GetUserById(order.UserID)
-// 	return user
-// }
-
 func (order Order) RequestPayment() (map[string]string, error) {
+	payment, err := order.UnifiedOrder()
+	timastamp := strconv.FormatInt(time.Now().Unix(), 10)
+	signParams := make(wxpay.Params)
+	signParams.SetString("package", "prepay_id="+payment["prepay_id"]).
+		SetString("nonceStr", payment["nonce_str"]).
+		SetString("timeStamp", timastamp).
+		SetString("appId", setting.WechatAppId).
+		SetString("signType", "MD5")
+
+	paymentParams := map[string]string{
+		"timeStamp": timastamp,
+		"nonceStr":  payment["nonce_str"],
+		"package":   "prepay_id=" + payment["prepay_id"],
+		"signType":  "MD5",
+		"paySign":   WxpayClient.Sign(signParams),
+	}
+
+	log.Println("=====paymentParams=======", paymentParams)
+
+	return paymentParams, err
+}
+
+func (order Order) UnifiedOrder() (map[string]string, error) {
 	params := make(wxpay.Params)
 	params.SetString("body", "eshop 测试订单").
 		SetString("out_trade_no", order.OrderNo).
-		SetInt64("total_fee", int64(order.ProductAmount*100)).
+		SetInt64("total_fee", int64(order.PayAmount*100)).
 		SetString("spbill_create_ip", "127.0.0.1").
 		SetString("notify_url", "http://notify.objcoding.com/notify").
 		SetString("trade_type", "JSAPI").
 		SetString("openid", order.User.OpenId)
+
 	payment, err := WxpayClient.UnifiedOrder(params)
+
+	log.Println("=====payment=======", payment)
+	if err != nil {
+		log.Println(err)
+	}
 	return payment, err
 }
 
@@ -348,7 +407,7 @@ func (order Order) Close() (err error) {
 		return err
 	}
 
-	if err = tx.Save(&order).Error; err != nil {
+	if err = tx.Set("gorm:association_autoupdate", false).Model(&order).UpdateColumn("state", order.State).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -365,7 +424,7 @@ func (order Order) Pay() (err error) {
 		return err
 	}
 
-	if err = tx.Save(&order).Error; err != nil {
+	if err = tx.Set("gorm:association_autoupdate", false).Model(&order).UpdateColumn("state", order.State).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -375,11 +434,11 @@ func (order Order) Pay() (err error) {
 }
 
 func (order Order) Ship(tx *gorm.DB) (err error) {
-	if err = OrderFSM.Trigger("ship", &order, tx, "admin user pay order"); err != nil {
+	if err = OrderFSM.Trigger("ship", &order, tx, "admin user ship order"); err != nil {
 		log.Println("====ship order failed===", err)
 		return err
 	}
-	if err = tx.Save(&order).Error; err != nil {
+	if err = tx.Set("gorm:association_autoupdate", false).Model(&order).UpdateColumn("state", order.State).Error; err != nil {
 		return err
 	}
 	return nil
@@ -391,7 +450,7 @@ func (order Order) Finish() (err error) {
 		log.Println("====ship order failed===", err)
 		return err
 	}
-	if err = tx.Save(&order).Error; err != nil {
+	if err = tx.Set("gorm:association_autoupdate", false).Model(&order).UpdateColumn("state", order.State).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -405,7 +464,7 @@ func (order Order) Confirm(operator string) (err error) {
 		log.Println("====ship order failed===", err)
 		return err
 	}
-	if err = db.Save(&order).Error; err != nil {
+	if err = tx.Set("gorm:association_autoupdate", false).Model(&order).UpdateColumn("state", order.State).Error; err != nil {
 		tx.Rollback()
 		return err
 	}

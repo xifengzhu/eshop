@@ -16,7 +16,7 @@ func InitAppAPI(r *gin.Engine) {
 	}
 
 	{
-		apiv1.GET("/web_page", v1.GetWxappPage)
+		apiv1.GET("/web_page", v1.GetWebPage)
 		apiv1.GET("/wxapp_page", v1.GetWxappPage)
 	}
 
@@ -27,7 +27,7 @@ func InitAppAPI(r *gin.Engine) {
 		apiv1.POST("/orders/refund_notify", v1.RefundNotify)
 	}
 
-	apiv1.GET("/user/auth", v1.AuthWithWechat)
+	apiv1.POST("/user/auth", v1.AuthWithWechat)
 	apiv1.GET("/user/fake_token", v1.GetToken)
 	apiv1.POST("/user/verify", v1.VerifyToken)
 
@@ -50,7 +50,7 @@ func InitAppAPI(r *gin.Engine) {
 	// user router
 	{
 		apiv1.GET("/users/mine", v1.GetUser)
-		apiv1.PUT("/users/update", v1.EditUser)
+		apiv1.PUT("/users/mine", v1.EditUser)
 	}
 	// address router
 	{
@@ -62,19 +62,26 @@ func InitAppAPI(r *gin.Engine) {
 	}
 	// shopping cart
 	{
-		apiv1.GET("/shopping_cart", v1.GetCartItems)
+		apiv1.GET("/shopping_cart/my", v1.GetCartItems)
 		apiv1.POST("/shopping_cart/add", v1.AddCartItem)
 		apiv1.PUT("/shopping_cart/check", v1.CheckCartItem)
 		apiv1.PUT("/shopping_cart/uncheck", v1.UnCheckCartItem)
-		apiv1.DELETE("/shopping_cart/remove", v1.DeleteCartItem)
+		apiv1.DELETE("/shopping_cart/delete", v1.DeleteCartItem)
 		apiv1.PUT("/shopping_cart/qty", v1.UpdateCartItemQty)
 	}
+	// user orders
 	{
 		apiv1.GET("/orders", v1.GetOrders)
 		apiv1.POST("/orders", v1.CreateOrder)
 		apiv1.GET("/orders/:id", v1.GetOrder)
 		apiv1.POST("/orders/pre_check", v1.PreOrder)
-		apiv1.POST("/orders/payment_params", v1.RequestPayment)
+		apiv1.POST("/orders/request_payment", v1.RequestPayment)
+		apiv1.POST("/orders/close", v1.CloseOrder)
 		apiv1.DELETE("/orders/:id", v1.DeleteOrder)
+	}
+	// user categories
+	{
+		apiv1.GET("/categories", v1.GetCategories)
+		apiv1.GET("/categories/:id/products", v1.GetCategoryProducts)
 	}
 }

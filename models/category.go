@@ -1,7 +1,7 @@
 package models
 
 import (
-// "github.com/xifengzhu/eshop/helpers/utils"
+	"github.com/xifengzhu/eshop/helpers/utils"
 )
 
 type Category struct {
@@ -19,6 +19,22 @@ type Category struct {
 
 func (Category) TableName() string {
 	return "category"
+}
+
+func (category Category) IsParent() bool {
+	return category.ParentID == 0
+}
+
+// TODO: 支持分页
+func (category Category) GetCategoryProducts(pagination *utils.Pagination) (products []Product) {
+	if category.IsParent() {
+		var categories []Category
+		db.Model(&category).Association("Children").Find(&categories)
+		db.Model(&categories).Related(&products, "Products")
+	} else {
+		db.Model(&category).Related(&products, "Products")
+	}
+	return
 }
 
 func (category Category) RemoveChildrenRefer() {

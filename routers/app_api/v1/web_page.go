@@ -5,6 +5,8 @@ import (
 	"github.com/xifengzhu/eshop/helpers/e"
 	"github.com/xifengzhu/eshop/models"
 	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+
+	"log"
 )
 
 // @Summary 获取webview页面
@@ -15,8 +17,9 @@ import (
 // @Router /app_api/v1/web_page [get]
 func GetWebPage(c *gin.Context) {
 	var webPage models.WebPage
+	log.Println("===query===", c.Query("title"))
 	parmMap := map[string]interface{}{"title": c.Query("title")}
-	err := models.FirstResource(&webPage, Query{Conditions: parmMap})
+	err := models.Find(&webPage, Query{Conditions: parmMap})
 
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)

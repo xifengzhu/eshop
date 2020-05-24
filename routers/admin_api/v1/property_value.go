@@ -34,7 +34,7 @@ func AddPropertyValue(c *gin.Context) {
 	var pvalue models.PropertyValue
 	copier.Copy(&pvalue, &pvp)
 
-	err = models.SaveResource(&pvalue)
+	err = models.Save(&pvalue)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -54,7 +54,7 @@ func DeletePropertyValue(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	pvalue.ID = id
 
-	err := models.DestroyResource(pvalue, Query{})
+	err := models.Destroy(pvalue)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return

@@ -27,7 +27,7 @@ func GetLogistic(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	logistic.ID = int(id)
 
-	err := models.FindResource(&logistic, Query{Preloads: []string{"Order"}})
+	err := models.Find(&logistic, Query{Preloads: []string{"Order"}})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -48,9 +48,9 @@ func GetLogistics(c *gin.Context) {
 	pagination := apiHelpers.SetDefaultPagination(c)
 
 	var model models.Logistic
-	result := &[]models.Logistic{}
+	var result []models.Logistic
 
-	models.SearchResourceWithPreloadQuery(&model, result, pagination, c.QueryMap("q"), []string{"Order"})
+	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q"), Preloads: []string{"Order"}}, result)
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 

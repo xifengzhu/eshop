@@ -14,6 +14,7 @@ type Product struct {
 	WxappId         string          `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	Name            string          `gorm:"type: varchar(50); not null" json:"name"`
 	SerialNo        string          `gorm:"type: varchar(15); not null; unique_index" json:"serial_no"`
+	Cover           string          `gorm:"type: varchar(250);" json:"cover"`
 	MainPictures    JSON            `gorm:"type: json;" json:"main_pictures"`
 	ShareCover      string          `gorm:"type: varchar(250);" json:"share_cover"`
 	ShareDesc       string          `gorm:"type: varchar(250);" json:"share_desc"`

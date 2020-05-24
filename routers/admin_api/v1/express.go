@@ -40,7 +40,7 @@ func AddExpress(c *gin.Context) {
 	var express models.Express
 	copier.Copy(&express, &expressParams)
 
-	err = models.SaveResource(&express)
+	err = models.Save(&express)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -60,7 +60,7 @@ func DeleteExpress(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	express.ID = id
 
-	err := models.DestroyResource(express, Query{})
+	err := models.Destroy(express)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -80,7 +80,7 @@ func GetExpress(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	express.ID = id
 
-	err := models.FindResource(&express, Query{})
+	err := models.Find(&express, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -130,16 +130,17 @@ func UpdateExpress(c *gin.Context) {
 	}
 
 	var express models.Express
-
 	express.ID, _ = strconv.Atoi(c.Param("id"))
-	err = models.SaveResource(&express)
+	err = models.Find(&express, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
 	}
 
-	copier.Copy(&express, &expressParams)
-	err = models.SaveResource(&express)
+	changedAttrs := models.Express{}
+	copier.Copy(&changedAttrs, &expressParams)
+	err = models.Update(&express, &changedAttrs)
+
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return

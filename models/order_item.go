@@ -29,7 +29,7 @@ func (OrderItem) TableName() string {
 func (orderItem OrderItem) GetGoods() (Goods, error) {
 	var goods Goods
 	goods.ID = orderItem.GoodsID
-	err := FindResource(&goods, Options{})
+	err := Find(&goods, Options{})
 	return goods, err
 }
 
@@ -39,7 +39,7 @@ func (orderItem OrderItem) GetProduct() (product Product, err error) {
 		return product, err
 	}
 	product.ID = goods.ProductID
-	err = FindResource(&product, Options{})
+	err = Find(&product, Options{})
 	return
 }
 

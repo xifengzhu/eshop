@@ -70,11 +70,11 @@ func AddProduct(c *gin.Context) {
 	var product models.Product
 	copier.Copy(&product, &productParams)
 
-	err = models.SaveResource(&product)
+	err = models.Save(&product)
 
 	// update categories
 	var categories []models.Category
-	models.WhereResources(&categories, Query{Conditions: productParams.CategoryIDs})
+	models.Where(Query{Conditions: productParams.CategoryIDs}).Find(&categories)
 	fmt.Println("========categories=======", categories)
 
 	product.UpdateCatgories(categories)
@@ -98,7 +98,7 @@ func DeleteProduct(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	product.ID = id
 
-	err := models.DestroyResource(product, Query{Callbacks: []func(){product.RemoveGoodses}})
+	err := models.DestroyWithCallbacks(product, Query{Callbacks: []func(){product.RemoveGoodses}})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -138,7 +138,7 @@ func GetProduct(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	product.ID = id
 
-	err := models.FindResource(&product, Query{Preloads: []string{"Goodses", "Delivery", "Categories"}})
+	err := models.Find(&product, Query{Preloads: []string{"Goodses", "Delivery", "Categories"}})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -158,12 +158,7 @@ func GetGoodses(c *gin.Context) {
 	var goodses []models.Goods
 	fmt.Println("=======id======", c.Param("id"))
 	parmMap := map[string]interface{}{"product_id": c.Param("id")}
-	err := models.WhereResources(&goodses, Query{Conditions: parmMap})
-	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
-		return
-	}
-
+	models.Where(Query{Conditions: parmMap}).Find(&goodses)
 	apiHelpers.ResponseSuccess(c, goodses)
 }
 
@@ -193,7 +188,7 @@ func UpdateProduct(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	product.ID = id
 
-	err = models.FindResource(&product, Query{})
+	err = models.Find(&product, Query{})
 
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
@@ -210,11 +205,11 @@ func UpdateProduct(c *gin.Context) {
 	err = product.NestUpdate()
 
 	var categories []models.Category
-	models.WhereResources(&categories, Query{Conditions: productParams.CategoryIDs})
+	models.Where(Query{Conditions: productParams.CategoryIDs}).Find(&categories)
 	fmt.Println("========categories=======", categories)
 	product.UpdateCatgories(categories)
 
-	models.FindResource(&product, Query{})
+	models.Find(&product, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return

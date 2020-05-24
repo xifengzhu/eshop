@@ -7,7 +7,6 @@ import (
 	"github.com/xifengzhu/eshop/helpers/e"
 	"github.com/xifengzhu/eshop/models"
 	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
-	"log"
 	"strconv"
 )
 
@@ -39,7 +38,7 @@ func AddWxAppPage(c *gin.Context) {
 	copier.Copy(&wxAppPage, &wpParams)
 	wxAppPage.PageType = "2"
 
-	err = models.SaveResource(&wxAppPage)
+	err = models.Save(&wxAppPage)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -59,7 +58,7 @@ func DeleteWxAppPage(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	wxAppPage.ID = id
 
-	err := models.DestroyResource(&wxAppPage, Query{})
+	err := models.Destroy(&wxAppPage)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -78,7 +77,7 @@ func GetWxAppPage(c *gin.Context) {
 	var wxAppPage models.WxappPage
 	id, _ := strconv.Atoi(c.Param("id"))
 	wxAppPage.ID = id
-	err := models.FindResource(&wxAppPage, Query{})
+	err := models.Find(&wxAppPage, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -129,18 +128,16 @@ func UpdateWxAppPage(c *gin.Context) {
 	var wxAppPage models.WxappPage
 	id, _ := strconv.Atoi(c.Param("id"))
 	wxAppPage.ID = id
-	err = models.FindResource(&wxAppPage, Query{})
+	err = models.Find(&wxAppPage, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
 	}
 
-	log.Println("======wxAppPageParams=======", wxAppPageParams)
-	copier.Copy(&wxAppPage, &wxAppPageParams)
+	changedAttrs := models.WxappPage{}
+	copier.Copy(&changedAttrs, &wxAppPageParams)
 
-	log.Println("======new wxAppPage=======", wxAppPage)
-
-	err = models.UpdateResource(&wxAppPage)
+	err = models.Update(&wxAppPage, changedAttrs)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return

@@ -21,6 +21,7 @@ type Goods struct {
 	Weight         float32 `gorm:"type: double; " json:"weight"`
 	ProductID      int     `gorm:"type: int; " json:"product_id"`
 	Destroy        bool    `sql:"-" json:"_destroy,omitempty"`
+	OnSale         bool    `sql:"-" json:"on_sale"`
 	PropertiesText string  `gorm:"type: varchar(100); " json:"properties_text"`
 }
 
@@ -35,6 +36,19 @@ func (goods *Goods) IsExist() bool {
 	return true
 }
 
+func (goods *Goods) Product() (product Product) {
+	db.Where("id = ?", goods.ProductID).Find(&product)
+	return
+}
+
+func (goods *Goods) SetSaleStatus() {
+	if goods.Product().IsOnline && goods.StockNum > 0 {
+		goods.OnSale = true
+	} else {
+		goods.OnSale = false
+	}
+}
+
 func (goods *Goods) GetPropertiesText() string {
 	var text string
 	properties := strings.Split(goods.Properties, ";")
@@ -46,7 +60,7 @@ func (goods *Goods) GetPropertiesText() string {
 			pvID, _ := strconv.Atoi(values[1])
 			pvalue.ID = pvID
 
-			FindResource(&pvalue, Options{})
+			Find(&pvalue, Options{})
 
 			text += pvalue.Value + " "
 		}
@@ -67,9 +81,13 @@ func (goods *Goods) PVIDs() (pids []int, vids []int) {
 }
 
 func (goods Goods) DeliveryRule(expressID int, provinceID int) (rule DeliveryRule) {
-	var product Product
-	db.Where("id = ?", goods.ProductID).Find(&product)
+	product := goods.Product()
 	rule = product.DeliveryRule(expressID, provinceID)
+	return
+}
+
+func (goods *Goods) AfterFind() (err error) {
+	goods.SetSaleStatus()
 	return
 }
 

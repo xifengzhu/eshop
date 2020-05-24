@@ -51,7 +51,7 @@ func AddAdminUser(c *gin.Context) {
 
 	var admin models.AdminUser
 	parmMap := map[string]interface{}{"email": adminUserParams.Email}
-	exist := models.ExistResource(&admin, Query{Conditions: parmMap})
+	exist := models.Exist(&admin, Query{Conditions: parmMap})
 	if exist {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("账号已经存在"))
 		return
@@ -59,7 +59,7 @@ func AddAdminUser(c *gin.Context) {
 
 	copier.Copy(&admin, &adminUserParams)
 	admin.Status = "active"
-	err = models.CreateResource(&admin)
+	err = models.Create(&admin)
 
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("添加账号失败"))
@@ -88,14 +88,14 @@ func UpdateAdminUser(c *gin.Context) {
 	var adminUser models.AdminUser
 	id, _ := strconv.Atoi(c.Param("id"))
 	adminUser.ID = id
-	err = models.FindResource(&adminUser, Query{})
+	err = models.Find(&adminUser, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
 	}
 
 	copier.Copy(&adminUser, &adminUserParams)
-	err = models.SaveResource(&adminUser)
+	err = models.Save(&adminUser)
 
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("更新账号失败"))
@@ -137,7 +137,7 @@ func GetAdminUser(c *gin.Context) {
 	var adminUser models.AdminUser
 	id, _ := strconv.Atoi(c.Param("id"))
 	adminUser.ID = id
-	err := models.FindResource(&adminUser, Query{})
+	err := models.Find(&adminUser, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -157,7 +157,7 @@ func DeleteAdminUser(c *gin.Context) {
 	var admin models.AdminUser
 	admin.ID, _ = strconv.Atoi(c.Param("id"))
 
-	err := models.DestroyResource(&admin, Query{})
+	err := models.Destroy(&admin)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return

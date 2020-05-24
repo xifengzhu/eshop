@@ -14,8 +14,7 @@ import (
 
 type ProductQueryParams struct {
 	utils.Pagination
-	CategoryID int    `json:"q[category_id]"`
-	Name       string `json:"q[name_cont]"`
+	Name string `json:"q[name_cont]"`
 }
 
 // @Summary 获取产品列表
@@ -49,7 +48,7 @@ func GetProducts(c *gin.Context) {
 func BatchProducts(c *gin.Context) {
 	parmSlice := c.QueryArray("ids")[:]
 	var products []models.Product
-	models.WhereResources(&products, Query{Conditions: parmSlice})
+	models.Where(Query{Conditions: parmSlice}).Find(&products)
 
 	productEntities := transferProductToEntity(products)
 	apiHelpers.ResponseSuccess(c, productEntities)
@@ -66,7 +65,7 @@ func GetProduct(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	product.ID = id
 
-	err := models.FindResource(&product, Query{Preloads: []string{"Goodses"}})
+	err := models.Find(&product, Query{Preloads: []string{"Goodses"}})
 
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
@@ -77,7 +76,7 @@ func GetProduct(c *gin.Context) {
 	var productDetail []entities.ProductDetailEntity
 	copier.Copy(&productDetail, &product)
 
-	apiHelpers.ResponseSuccess(c, productDetail)
+	apiHelpers.ResponseSuccess(c, productDetail[0])
 }
 
 func transferProductToEntity(products []models.Product) (productEntities []entities.ProductEntity) {

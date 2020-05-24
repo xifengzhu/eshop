@@ -45,7 +45,7 @@ func AddProductGroup(c *gin.Context) {
 	var productGroup models.ProductGroup
 	copier.Copy(&productGroup, &productGroupParams)
 
-	err = models.SaveResource(&productGroup)
+	err = models.Save(&productGroup)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -65,7 +65,7 @@ func DeleteProductGroup(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	productGroup.ID = id
 
-	err := models.DestroyResource(&productGroup, Query{})
+	err := models.Destroy(&productGroup)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
@@ -84,7 +84,7 @@ func GetProductGroup(c *gin.Context) {
 	var productGroup models.ProductGroup
 	id, _ := strconv.Atoi(c.Param("id"))
 	productGroup.ID = id
-	err := models.FindResource(&productGroup, Query{})
+	err := models.Find(&productGroup, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -139,7 +139,7 @@ func UpdateProductGroup(c *gin.Context) {
 	var productGroup models.ProductGroup
 	id, _ := strconv.Atoi(c.Param("id"))
 	productGroup.ID = id
-	err = models.FindResource(&productGroup, Query{})
+	err = models.Find(&productGroup, Query{})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
 		return
@@ -147,7 +147,7 @@ func UpdateProductGroup(c *gin.Context) {
 
 	copier.Copy(&productGroup, &productGroupParams)
 
-	err = models.SaveResource(&productGroup)
+	err = models.Save(&productGroup)
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
