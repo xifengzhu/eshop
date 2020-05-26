@@ -48,6 +48,7 @@ require (
 	github.com/stretchr/testify v1.5.1 // indirect
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.5
+	github.com/tealeg/xlsx v1.0.5
 	github.com/theplant/cldr v0.0.0-20190423050709-9f76f7ce4ee8 // indirect
 	github.com/unknwon/com v1.0.1
 	golang.org/x/crypto v0.0.0-20200221231518-2aa609cf4a9d

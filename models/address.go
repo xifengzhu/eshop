@@ -1,7 +1,6 @@
 package models
 
 import (
-	"encoding/json"
 	"github.com/jinzhu/gorm"
 )
 
@@ -39,12 +38,6 @@ func (address *Address) Exist() bool {
 	return true
 }
 
-func (address Address) ToJSON() []byte {
-	addressDisplay := AddressDisplay{Region: address.Region, Province: address.Province, City: address.City, Detail: address.Detail, Phone: address.Phone, Receiver: address.Receiver}
-	addr, _ := json.Marshal(addressDisplay)
-	return addr
-}
-
 func (address Address) DisplayString() string {
-	return address.Province + address.City + address.Region + address.Detail + " " + address.Phone
+	return address.Receiver + " " + address.Phone + " " + address.Province + address.City + address.Region + address.Detail
 }

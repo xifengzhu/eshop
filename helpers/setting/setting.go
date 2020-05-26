@@ -14,8 +14,10 @@ var (
 	ReadTimeout  time.Duration
 	WriteTimeout time.Duration
 
-	PageSize  int
-	JwtSecret string
+	PageSize        int
+	JwtSecret       string
+	Domain          string
+	RuntimeRootPath string
 
 	WechatAppId     string
 	WechatSecret    string
@@ -42,6 +44,8 @@ var (
 	QiniuSecretKey    string
 	QiniuBucket       string
 	QiniuBucketDomain string
+
+	ExportSavePath string
 )
 
 func init() {
@@ -65,6 +69,7 @@ func init() {
 	LoadDatabase()
 	LoadRedis()
 	LoadQiniu()
+	LoadExport()
 }
 
 func LoadBase() {
@@ -82,6 +87,8 @@ func LoadServer() {
 func LoadApp() {
 	JwtSecret = os.Getenv("JWT_SECRET")
 	PageSize, _ = strconv.Atoi(os.Getenv("PAGE_SIZE"))
+	Domain = os.Getenv("DOMAIN")
+	RuntimeRootPath = os.Getenv("RUNTIME_ROOT_PATH")
 }
 
 func LoadWechat() {
@@ -119,4 +126,8 @@ func LoadQiniu() {
 	QiniuSecretKey = os.Getenv("SECRET_KEY")
 	QiniuBucket = os.Getenv("BUCKET")
 	QiniuBucketDomain = os.Getenv("BUCKET_DOMAIN")
+}
+
+func LoadExport() {
+	ExportSavePath = os.Getenv("EXPORT_SAVE_PATH")
 }

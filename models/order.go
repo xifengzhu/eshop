@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/objcoding/wxpay"
 	"github.com/qor/transition"
+	"github.com/xifengzhu/eshop/helpers/export"
 	"github.com/xifengzhu/eshop/helpers/setting"
 	"github.com/xifengzhu/eshop/helpers/utils"
 	"log"
@@ -21,7 +22,7 @@ type Order struct {
 	WxappId            string      `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	OrderNo            string      `gorm:"type: varchar(50); not null; unique_index" json:"order_no"`
 	AddressID          int         `gorm:"-" json:"address_id"`
-	ReceiverProperties JSON        `gorm:"type: json; " json:"receiver_properties"`
+	ReceiverProperties string      `gorm:"type: varchar(250); " json:"receiver_properties"`
 	OuterPayId         string      `gorm:"type: varchar(60); " json:"outer_pay_id"`
 	PayAt              *time.Time  `gorm:"type: datetime; " json:"pay_at"`
 	ExpressID          int         `gorm:"type: int;" json:"express_id"`
@@ -474,4 +475,39 @@ func (order Order) Confirm(operator string) (err error) {
 
 func (order Order) DestroyOrderItems() {
 	db.Where("order_id = ?", order.ID).Delete(OrderItem{})
+}
+
+func (order Order) OrderItemsCount() (total int) {
+	type Result struct{ Count int }
+	var result Result
+	db.Table("order_item").Where("order_id = ?", order.ID).Select("sum(total_num) as count").Scan(&result)
+	return result.Count
+}
+
+func (order Order) Export() (string, error) {
+	var orders []Order
+	All(&orders, Options{})
+	data := [][]string{}
+	titles := []string{"编号", "订单号", "件数", "产品金额", "运费", "支付金额", "收货信息", "支付时间"}
+	for _, v := range orders {
+		var payAt string
+		if v.PayAt == nil {
+			payAt = ""
+		} else {
+			payAt = v.PayAt.Format("2006-01-02 03:04:05 PM")
+		}
+		values := []string{
+			strconv.Itoa(v.ID),
+			v.OrderNo,
+			strconv.Itoa(v.OrderItemsCount()),
+			fmt.Sprintf("%f", v.ProductAmount),
+			fmt.Sprintf("%f", v.ExpressFee),
+			fmt.Sprintf("%f", v.PayAmount),
+			v.ReceiverProperties,
+			payAt,
+		}
+		data = append(data, values)
+	}
+
+	return export.Exec("订单列表", titles, data)
 }

@@ -10,6 +10,9 @@ import (
 	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
 	"strconv"
 	"time"
+
+	"github.com/xifengzhu/eshop/helpers/export"
+	"log"
 )
 
 type ShipOrderParams struct {
@@ -129,4 +132,20 @@ func PayOrder(c *gin.Context) {
 	// reload
 	models.Find(&order, Query{})
 	apiHelpers.ResponseSuccess(c, order)
+}
+
+func ExportOrders(c *gin.Context) {
+	var order models.Order
+
+	filename, err := order.Export()
+
+	if err != nil {
+		log.Println("======export orders=======", err)
+	}
+
+	data := map[string]string{
+		"export_url":      export.GetExcelFullUrl(filename),
+		"export_save_url": export.GetExcelPath() + filename,
+	}
+	apiHelpers.ResponseSuccess(c, data)
 }

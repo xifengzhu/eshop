@@ -146,7 +146,7 @@ func CreateOrder(c *gin.Context) {
 	}
 
 	address, err := user.GetAddressByID(orderParams.AddressID)
-	receiverProperties := address.ToJSON()
+	receiverProperties := address.DisplayString()
 	if err != nil {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
 		return
