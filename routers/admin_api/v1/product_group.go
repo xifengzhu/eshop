@@ -109,7 +109,7 @@ func GetProductGroups(c *gin.Context) {
 	var model models.ProductGroup
 	result := &[]models.ProductGroup{}
 
-	models.SearchResourceQuery(&model, result, pagination, c.QueryMap("q"))
+	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q")}, &result)
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 

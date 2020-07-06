@@ -7,8 +7,8 @@ import (
 	"github.com/objcoding/wxpay"
 	"github.com/qor/transition"
 	"github.com/xifengzhu/eshop/helpers/export"
-	"github.com/xifengzhu/eshop/helpers/setting"
-	"github.com/xifengzhu/eshop/helpers/utils"
+	config "github.com/xifengzhu/eshop/initializers"
+	"github.com/xifengzhu/eshop/initializers/setting"
 	"log"
 	"math"
 	"math/rand"
@@ -355,7 +355,7 @@ func (order Order) OrderNoIsTaken() bool {
 }
 
 func (order Order) enqueueCloseOrderJob() {
-	enqueuer := work.NewEnqueuer(setting.RedisNamespace, utils.RedisPool)
+	enqueuer := work.NewEnqueuer(setting.RedisNamespace, config.RedisPool)
 	enqueuer.EnqueueIn("close_order", 60*15, work.Q{"order_id": order.ID})
 }
 

@@ -11,9 +11,9 @@ import (
 )
 
 type WebPageParams struct {
-	Title   string `json:"title" binding:"required"`
+	Title   string `json:"title" validate:"required"`
 	Cover   string `json:"cover"`
-	Content string `json:"content" binding:"required"`
+	Content string `json:"content" validate:"required"`
 }
 
 // @Summary 添加webview
@@ -94,7 +94,7 @@ func GetWebPages(c *gin.Context) {
 	var model models.WebPage
 	result := &[]models.WebPage{}
 
-	models.SearchResourceQuery(&model, result, pagination, c.QueryMap("q"))
+	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q")}, &result)
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 

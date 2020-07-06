@@ -97,7 +97,7 @@ func GetWxAppPages(c *gin.Context) {
 	var model models.WxappPage
 	result := &[]models.WxappPage{}
 
-	models.SearchResourceQuery(&model, result, pagination, c.QueryMap("q"))
+	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q")}, &result)
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 

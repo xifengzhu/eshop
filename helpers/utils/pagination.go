@@ -3,12 +3,12 @@ package utils
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
-	"github.com/xifengzhu/eshop/helpers/setting"
+	"github.com/xifengzhu/eshop/initializers/setting"
 )
 
 type Pagination struct {
-	Page    int    `json:"page" binding:"gte=0"`
-	PerPage int    `json:"per_page" binding:"lt=100"`
+	Page    int    `json:"page" validate:"gte=0"`
+	PerPage int    `json:"per_page" validate:"lt=100"`
 	Sort    string `json:"sort"`
 	Total   int    `json:"total"`
 }

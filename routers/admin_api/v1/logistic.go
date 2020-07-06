@@ -50,7 +50,7 @@ func GetLogistics(c *gin.Context) {
 	var model models.Logistic
 	var result []models.Logistic
 
-	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q"), Preloads: []string{"Order"}}, result)
+	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q"), Preloads: []string{"Order"}}, &result)
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 

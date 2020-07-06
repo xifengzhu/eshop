@@ -16,13 +16,13 @@ import (
 
 type AddressParams struct {
 	UserID    int    `json:"user_id"`
-	Region    string `json:"region" binding:"required"`
-	Province  string `json:"province" binding:"required"`
-	City      string `json:"city" binding:"required"`
-	Detail    string `json:"detail" binding:"required"`
-	isDefault bool   `json:"is_default" binding:"required"`
-	Phone     string `json:"phone" binding:"required"`
-	Receiver  string `json:"receiver" binding:"required"`
+	Region    string `json:"region" validate:"required"`
+	Province  string `json:"province" validate:"required"`
+	City      string `json:"city" validate:"required"`
+	Detail    string `json:"detail" validate:"required"`
+	isDefault bool   `json:"is_default" validate:"required"`
+	Phone     string `json:"phone" validate:"required,checkMobile"`
+	Receiver  string `json:"receiver" validate:"required"`
 }
 
 type AddressQueryParams struct {
@@ -40,8 +40,8 @@ func AddAddress(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
 	var addressParams AddressParams
 	addressParams.UserID = user.ID
-	if err := c.ShouldBindJSON(&addressParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+
+	if err := apiHelpers.ValidateParams(c, &addressParams); err != nil {
 		return
 	}
 

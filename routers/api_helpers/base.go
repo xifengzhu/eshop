@@ -2,6 +2,7 @@ package apiHelpers
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/unknwon/com"
 	"github.com/xifengzhu/eshop/helpers/e"
 	"github.com/xifengzhu/eshop/helpers/utils"
@@ -19,10 +20,26 @@ type Collection struct {
 	List       interface{}       `json:"list"`
 }
 
+func ValidateParams(c *gin.Context, params interface{}) error {
+
+	if err := c.ShouldBindJSON(params); err != nil {
+		ResponseError(c, e.INVALID_PARAMS, err)
+		return err
+	}
+	validate := validator.New()
+	errs := validate.Struct(params)
+	if errs != nil {
+		ResponseError(c, e.INVALID_PARAMS, errs)
+		return errs
+	}
+
+	return nil
+}
+
 func SetDefaultPagination(c *gin.Context) (pagination *utils.Pagination) {
 	perPage := com.StrTo(c.DefaultQuery("per_page", "10")).MustInt()
 	page := com.StrTo(c.DefaultQuery("page", "1")).MustInt()
-	Sort := c.DefaultQuery("sort", "id desc")
+	Sort := c.DefaultQuery("order_by", "id desc")
 	pagination = &utils.Pagination{Page: page, PerPage: perPage, Sort: Sort}
 	return
 }

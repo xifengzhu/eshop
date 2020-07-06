@@ -12,7 +12,7 @@ import (
 // @Produce  json
 // @Tags 后台管理地址
 // @Success 200 {object} apiHelpers.Response
-// @Router /admin_api/v1/addresses [get]
+// @Router /admin_api/v1/provinces [get]
 func GetProvinces(c *gin.Context) {
 	var provinces []models.Province
 	models.All(&provinces, Query{})
@@ -20,12 +20,12 @@ func GetProvinces(c *gin.Context) {
 	apiHelpers.ResponseSuccess(c, response)
 }
 
-// @Summary 获取所有的省份信息
+// @Summary 获取用户收货地址
 // @Produce  json
 // @Tags 后台管理地址
 // @Param user_id query int true "user id"
 // @Success 200 {object} apiHelpers.Response
-// @Router /admin_api/v1/provinces [get]
+// @Router /admin_api/v1/addresses [get]
 func GetUserAdddresses(c *gin.Context) {
 	userID := c.Query("user_id")
 	var addresses []models.Address

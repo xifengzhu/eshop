@@ -1,4 +1,4 @@
-package utils
+package initializers
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/xifengzhu/eshop/helpers/setting"
+	"github.com/xifengzhu/eshop/initializers/setting"
 
 	"github.com/gomodule/redigo/redis"
 )

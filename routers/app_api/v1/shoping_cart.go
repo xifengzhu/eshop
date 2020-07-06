@@ -11,17 +11,17 @@ import (
 )
 
 type CartItemParams struct {
-	Quantity int `json:"quantity" binding:"required,gt=0"`
-	GoodsID  int `json:"goods_id" binding:"required"`
+	Quantity int `json:"quantity" validate:"required,gt=0"`
+	GoodsID  int `json:"goods_id" validate:"required"`
 }
 
 type CartItemIDParams struct {
-	ItemIDs []int `json:"item_ids" binding:"required,gt=0"`
+	ItemIDs []int `json:"item_ids" validate:"required,gt=0"`
 }
 
 type CartItemQtyParams struct {
-	ItemID   int `json:"item_id" binding:"required"`
-	Quantity int `json:"quantity" binding:"required,gt=0"`
+	ItemID   int `json:"item_id" validate:"required"`
+	Quantity int `json:"quantity" validate:"required,gt=0"`
 }
 
 // @Summary 获取购物车列表

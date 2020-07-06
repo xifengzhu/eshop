@@ -2,33 +2,34 @@ package v1
 
 import (
 	"errors"
-	// "fmt"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/xifengzhu/eshop/helpers/e"
 	"github.com/xifengzhu/eshop/helpers/utils"
+	config "github.com/xifengzhu/eshop/initializers"
 	"github.com/xifengzhu/eshop/models"
 	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
 )
 
 type CaptchaParam struct {
-	CaptchaID    string `json:"captcha_id" binding:"required"`
-	CaptchaValue string `json:"captcha_value" binding:"required"`
+	CaptchaID    string `json:"captcha_id" validate:"required"`
+	CaptchaValue string `json:"captcha_value" validate:"required"`
 }
 
 type LoginParams struct {
 	CaptchaParam
-	Email    string `json:"email"  binding:"required,email"`
-	Password string `json:"password"  binding:"required"`
+	Email    string `json:"email"  validate:"required,email"`
+	Password string `json:"password"  validate:"required"`
 }
 
 type ForgetPasswordParams struct {
 	CaptchaParam
-	Email string `json:"email"  binding:"required,email"`
+	Email string `json:"email"  validate:"required,email"`
 }
 
 type ResetPasswordParams struct {
-	Password string `json:"password"  binding:"required,gte=6,lt=12"`
+	Password string `json:"password"  validate:"required,gte=6,lt=12"`
 }
 
 // @Summary 管理员登录
@@ -39,12 +40,17 @@ type ResetPasswordParams struct {
 // @Router /admin_api/v1/sessions/login [post]
 func Login(c *gin.Context) {
 	var login LoginParams
-	if err := c.ShouldBindJSON(&login); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+
+	if err := apiHelpers.ValidateParams(c, &login); err != nil {
 		return
 	}
 
-	valid := utils.CaptchaVerify(login.CaptchaID, login.CaptchaValue)
+	// if err := c.ShouldBindJSON(&login); err != nil {
+	// 	apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	// 	return
+	// }
+
+	valid := config.CaptchaVerify(login.CaptchaID, login.CaptchaValue)
 	if !valid {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("验证码错误"))
 		return
@@ -72,8 +78,9 @@ func Login(c *gin.Context) {
 // @Success 200 {object} apiHelpers.Response
 // @Router /admin_api/v1/sessions/mine [get]
 // @Security ApiKeyAuth
-func GetCurrentAdminUsers(c *gin.Context) {
+func GetCurrentAdminUser(c *gin.Context) {
 	admin, _ := c.Get("resource")
+	fmt.Println("======admin====", admin)
 	apiHelpers.ResponseSuccess(c, admin.(models.AdminUser))
 }
 
@@ -90,7 +97,7 @@ func ForgetPassword(c *gin.Context) {
 		return
 	}
 
-	valid := utils.CaptchaVerify(resetParam.CaptchaID, resetParam.CaptchaValue)
+	valid := config.CaptchaVerify(resetParam.CaptchaID, resetParam.CaptchaValue)
 	if !valid {
 		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("验证码错误"))
 		return

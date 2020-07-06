@@ -3,7 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/xifengzhu/eshop/helpers/e"
-	"github.com/xifengzhu/eshop/helpers/utils"
+	config "github.com/xifengzhu/eshop/initializers"
 	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
 )
 
@@ -13,7 +13,7 @@ import (
 // @Success 200 {object} apiHelpers.Response
 // @Router /admin_api/v1/get_captcha [get]
 func GetCaptcha(c *gin.Context) {
-	id, b64s, err := utils.CaptchaGenerate()
+	id, b64s, err := config.CaptchaGenerate()
 	if err != nil {
 		apiHelpers.ResponseError(c, e.SERVER_ERROR, err)
 	}

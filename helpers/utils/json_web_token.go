@@ -7,7 +7,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	// "github.com/unknwon/com"
-	"github.com/xifengzhu/eshop/helpers/setting"
+	"github.com/xifengzhu/eshop/initializers/setting"
 )
 
 var mySigningKey = setting.JwtSecret

@@ -2,7 +2,6 @@ package v1
 
 import (
 	"errors"
-	// "fmt"
 	"strconv"
 	"time"
 
@@ -15,15 +14,19 @@ import (
 )
 
 type AddAdminUserParams struct {
-	Email    string `json:"email" binding:"required,email"`
-	Role     string `json:"role" binding:"required"`
-	Password string `json:"password"  binding:"required,gte=6,lt=12"`
+	Email    string `json:"email" validate:"required,email"`
+	Role     string `json:"role" validate:"required"`
+	Password string `json:"password"  validate:"required,gte=6,lt=12"`
 }
 
 type UpdateAdminUserParams struct {
 	Role     string `json:"role,omitempty"`
 	Password string `json:"password,omitempty"`
-	Status   string `json:"status,omitempty" binding:"oneof=active banned"`
+	Status   string `json:"status,omitempty" validate:"oneof=active banned"`
+}
+
+type AddRolesParams struct {
+	RoleIds []int `json:"role_ids"`
 }
 
 type QueryAdminUserParams struct {
@@ -119,7 +122,7 @@ func GetAdminUsers(c *gin.Context) {
 	var model models.AdminUser
 	result := &[]models.AdminUser{}
 
-	models.SearchResourceQuery(&model, result, pagination, c.QueryMap("q"))
+	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q")}, &result)
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 
@@ -143,6 +146,9 @@ func GetAdminUser(c *gin.Context) {
 		return
 	}
 
+	adminUser.Roles = adminUser.GetRoles()
+	adminUser.Permissions = adminUser.GetPermissions()
+
 	apiHelpers.ResponseSuccess(c, adminUser)
 }
 
@@ -163,4 +169,50 @@ func DeleteAdminUser(c *gin.Context) {
 		return
 	}
 	apiHelpers.ResponseOK(c)
+}
+
+// @Summary 分配角色给用户
+// @Produce  json
+// @Tags 后台管理员
+// @Param params body AddRolesParams true "角色ID数组"
+// @Param id path int true "管理员id"
+// @Success 200 {object} apiHelpers.Response
+// @Router /admin_api/v1/admin_users/{id}/roles [post]
+// @Security ApiKeyAuth
+func AddRoleForUser(c *gin.Context) {
+	var adminUser models.AdminUser
+	id, _ := strconv.Atoi(c.Param("id"))
+	adminUser.ID = id
+	err := models.Find(&adminUser, Query{})
+	if err != nil {
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		return
+	}
+
+	var params AddRolesParams
+	if err = c.ShouldBindJSON(&params); err != nil {
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		return
+	}
+
+	var roles []models.Role
+	models.Where(Query{Conditions: params.RoleIds}).Find(&roles)
+
+	for _, role := range roles {
+		models.Enforcer.AddRoleForUser(adminUser.AuthKey(), role.Name)
+	}
+	apiHelpers.ResponseOK(c)
+}
+
+// @Summary 当前管理员权限
+// @Produce  json
+// @Tags 后台管理员
+// @Success 200 {object} apiHelpers.Response
+// @Router /admin_api/v1/admin_user/abilities [get]
+// @Security ApiKeyAuth
+func GetAdminUserPermissions(c *gin.Context) {
+	adminStr, _ := c.Get("resource")
+	adminUser := adminStr.(models.AdminUser)
+	permissions := adminUser.GetPermissions()
+	apiHelpers.ResponseSuccess(c, permissions)
 }

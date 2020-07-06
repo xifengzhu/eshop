@@ -21,13 +21,13 @@ type QueryOrderParams struct {
 }
 
 type OrderParams struct {
-	AddressID    int    `json:"address_id" binding:"required"`
+	AddressID    int    `json:"address_id" validate:"required"`
 	ExpressID    int    `json:"express_id"`
 	BuyerMessage string `json:"buyer_message"`
 }
 
 type OrderIDParams struct {
-	OrderID int `json:"order_id" binding:"required"`
+	OrderID int `json:"order_id" validate:"required"`
 }
 
 // @Summary 获取订单列表

@@ -2,8 +2,8 @@ package workers
 
 import (
 	"github.com/gocraft/work"
-	"github.com/xifengzhu/eshop/helpers/setting"
-	"github.com/xifengzhu/eshop/helpers/utils"
+	config "github.com/xifengzhu/eshop/initializers"
+	"github.com/xifengzhu/eshop/initializers/setting"
 	"log"
 )
 
@@ -17,7 +17,7 @@ func init() {
 	// 10 is the max concurrency
 	// "my_app_namespace" is the Redis namespace
 	// RedisPool is a Redis pool
-	pool := work.NewWorkerPool(Context{}, 10, setting.RedisNamespace, utils.RedisPool)
+	pool := work.NewWorkerPool(Context{}, 10, setting.RedisNamespace, config.RedisPool)
 
 	// Add middleware that will be executed for each job
 	pool.Middleware((*Context).Log)

@@ -2,7 +2,7 @@ package export
 
 import (
 	"github.com/tealeg/xlsx"
-	"github.com/xifengzhu/eshop/helpers/setting"
+	"github.com/xifengzhu/eshop/initializers/setting"
 	"strconv"
 	"time"
 )

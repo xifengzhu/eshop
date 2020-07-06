@@ -12,7 +12,7 @@ import (
 func InitAdminAPI(r *gin.Engine) {
 
 	admin_export := r.Group("/export")
-	admin_export.Use(jwt.JWTAuth())
+	// admin_export.Use(jwt.JWTAuth())
 	admin_export.StaticFS("/", http.Dir(export.GetExcelFullPath()))
 
 	admin_apiv1 := r.Group("/admin_api/v1")
@@ -31,12 +31,23 @@ func InitAdminAPI(r *gin.Engine) {
 	}
 
 	{
+		admin_apiv1.GET("/sessions/mine", v1.GetCurrentAdminUser)
+
+		admin_apiv1.GET("/admin_user/abilities", v1.GetAdminUserPermissions)
+
 		admin_apiv1.POST("/admin_users", v1.AddAdminUser)
 		admin_apiv1.GET("/admin_users", v1.GetAdminUsers)
 		admin_apiv1.GET("/admin_users/:id", v1.GetAdminUser)
 		admin_apiv1.PUT("/admin_users/:id", v1.UpdateAdminUser)
+		admin_apiv1.POST("/admin_users/:id/roles", v1.AddRoleForUser)
 		admin_apiv1.DELETE("/admin_users/:id", v1.DeleteAdminUser)
-		admin_apiv1.GET("/sessions/mine", v1.GetCurrentAdminUsers)
+
+		admin_apiv1.GET("/roles", v1.GetRoles)
+		admin_apiv1.GET("/roles/:id", v1.GetRole)
+		admin_apiv1.POST("/roles/:id/permissions", v1.AddPermissionToRole)
+
+		admin_apiv1.GET("/permissions", v1.GetPermissions)
+
 		admin_apiv1.POST("/cabin_rules", v1.AddPolicy)
 		admin_apiv1.DELETE("/cabin_rules", v1.RemovePolicy)
 	}

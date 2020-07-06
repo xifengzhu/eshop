@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"github.com/xifengzhu/eshop/helpers/utils"
+	// "log"
 	"reflect"
 	"strconv"
 	"strings"
@@ -64,6 +65,10 @@ func All(model interface{}, options Options) (err error) {
 	return
 }
 
+func Pluck(model interface{}, column string, results interface{}) {
+	db.Model(model).Pluck(column, results)
+}
+
 func Destroy(model interface{}) error {
 	return db.Delete(model).Error
 }
@@ -95,31 +100,6 @@ func Search(model interface{}, search *SearchParams, result interface{}) {
 func DestroyAll(values interface{}, options Options) (err error) {
 	err = db.Where(options.Conditions).Delete(values).Error
 	return
-}
-
-func SearchResourceQuery(model interface{}, result interface{}, pagination *utils.Pagination, q map[string]string) {
-
-	offset := (pagination.Page - 1) * pagination.PerPage
-
-	query := queryConditionTranslator(q)
-	baseQuery := db.Model(model)
-	baseQuery, _ = BuildWhere(baseQuery, query)
-	baseQuery.Count(&pagination.Total)
-
-	baseQuery.Offset(offset).Limit(pagination.PerPage).Order(pagination.Sort).Find(result)
-}
-
-func SearchResourceWithPreloadQuery(model interface{}, result interface{}, pagination *utils.Pagination, q map[string]string, preloads []string) {
-
-	offset := (pagination.Page - 1) * pagination.PerPage
-
-	cdb := preloadQuery(preloads)
-	query := queryConditionTranslator(q)
-	baseQuery := cdb.Model(model)
-	baseQuery, _ = BuildWhere(baseQuery, query)
-	baseQuery.Count(&pagination.Total)
-
-	baseQuery.Offset(offset).Limit(pagination.PerPage).Order(pagination.Sort).Find(result)
 }
 
 func preloadQuery(preloads []string) *gorm.DB {

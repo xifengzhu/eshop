@@ -2,13 +2,15 @@ package models
 
 import (
 	"fmt"
-	"log"
+	// "log"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/qor/transition"
-	"github.com/xifengzhu/eshop/helpers/setting"
+	"github.com/xifengzhu/eshop/initializers/setting"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var db *gorm.DB
@@ -49,7 +51,7 @@ func init() {
 
 func migration() {
 	//Migrate the schema
-	db.AutoMigrate(&User{}, &Tag{}, &Address{}, &WxpaySetting{}, &CarItem{}, &Category{}, &City{}, &Delivery{}, &DeliveryRule{}, &Goods{}, &Logistic{}, &Order{}, &OrderItem{}, &Product{}, &PropertyName{}, &PropertyValue{}, &Province{}, &Region{}, &Tag{}, &User{}, &WebPage{}, &WxappPage{}, &Express{}, &AdminUser{}, &transition.StateChangeLog{}, &ProductGroup{})
+	db.AutoMigrate(&User{}, &Tag{}, &Address{}, &WxpaySetting{}, &CarItem{}, &Category{}, &City{}, &Delivery{}, &DeliveryRule{}, &Goods{}, &Logistic{}, &Order{}, &OrderItem{}, &Product{}, &PropertyName{}, &PropertyValue{}, &Province{}, &Region{}, &Tag{}, &User{}, &WebPage{}, &WxappPage{}, &Express{}, &AdminUser{}, &transition.StateChangeLog{}, &ProductGroup{}, &GlobalSetting{}, &Role{})
 }
 
 func CloseDB() {

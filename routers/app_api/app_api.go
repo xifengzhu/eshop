@@ -2,12 +2,14 @@ package app_api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/xifengzhu/eshop/middleware/ip_filter"
 	"github.com/xifengzhu/eshop/middleware/jwt"
 	"github.com/xifengzhu/eshop/routers/app_api/v1"
 )
 
 func InitAppAPI(r *gin.Engine) {
 	apiv1 := r.Group("/app_api/v1")
+	apiv1.Use(ip_filter.IPFilter())
 	// get address data
 	{
 		apiv1.GET("/provinces", v1.GetProvinces)
@@ -36,6 +38,12 @@ func InitAppAPI(r *gin.Engine) {
 		apiv1.GET("/products", v1.GetProducts)
 		apiv1.GET("/batch_products", v1.BatchProducts)
 		apiv1.GET("/products/:id", v1.GetProduct)
+	}
+
+	// categories
+	{
+		apiv1.GET("/categories", v1.GetCategories)
+		apiv1.GET("/categories/:id/products", v1.GetCategoryProducts)
 	}
 
 	apiv1.Use(jwt.JWTAuth())
@@ -78,10 +86,5 @@ func InitAppAPI(r *gin.Engine) {
 		apiv1.POST("/orders/request_payment", v1.RequestPayment)
 		apiv1.POST("/orders/close", v1.CloseOrder)
 		apiv1.DELETE("/orders/:id", v1.DeleteOrder)
-	}
-	// user categories
-	{
-		apiv1.GET("/categories", v1.GetCategories)
-		apiv1.GET("/categories/:id/products", v1.GetCategoryProducts)
 	}
 }

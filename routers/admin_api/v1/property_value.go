@@ -11,8 +11,8 @@ import (
 
 type PropertyValueParams struct {
 	ID             int    `json:"id,omitempty"`
-	Value          string `json:"value" binding:"required"`
-	PropertyNameID int    `json:"property_name_id" binding:"required"`
+	Value          string `json:"value" validate:"required"`
+	PropertyNameID int    `json:"property_name_id" validate:"required"`
 	Destroy        bool   `json:"_destroy,omitempty"`
 }
 

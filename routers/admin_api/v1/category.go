@@ -2,7 +2,6 @@ package v1
 
 import (
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
@@ -14,7 +13,7 @@ import (
 )
 
 type CategoryParams struct {
-	Name     string `json:"name" binding:"required" `
+	Name     string `json:"name" validate:"required" `
 	Position int    `json:"position"`
 	ParentID int    `json:"parent_id"`
 	Image    string `json:"image"`
@@ -110,8 +109,7 @@ func GetCategories(c *gin.Context) {
 	var model models.Category
 	result := &[]models.Category{}
 
-	fmt.Println("======c.QueryMap('q')=====", c.QueryMap("q"))
-	models.SearchResourceQuery(&model, result, pagination, c.QueryMap("q"))
+	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q")}, &result)
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 

@@ -14,8 +14,8 @@ import (
 
 type PropertyParams struct {
 	ID             int                   `json:"id,omitempty"`
-	Name           string                `json:"name" binding:"required"`
-	PropertyValues []PropertyValueParams `json:"property_values"  binding:"dive"`
+	Name           string                `json:"name" validate:"required"`
+	PropertyValues []PropertyValueParams `json:"property_values"  validate:"dive"`
 }
 
 type QueryPropertyParams struct {
@@ -105,9 +105,7 @@ func GetPropertyNames(c *gin.Context) {
 	var model models.PropertyName
 	result := &[]models.PropertyName{}
 
-	// result := models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q"), Preloads: []string{"PropertyValues"}})
-
-	models.SearchResourceWithPreloadQuery(&model, result, pagination, c.QueryMap("q"), []string{"PropertyValues"})
+	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q"), Preloads: []string{"PropertyValues"}}, &result)
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 

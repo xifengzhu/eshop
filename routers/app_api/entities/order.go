@@ -16,14 +16,15 @@ type OrderDetailEntity struct {
 }
 
 type OrderEntity struct {
-	ID            int                `json:"id"`
-	WxappId       string             `json:"wxapp_id"`
-	OrderNo       string             `json:"order_no"`
-	State         string             `json:"state"`
-	ExpressAmount float32            `json:"express_amount"`
-	PayAmount     float32            `json:"pay_amount"`
-	TotalAmount   float32            `json:"total_amount"`
-	OrderItems    []models.OrderItem `json:"order_items"`
+	ID                int                `json:"id"`
+	WxappId           string             `json:"wxapp_id"`
+	OrderNo           string             `json:"order_no"`
+	State             string             `json:"state"`
+	ExpressAmount     float32            `json:"express_amount"`
+	PayAmount         float32            `json:"pay_amount"`
+	TotalAmount       float32            `json:"total_amount"`
+	LatestPaymentTime *time.Time         `json:"latest_payment_time"`
+	OrderItems        []models.OrderItem `json:"order_items"`
 }
 
 type OrderIDEntity struct {

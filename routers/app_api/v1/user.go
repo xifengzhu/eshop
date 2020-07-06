@@ -7,7 +7,7 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
 	"github.com/xifengzhu/eshop/helpers/utils"
-	"github.com/xifengzhu/eshop/helpers/wechat"
+	"github.com/xifengzhu/eshop/initializers/wechat"
 	"github.com/xifengzhu/eshop/models"
 	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
 	"strconv"
@@ -15,14 +15,14 @@ import (
 
 // Binding from JSON
 type Login struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
 type AuthParams struct {
-	Code          string `json:"code" binding:"required"`
-	EncryptedData string `json:"encrypted_data" binding:"required"`
-	IV            string `json:"iv" binding:"required"`
+	Code          string `json:"code" validate:"required"`
+	EncryptedData string `json:"encrypted_data" validate:"required"`
+	IV            string `json:"iv" validate:"required"`
 }
 
 type UserInfo struct {
@@ -110,17 +110,18 @@ func AuthWithWechat(c *gin.Context) {
 // @Description 用户获取token
 // @Accept  json
 // @Produce  json
-// @Param user_id query integer true "user id"
+// @Param resource_id query integer true "resource id"
+// @Param resource_type query string true "resource type"
 // @Success 200 {object} apiHelpers.Response
 // @Failure 400 {object} utils.HTTPError
 // @Failure 404 {object} utils.HTTPError
 // @Failure 500 {object} utils.HTTPError
 // @Router /app_api/v1/user/fake_token [get]
 func GetToken(c *gin.Context) {
-	userID, _ := strconv.Atoi(c.Query("user_id"))
+	userID, _ := strconv.Atoi(c.Query("resource_id"))
 	params := make(map[string]interface{})
 	params["id"] = userID
-	params["resource"] = "user"
+	params["resource"] = c.Query("resource_type")
 	token := utils.Encode(params)
 	apiHelpers.ResponseSuccess(c, token)
 }

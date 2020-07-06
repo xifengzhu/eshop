@@ -2,7 +2,7 @@ package workers
 
 import (
 	"github.com/gocraft/work"
-	// "github.com/xifengzhu/eshop/helpers/wechat"
+	// "github.com/xifengzhu/eshop/initializers/wechat"
 	"log"
 )
 

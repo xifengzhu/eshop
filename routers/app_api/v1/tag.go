@@ -8,8 +8,8 @@ import (
 	"github.com/unknwon/com"
 
 	"github.com/xifengzhu/eshop/helpers/e"
-	"github.com/xifengzhu/eshop/helpers/setting"
 	"github.com/xifengzhu/eshop/helpers/utils"
+	"github.com/xifengzhu/eshop/initializers/setting"
 	"github.com/xifengzhu/eshop/models"
 )
 

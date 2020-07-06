@@ -1,9 +1,9 @@
-package utils
+package initializers
 
 import (
 	"github.com/qiniu/api.v7/v7/auth/qbox"
 	"github.com/qiniu/api.v7/v7/storage"
-	"github.com/xifengzhu/eshop/helpers/setting"
+	"github.com/xifengzhu/eshop/initializers/setting"
 )
 
 type QiniuMeta struct {

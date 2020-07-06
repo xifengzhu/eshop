@@ -25,9 +25,9 @@ type DeliveryRuleParams struct {
 
 type DeliveryParams struct {
 	ID            int                  `json:"id,omitempty"`
-	Name          string               `json:"name,omitempty" binding:"required"`
-	Way           int                  `json:"way" binding:"required"` // 1 为按件计费 2 按重量计费
-	DeliveryRules []DeliveryRuleParams `json:"delivery_rules" binding:"required,dive"`
+	Name          string               `json:"name,omitempty" validate:"required"`
+	Way           int                  `json:"way" validate:"required"` // 1 为按件计费 2 按重量计费
+	DeliveryRules []DeliveryRuleParams `json:"delivery_rules" validate:"required,dive"`
 }
 
 type QueryDeliveryParams struct {
@@ -120,7 +120,7 @@ func GetDeliveries(c *gin.Context) {
 	var model models.Delivery
 	result := &[]models.Delivery{}
 
-	models.SearchResourceQuery(&model, result, pagination, c.QueryMap("q"))
+	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q")}, &result)
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 

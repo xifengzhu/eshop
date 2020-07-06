@@ -30,7 +30,7 @@ func GetProducts(c *gin.Context) {
 	var model models.Product
 	products := &[]models.Product{}
 
-	models.SearchResourceQuery(&model, products, pagination, c.QueryMap("q"))
+	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q")}, &products)
 
 	result := transferProductToEntity(*products)
 	response := apiHelpers.Collection{Pagination: pagination, List: result}

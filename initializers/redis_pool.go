@@ -1,8 +1,8 @@
-package utils
+package initializers
 
 import (
 	"github.com/gomodule/redigo/redis"
-	"github.com/xifengzhu/eshop/helpers/setting"
+	"github.com/xifengzhu/eshop/initializers/setting"
 )
 
 var RedisPool = &redis.Pool{

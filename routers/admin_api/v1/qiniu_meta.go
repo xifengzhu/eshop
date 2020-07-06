@@ -2,7 +2,7 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/xifengzhu/eshop/helpers/utils"
+	config "github.com/xifengzhu/eshop/initializers"
 	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
 )
 
@@ -13,6 +13,6 @@ import (
 // @Router /admin_api/v1/qiniu_meta [get]
 // @Security ApiKeyAuth
 func GetQiniuMeta(c *gin.Context) {
-	meta := utils.GetUploadMeta()
+	meta := config.GetUploadMeta()
 	apiHelpers.ResponseSuccess(c, meta)
 }

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/xifengzhu/eshop/helpers/setting"
+	"github.com/xifengzhu/eshop/initializers/setting"
 	"github.com/xifengzhu/eshop/routers"
 	_ "github.com/xifengzhu/eshop/workers"
 	"net/http"
@@ -21,7 +21,7 @@ func main() {
 	// @name Authorization
 	router := routers.InitRouter()
 
-	s := &http.Server{
+	server := &http.Server{
 		Addr:           fmt.Sprintf(":%d", setting.HTTPPort),
 		Handler:        router,
 		ReadTimeout:    setting.ReadTimeout,
@@ -29,5 +29,5 @@ func main() {
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	s.ListenAndServe()
+	server.ListenAndServe()
 }

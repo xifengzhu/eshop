@@ -16,8 +16,8 @@ import (
 )
 
 type ShipOrderParams struct {
-	ExpressNo      string `json:"express_no" binding:"required`
-	ExpressCompany string `json:"express_company" binding:"required`
+	ExpressNo      string `json:"express_no" validate:"required`
+	ExpressCompany string `json:"express_company" validate:"required`
 }
 
 type QueryOrderParams struct {
@@ -81,7 +81,7 @@ func GetOrders(c *gin.Context) {
 	var model models.Order
 	result := &[]models.Order{}
 
-	models.SearchResourceWithPreloadQuery(&model, result, pagination, c.QueryMap("q"), []string{"OrderItems", "User"})
+	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q"), Preloads: []string{"OrderItems", "User"}}, &result)
 
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 

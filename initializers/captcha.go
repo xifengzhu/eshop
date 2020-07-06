@@ -1,10 +1,9 @@
-package utils
+package initializers
 
 import (
 	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"github.com/mojocn/base64Captcha"
-	"github.com/xifengzhu/eshop/helpers/setting"
 	"log"
 	"strings"
 )
@@ -44,7 +43,7 @@ var store *redisStore
 
 func init() {
 	// init redis store
-	redisConn, _ = redis.DialURL(setting.RedisUrl)
+	redisConn = RedisPool.Get()
 	store = &redisStore{redisConn}
 
 	// SetCustomStore is not working
