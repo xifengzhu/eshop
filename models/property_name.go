@@ -11,10 +11,6 @@ type PropertyName struct {
 	PropertyValues []PropertyValue `json:"property_values"`
 }
 
-func (PropertyName) TableName() string {
-	return "property_name"
-}
-
 func (p *PropertyName) RemovePropertyValues() {
 	db.Where("property_name_id = ?", p.ID).Delete(PropertyValue{})
 }

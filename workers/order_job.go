@@ -12,7 +12,7 @@ func (c *Context) CloseOrder(job *work.Job) error {
 	log.Println("========CloseOrder=====", orderID)
 	var order models.Order
 	order.ID = int(orderID)
-	models.Find(&order, models.Options{})
+	models.Find(&order, models.Options{Preloads: []string{"OrderItems"}})
 	if order.State == "wait_buyer_pay" {
 		order.Close()
 	}

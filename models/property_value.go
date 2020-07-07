@@ -7,7 +7,3 @@ type PropertyValue struct {
 	PropertyNameID int    `gorm:"type: int; not null" json:"property_name_id"`
 	Destroy        bool   `sql:"-" json:"_destroy,omitempty"`
 }
-
-func (PropertyValue) TableName() string {
-	return "property_value"
-}

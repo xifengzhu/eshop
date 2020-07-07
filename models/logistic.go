@@ -16,10 +16,6 @@ type Logistic struct {
 	Order          *Order `json:"order"`
 }
 
-func (Logistic) TableName() string {
-	return "logistic"
-}
-
 func (logistic *Logistic) AfterCreate(tx *gorm.DB) (err error) {
 	var order Order
 	order.ID = logistic.OrderID

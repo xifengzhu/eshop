@@ -5,3 +5,4 @@ gin-bin
 tmp/
 uploads/
 static/
+log/

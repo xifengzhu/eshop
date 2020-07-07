@@ -39,14 +39,10 @@ type Order struct {
 	transition.Transition
 }
 
-func (Order) TableName() string {
-	return "orders"
-}
-
 var (
 	WxpayClient *wxpay.Client
 	OrderFSM    = transition.New(&Order{})
-	RemainTime  = time.Minute * 15
+	RemainTime  = time.Minute * 2
 )
 
 func init() {
@@ -152,14 +148,30 @@ func (order *Order) AfterCreate(tx *gorm.DB) (err error) {
 	order.setPayAmount(tx)
 	order.setLatestPaymentTime(tx)
 	order.enqueueCloseOrderJob()
+	// order.removeFromCartItem()
+	err = order.reductStock() // if reduceType == 0
+	return
+}
 
-	removeFromCartItem()
-
-	err = reductStock()
-	if err != nil {
-		return
+func (order *Order) reductStock() (err error) {
+	for _, orderItem := range order.OrderItems {
+		err = orderItem.ReductStock()
+		if err != nil {
+			break
+		}
 	}
 	return
+}
+
+func (order *Order) RestoreStock() {
+	// restore stock number
+	for _, orderItem := range order.OrderItems {
+		orderItem.RestoreStock()
+	}
+}
+
+func (order *Order) removeFromCartItem() {
+	db.Where("user_id =? AND checked IS TRUE", order.UserID).Delete(&CarItem{})
 }
 
 func (order *Order) PreOrder() {
@@ -181,16 +193,6 @@ func (order *Order) setOrderNo() {
 func (order *Order) setLatestPaymentTime(tx *gorm.DB) {
 	DeadLine := order.CreatedAt.Add(RemainTime)
 	tx.Model(order).Updates(Order{LatestPaymentTime: &DeadLine})
-	return
-}
-
-// TODO: 减库存
-func reductStock() (err error) {
-	return
-}
-
-// TODO: 从购物车移除
-func removeFromCartItem() (err error) {
 	return
 }
 
@@ -412,6 +414,7 @@ func (order Order) Close() (err error) {
 		tx.Rollback()
 		return err
 	}
+	order.RestoreStock()
 	// Or commit the transaction
 	tx.Commit()
 	return

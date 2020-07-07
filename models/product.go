@@ -11,31 +11,26 @@ import (
 type Product struct {
 	BaseModel
 
-	WxappId         string          `gorm:"type: varchar(50); not null" json:"wxapp_id"`
-	Name            string          `gorm:"type: varchar(50); not null" json:"name"`
-	SerialNo        string          `gorm:"type: varchar(15); not null; unique_index" json:"serial_no"`
-	Cover           string          `gorm:"type: varchar(250);" json:"cover"`
-	MainPictures    JSON            `gorm:"type: json;" json:"main_pictures"`
-	ShareCover      string          `gorm:"type: varchar(250);" json:"share_cover"`
-	ShareDesc       string          `gorm:"type: varchar(250);" json:"share_desc"`
-	Content         string          `gorm:"type: text;" json:"content"`
-	DeductStockType int             `gorm:"type: tinyint; not null" json:"deduct_stock_type"`
-	SalesInitial    int             `gorm:"type: int; default 1" json:"sales_initial"`
-	SalesActual     int             `gorm:"type: int; default 1" json:"sales_actual"`
-	Position        int             `gorm:"type: int; " json:"position"`
-	Price           float32         `gorm:"type: decimal(10,2); " json:"price"`
-	IsOnline        bool            `gorm:"type: boolean; default true" json:"is_online"`
-	DeletedAt       *time.Time      `gorm:"type: datetime; " json:"deleted_at"`
-	DeliveryID      int             `gorm:"type: int; " json:"delivery_id"`
-	Goodses         []Goods         `json:"goodses,omitemptys"`
-	Category        *Category       `json:"category,omitempty"`
-	Delivery        *Delivery       `json:"delivery,omitempty"`
-	Categories      []*Category     `gorm:"many2many:product_categories;" json:"categories"`
-	Specifications  []Specification `sql:"-" json:"specifications,omitempty"`
-}
-
-func (Product) TableName() string {
-	return "product"
+	WxappId        string          `gorm:"type: varchar(50); not null" json:"wxapp_id"`
+	Name           string          `gorm:"type: varchar(50); not null" json:"name"`
+	SerialNo       string          `gorm:"type: varchar(15); not null; unique_index" json:"serial_no"`
+	Cover          string          `gorm:"type: varchar(250);" json:"cover"`
+	MainPictures   JSON            `gorm:"type: json;" json:"main_pictures"`
+	ShareCover     string          `gorm:"type: varchar(250);" json:"share_cover"`
+	ShareDesc      string          `gorm:"type: varchar(250);" json:"share_desc"`
+	Content        string          `gorm:"type: text;" json:"content"`
+	SalesInitial   int             `gorm:"type: int; default 1" json:"sales_initial"`
+	SalesActual    int             `gorm:"type: int; default 1" json:"sales_actual"`
+	Position       int             `gorm:"type: int; " json:"position"`
+	Price          float32         `gorm:"type: decimal(10,2); " json:"price"`
+	IsOnline       bool            `gorm:"type: boolean; default true" json:"is_online"`
+	DeletedAt      *time.Time      `gorm:"type: datetime; " json:"deleted_at"`
+	DeliveryID     int             `gorm:"type: int; " json:"delivery_id"`
+	Goodses        []Goods         `json:"goodses,omitemptys"`
+	Category       *Category       `json:"category,omitempty"`
+	Delivery       *Delivery       `json:"delivery,omitempty"`
+	Categories     []*Category     `gorm:"many2many:product_categories;" json:"categories"`
+	Specifications []Specification `sql:"-" json:"specifications,omitempty"`
 }
 
 type Specification struct {

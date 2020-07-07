@@ -18,10 +18,6 @@ type Address struct {
 	Receiver  string `gorm:"type: varchar(50); not null" json:"receiver"`
 }
 
-func (Address) TableName() string {
-	return "address"
-}
-
 type AddressDisplay struct {
 	Region   string `json:"region"`
 	Province string `json:"province"`

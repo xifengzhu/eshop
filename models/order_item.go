@@ -53,3 +53,16 @@ func (orderItem *OrderItem) BeforeSave() (err error) {
 func (orderItem *OrderItem) caculateTotalAmount() {
 	orderItem.TotalAmount = orderItem.GoodsPrice * float32(orderItem.TotalNum)
 }
+
+// 减库存
+func (orderItem *OrderItem) ReductStock() (err error) {
+	goods, _ := orderItem.GetGoods()
+	err = goods.ReduceStock(orderItem.TotalNum)
+	return
+}
+
+// 恢复库存
+func (orderItem *OrderItem) RestoreStock() {
+	goods, _ := orderItem.GetGoods()
+	goods.IncreseStock(orderItem.TotalNum)
+}

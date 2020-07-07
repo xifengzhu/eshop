@@ -13,7 +13,3 @@ type WxappPage struct {
 	ShareCover           string `gorm:"type: text; " json:"share_cover"`
 	ShareBackgroundCover string `gorm:"type: text; " json:"share_background_cover"`
 }
-
-func (WxappPage) TableName() string {
-	return "wxapp_page"
-}

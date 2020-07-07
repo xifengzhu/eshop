@@ -16,10 +16,6 @@ type ProductGroup struct {
 	Products   []Product `sql:"-" json:"products,omitempty"`
 }
 
-func (ProductGroup) TableName() string {
-	return "product_group"
-}
-
 func (p *ProductGroup) GetProducts() (products []Product) {
 	var productIDs []int
 	json.Unmarshal([]byte(p.ProductIDs), &productIDs)

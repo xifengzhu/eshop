@@ -31,7 +31,7 @@ func init() {
 	// Customize options:
 	pool.JobWithOptions("export", work.JobOptions{Priority: 10, MaxFails: 1}, (*Context).Export)
 
-	pool.PeriodicallyEnqueue("* 1 * * * *", "refresh_wechat_access_token")
+	pool.PeriodicallyEnqueue("0 0 * * * *", "refresh_wechat_access_token")
 
 	// Start processing jobs
 	pool.Start()

@@ -11,12 +11,10 @@ type AdminUser struct {
 	WxappId  string `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	Email    string `gorm:"type: varchar(100); not null" json:"email"`
 	Status   string `gorm:"type: varchar(10);" json:"status"`
-	Password string `gorm:"type: varchar(120); not null" json:"password"`
-	Role     string `gorm:"type: varchar(50);" json:"role"`
-}
+	Password string `gorm:"type: varchar(120); not null" json:"-"`
 
-func (AdminUser) TableName() string {
-	return "admin_user"
+	Roles       []string `gorm:"-" json:roles`
+	Permissions []string `gorm:"-" json:permissions`
 }
 
 func HashPassword(password string) (string, error) {
@@ -45,18 +43,19 @@ func (admin *AdminUser) BeforeSave(scope *gorm.Scope) (err error) {
 	return
 }
 
-// func (admin *AdminUser) Create() (err error) {
-// 	var password string
-// 	password, err = HashPassword(admin.Password)
-// 	if err != nil {
-// 		return
-// 	}
-// 	admin.Password = password
-// 	err = db.Create(&admin).Error
-// 	return
-// }
-
 func GetAdminUserById(ID int) (admin AdminUser, err error) {
 	err = db.First(&admin, ID).Error
 	return
+}
+
+func (admin *AdminUser) AuthKey() string {
+	return admin.Email
+}
+
+func (admin *AdminUser) GetRoles() (roles []string) {
+	return GetRolesByKey(admin.AuthKey())
+}
+
+func (admin *AdminUser) GetPermissions() (permits []string) {
+	return GetPermissionByKey(admin.AuthKey())
 }

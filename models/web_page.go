@@ -8,7 +8,3 @@ type WebPage struct {
 	Title   string `gorm:"type: varchar(120); not null" json:"title"`
 	Content string `gorm:"type: text; not null" json:"content"`
 }
-
-func (WebPage) TableName() string {
-	return "web_page"
-}

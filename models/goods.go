@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+	"fmt"
 	"github.com/jinzhu/gorm"
 	"strconv"
 	"strings"
@@ -23,10 +25,6 @@ type Goods struct {
 	Destroy        bool    `sql:"-" json:"_destroy,omitempty"`
 	OnSale         bool    `sql:"-" json:"on_sale"`
 	PropertiesText string  `gorm:"type: varchar(100); " json:"properties_text"`
-}
-
-func (Goods) TableName() string {
-	return "goods"
 }
 
 func (goods *Goods) IsExist() bool {
@@ -94,4 +92,22 @@ func (goods *Goods) AfterFind() (err error) {
 func (goods *Goods) BeforeSave() (err error) {
 	goods.PropertiesText = goods.GetPropertiesText()
 	return
+}
+
+func (goods *Goods) ReduceStock(reduceNum int) (err error) {
+	rowsAffected := db.Model(&goods).Where("stock_num >= ?", reduceNum).Update("stock_num", gorm.Expr("stock_num - ?", reduceNum)).RowsAffected
+	if rowsAffected > 0 {
+		return
+	} else {
+		err = errors.New(fmt.Sprintf("%s 库存不足", goods.GoodsInfo()))
+	}
+	return
+}
+
+func (goods *Goods) IncreseStock(increaseNum int) {
+	db.Model(&goods).Update("stock_num", gorm.Expr("stock_num + ?", increaseNum))
+}
+
+func (goods *Goods) GoodsInfo() string {
+	return goods.Name + goods.PropertiesText
 }

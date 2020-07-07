@@ -10,7 +10,3 @@ type CarItem struct {
 	GoodsID  int    `gorm:"type: int; not null" json:"goods_id"`
 	Goods    *Goods `gorm:"association_autoupdate:false" json:"goods,omitempty"`
 }
-
-func (CarItem) TableName() string {
-	return "car_item"
-}

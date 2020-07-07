@@ -18,10 +18,6 @@ type User struct {
 	Orders    []Order   `json:"orders"`
 }
 
-func (User) TableName() string {
-	return "user"
-}
-
 func GetUsers(pageNum int, pageSize int, maps interface{}) (users []User) {
 	db.Where(maps).Offset(pageNum).Limit(pageSize).Find(&users)
 	return

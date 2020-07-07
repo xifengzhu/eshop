@@ -11,10 +11,6 @@ type WxpaySetting struct {
 	NotifyUrl string `gorm:"type: varchar(255); " json:"notify_url"`
 }
 
-func (WxpaySetting) TableName() string {
-	return "wxpay_setting"
-}
-
 func (setting *WxpaySetting) CreateOrUpdate() (err error) {
 	var existSetting WxpaySetting
 	err = db.First(&existSetting).Error

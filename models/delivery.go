@@ -14,10 +14,6 @@ type Delivery struct {
 	DeliveryRules []DeliveryRule `json:"delivery_rules,omitempty"`
 }
 
-func (Delivery) TableName() string {
-	return "delivery"
-}
-
 func (d *Delivery) IsCaculateByNum() bool {
 	return d.Way == 1
 }

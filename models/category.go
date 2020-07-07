@@ -17,10 +17,6 @@ type Category struct {
 	Products []*Product `gorm:"many2many:product_categories;" json:"products,omitempty"`
 }
 
-func (Category) TableName() string {
-	return "category"
-}
-
 func (category Category) IsParent() bool {
 	return category.ParentID == 0
 }

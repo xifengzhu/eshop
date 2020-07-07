@@ -2,7 +2,6 @@ package v1
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/xifengzhu/eshop/helpers/e"
@@ -80,7 +79,6 @@ func Login(c *gin.Context) {
 // @Security ApiKeyAuth
 func GetCurrentAdminUser(c *gin.Context) {
 	admin, _ := c.Get("resource")
-	fmt.Println("======admin====", admin)
 	apiHelpers.ResponseSuccess(c, admin.(models.AdminUser))
 }
 
