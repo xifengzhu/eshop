@@ -26,8 +26,7 @@ type PropertyValueParams struct {
 func AddPropertyValue(c *gin.Context) {
 	var err error
 	var pvp PropertyValueParams
-	if err = c.ShouldBindJSON(&pvp); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err = apiHelpers.ValidateParams(c, &pvp); err != nil {
 		return
 	}
 
@@ -36,7 +35,7 @@ func AddPropertyValue(c *gin.Context) {
 
 	err = models.Save(&pvalue)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, pvalue)
@@ -56,7 +55,7 @@ func DeletePropertyValue(c *gin.Context) {
 
 	err := models.Destroy(pvalue)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, nil)

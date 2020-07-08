@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
@@ -50,7 +49,7 @@ func AddAddress(c *gin.Context) {
 
 	err := models.Save(&address)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, address)
@@ -71,14 +70,15 @@ func EditAddress(c *gin.Context) {
 	var address models.Address
 	address.ID = addressID
 	if address.Exist() == false {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, errors.New("资源不存在"))
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, "资源不存在")
 		return
 	}
 
 	var addressParams AddressParams
 	addressParams.UserID = user.ID
-	if err := c.ShouldBindJSON(&addressParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+
+	if err := apiHelpers.ValidateParams(c, &addressParams); err != nil {
+		return
 	}
 
 	changedAttrs := models.Address{}
@@ -87,7 +87,7 @@ func EditAddress(c *gin.Context) {
 	err := models.Update(&address, changedAttrs)
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 	}
 	apiHelpers.ResponseSuccess(c, address)
 }
@@ -128,7 +128,7 @@ func GetAddress(c *gin.Context) {
 	addresses, err := user.GetAddressByID(ID)
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 	} else {
 		apiHelpers.ResponseSuccess(c, addresses)
 	}
@@ -147,7 +147,7 @@ func DeleteAddress(c *gin.Context) {
 	ID, _ := strconv.Atoi(c.Param("id"))
 	address, err := user.GetAddressByID(ID)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 

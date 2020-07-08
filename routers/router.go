@@ -10,12 +10,10 @@ import (
 	"time"
 
 	"github.com/getsentry/raven-go"
-
+	log "github.com/sirupsen/logrus"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	_ "github.com/xifengzhu/eshop/docs"
-
-	log "github.com/sirupsen/logrus"
 	"os"
 	"runtime/debug"
 	"strings"

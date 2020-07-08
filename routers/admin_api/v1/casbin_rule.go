@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/xifengzhu/eshop/helpers/e"
 	"github.com/xifengzhu/eshop/models"
@@ -23,12 +22,13 @@ type PolicyRuleParams struct {
 // @Security ApiKeyAuth
 func AddPolicy(c *gin.Context) {
 	var rule PolicyRuleParams
-	if err := c.ShouldBindJSON(&rule); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &rule); err != nil {
+		return
 	}
+
 	res, _ := models.Enforcer.AddPolicy(rule.RoleName, rule.Path, rule.Method)
 	if !res {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("添加失败，权限已经存在"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "添加失败，权限已经存在")
 		return
 	}
 	apiHelpers.ResponseOK(c)
@@ -44,11 +44,11 @@ func AddPolicy(c *gin.Context) {
 func RemovePolicy(c *gin.Context) {
 	var rule PolicyRuleParams
 	if err := c.ShouldBindJSON(&rule); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 	}
 	res, _ := models.Enforcer.RemovePolicy(rule.RoleName, rule.Path, rule.Method)
 	if !res {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("删除失败，权限不存在"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "删除失败，权限不存在")
 		return
 	}
 	apiHelpers.ResponseOK(c)

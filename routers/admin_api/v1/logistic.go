@@ -29,7 +29,7 @@ func GetLogistic(c *gin.Context) {
 
 	err := models.Find(&logistic, Query{Preloads: []string{"Order"}})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 

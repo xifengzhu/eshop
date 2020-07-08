@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
@@ -29,8 +28,7 @@ type WxAppPageParams struct {
 func AddWxAppPage(c *gin.Context) {
 	var err error
 	var wpParams WxAppPageParams
-	if err = c.ShouldBind(&wpParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err = apiHelpers.ValidateParams(c, &wpParams); err != nil {
 		return
 	}
 
@@ -40,7 +38,7 @@ func AddWxAppPage(c *gin.Context) {
 
 	err = models.Save(&wxAppPage)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, wxAppPage)
@@ -60,7 +58,7 @@ func DeleteWxAppPage(c *gin.Context) {
 
 	err := models.Destroy(&wxAppPage)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, nil)
@@ -79,7 +77,7 @@ func GetWxAppPage(c *gin.Context) {
 	wxAppPage.ID = id
 	err := models.Find(&wxAppPage, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, wxAppPage)
@@ -115,13 +113,12 @@ func GetWxAppPages(c *gin.Context) {
 // @Security ApiKeyAuth
 func UpdateWxAppPage(c *gin.Context) {
 	if c.Param("id") == "" {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("id 不能为空"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "id 不能为空")
 		return
 	}
 	var err error
 	var wxAppPageParams WxAppPageParams
-	if err = c.ShouldBindJSON(&wxAppPageParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err = apiHelpers.ValidateParams(c, &wxAppPageParams); err != nil {
 		return
 	}
 
@@ -130,7 +127,7 @@ func UpdateWxAppPage(c *gin.Context) {
 	wxAppPage.ID = id
 	err = models.Find(&wxAppPage, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -139,7 +136,7 @@ func UpdateWxAppPage(c *gin.Context) {
 
 	err = models.Update(&wxAppPage, changedAttrs)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, wxAppPage)

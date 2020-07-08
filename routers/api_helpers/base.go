@@ -7,6 +7,16 @@ import (
 	"github.com/xifengzhu/eshop/helpers/e"
 	"github.com/xifengzhu/eshop/helpers/utils"
 	"net/http"
+
+	"github.com/go-playground/locales/zh"
+	ut "github.com/go-playground/universal-translator"
+	en_translations "github.com/go-playground/validator/v10/translations/en"
+	zh_translations "github.com/go-playground/validator/v10/translations/zh"
+)
+
+var (
+	Translator *ut.UniversalTranslator
+	Validate   *validator.Validate
 )
 
 type Response struct {
@@ -20,20 +30,35 @@ type Collection struct {
 	List       interface{}       `json:"list"`
 }
 
-func ValidateParams(c *gin.Context, params interface{}) error {
+func init() {
+	zh := zh.New()
+	Translator = ut.New(zh)
+	Validate = validator.New()
+}
 
-	if err := c.ShouldBindJSON(params); err != nil {
-		ResponseError(c, e.INVALID_PARAMS, err)
-		return err
-	}
-	validate := validator.New()
-	errs := validate.Struct(params)
-	if errs != nil {
-		ResponseError(c, e.INVALID_PARAMS, errs)
-		return errs
+func ValidateParams(c *gin.Context, params interface{}) (err error) {
+
+	locale := c.DefaultQuery("locale", "zh")
+	translator, _ := Translator.GetTranslator(locale)
+	if locale == "zh" {
+		zh_translations.RegisterDefaultTranslations(Validate, translator)
+	} else {
+		en_translations.RegisterDefaultTranslations(Validate, translator)
 	}
 
-	return nil
+	c.ShouldBindJSON(params)
+	err = Validate.Struct(params)
+
+	if err != nil {
+		errs := err.(validator.ValidationErrors)
+		var errMsg string
+		for _, e := range errs {
+			errMsg = e.Translate(translator)
+			break
+		}
+		ResponseError(c, e.INVALID_PARAMS, errMsg)
+	}
+	return
 }
 
 func SetDefaultPagination(c *gin.Context) (pagination *utils.Pagination) {
@@ -44,8 +69,8 @@ func SetDefaultPagination(c *gin.Context) (pagination *utils.Pagination) {
 	return
 }
 
-func ResponseError(c *gin.Context, code int, err error) {
-	response := &Response{Code: code, Msg: err.Error(), Data: nil}
+func ResponseError(c *gin.Context, code int, errMsg string) {
+	response := &Response{Code: code, Msg: errMsg}
 	c.AbortWithStatusJSON(http.StatusBadRequest, response)
 }
 

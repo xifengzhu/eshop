@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
@@ -33,8 +32,7 @@ type QueryPropertyParams struct {
 func AddPropertyName(c *gin.Context) {
 	var err error
 	var pnp PropertyParams
-	if err = c.ShouldBindJSON(&pnp); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err = apiHelpers.ValidateParams(c, &pnp); err != nil {
 		return
 	}
 
@@ -45,7 +43,7 @@ func AddPropertyName(c *gin.Context) {
 
 	err = models.Create(&propertyName)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, propertyName)
@@ -65,7 +63,7 @@ func DeletePropertyName(c *gin.Context) {
 
 	err := models.DestroyWithCallbacks(propertyName, Query{Callbacks: []func(){propertyName.RemovePropertyValues}})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, nil)
@@ -85,7 +83,7 @@ func GetPropertyName(c *gin.Context) {
 
 	err := models.Find(&pn, Query{Preloads: []string{"PropertyValues"}})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -123,12 +121,11 @@ func GetPropertyNames(c *gin.Context) {
 // @Security ApiKeyAuth
 func UpdatePropertyName(c *gin.Context) {
 	if c.Param("id") == "" {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("id 不能为空"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "id 不能为空")
 	}
 	var err error
 	var propertyParams PropertyParams
-	if err = c.ShouldBindJSON(&propertyParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err = apiHelpers.ValidateParams(c, &propertyParams); err != nil {
 		return
 	}
 
@@ -140,7 +137,7 @@ func UpdatePropertyName(c *gin.Context) {
 	err = models.Find(&propertyName, Query{})
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -154,7 +151,7 @@ func UpdatePropertyName(c *gin.Context) {
 	err = propertyName.NestUpdate()
 	models.Find(&propertyName, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, propertyName)

@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"strconv"
 	"time"
 
@@ -48,7 +47,7 @@ func AddAdminUser(c *gin.Context) {
 	var err error
 	var adminUserParams AddAdminUserParams
 	if err = c.ShouldBindJSON(&adminUserParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 
@@ -56,7 +55,7 @@ func AddAdminUser(c *gin.Context) {
 	parmMap := map[string]interface{}{"email": adminUserParams.Email}
 	exist := models.Exist(&admin, Query{Conditions: parmMap})
 	if exist {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("账号已经存在"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "账号已经存在")
 		return
 	}
 
@@ -65,7 +64,7 @@ func AddAdminUser(c *gin.Context) {
 	err = models.Create(&admin)
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("添加账号失败"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "添加账号失败")
 		return
 	}
 
@@ -84,7 +83,7 @@ func UpdateAdminUser(c *gin.Context) {
 	var err error
 	var adminUserParams UpdateAdminUserParams
 	if err = c.ShouldBindJSON(&adminUserParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 
@@ -93,7 +92,7 @@ func UpdateAdminUser(c *gin.Context) {
 	adminUser.ID = id
 	err = models.Find(&adminUser, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -101,7 +100,7 @@ func UpdateAdminUser(c *gin.Context) {
 	err = models.Save(&adminUser)
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("更新账号失败"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "更新账号失败")
 		return
 	}
 
@@ -142,7 +141,7 @@ func GetAdminUser(c *gin.Context) {
 	adminUser.ID = id
 	err := models.Find(&adminUser, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -165,7 +164,7 @@ func DeleteAdminUser(c *gin.Context) {
 
 	err := models.Destroy(&admin)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseOK(c)
@@ -185,13 +184,13 @@ func AddRoleForUser(c *gin.Context) {
 	adminUser.ID = id
 	err := models.Find(&adminUser, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
 	var params AddRolesParams
 	if err = c.ShouldBindJSON(&params); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 

@@ -39,8 +39,8 @@ func GetWxpaySetting(c *gin.Context) {
 func UpdateWxpaySetting(c *gin.Context) {
 	var err error
 	var settingParams entities.WxpaySettingParams
-	if err = c.ShouldBindJSON(&settingParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &settingParams); err != nil {
+		return
 	}
 
 	var setting models.WxpaySetting
@@ -49,7 +49,7 @@ func UpdateWxpaySetting(c *gin.Context) {
 
 	err = setting.CreateOrUpdate()
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, setting)
@@ -78,7 +78,7 @@ func UpdateWechatCert(c *gin.Context) {
 	filename := filepath.Join(uploadDir, certName)
 	out, err := os.Create(filename)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 
@@ -87,7 +87,7 @@ func UpdateWechatCert(c *gin.Context) {
 	// 将file的内容拷贝到out
 	_, err = io.Copy(out, file)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseOK(c)

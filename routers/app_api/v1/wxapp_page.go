@@ -19,7 +19,7 @@ func GetWxappPage(c *gin.Context) {
 	err := models.Where(Query{Conditions: parmMap}).Find(&wxappPage).Error
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 

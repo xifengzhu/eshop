@@ -44,13 +44,12 @@ func ShipOrder(c *gin.Context) {
 
 	err = models.Find(&order, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
 	var ship ShipOrderParams
-	if err = c.ShouldBindJSON(&ship); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err = apiHelpers.ValidateParams(c, &ship); err != nil {
 		return
 	}
 
@@ -62,7 +61,7 @@ func ShipOrder(c *gin.Context) {
 
 	err = models.Save(&logistic)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, logistic)
@@ -101,7 +100,7 @@ func GetOrder(c *gin.Context) {
 
 	err := models.Find(&order, Query{Preloads: []string{"OrderItems", "User", "Express"}})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -121,12 +120,12 @@ func PayOrder(c *gin.Context) {
 
 	err := models.Find(&order, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 	err = order.Pay()
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	// reload

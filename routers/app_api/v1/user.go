@@ -53,8 +53,7 @@ func EditUser(c *gin.Context) {
 	var userInfo UserInfo
 	currentUser, _ := c.Get("resource")
 	user := currentUser.(models.User)
-	if err := c.BindJSON(&userInfo); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &userInfo); err != nil {
 		return
 	}
 
@@ -80,10 +79,10 @@ func EditUser(c *gin.Context) {
 // @Router /app_api/v1/user/auth [post]
 func AuthWithWechat(c *gin.Context) {
 	var auth AuthParams
-	if err := c.BindJSON(&auth); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &auth); err != nil {
 		return
 	}
+
 	code := auth.Code
 	result, err := wechat.CodeToSession(code)
 	openId := result["openid"].(string)
@@ -101,7 +100,7 @@ func AuthWithWechat(c *gin.Context) {
 		}
 		apiHelpers.ResponseSuccess(c, data)
 	} else {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 	}
 }
 

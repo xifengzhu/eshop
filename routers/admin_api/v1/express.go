@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
@@ -32,8 +31,7 @@ type QueryExpressParams struct {
 func AddExpress(c *gin.Context) {
 	var err error
 	var expressParams ExpressParams
-	if err = c.ShouldBindJSON(&expressParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &expressParams); err != nil {
 		return
 	}
 
@@ -42,7 +40,7 @@ func AddExpress(c *gin.Context) {
 
 	err = models.Save(&express)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, express)
@@ -62,7 +60,7 @@ func DeleteExpress(c *gin.Context) {
 
 	err := models.Destroy(express)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, nil)
@@ -82,7 +80,7 @@ func GetExpress(c *gin.Context) {
 
 	err := models.Find(&express, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -120,12 +118,11 @@ func GetExpresses(c *gin.Context) {
 // @Security ApiKeyAuth
 func UpdateExpress(c *gin.Context) {
 	if c.Param("id") == "" {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("id 不能为空"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "id 不能为空")
 	}
 	var err error
 	var expressParams ExpressParams
-	if err = c.ShouldBindJSON(&expressParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err = apiHelpers.ValidateParams(c, &expressParams); err != nil {
 		return
 	}
 
@@ -133,7 +130,7 @@ func UpdateExpress(c *gin.Context) {
 	express.ID, _ = strconv.Atoi(c.Param("id"))
 	err = models.Find(&express, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -142,7 +139,7 @@ func UpdateExpress(c *gin.Context) {
 	err = models.Update(&express, &changedAttrs)
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, express)

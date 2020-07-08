@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
@@ -54,8 +53,7 @@ func AddCartItem(c *gin.Context) {
 
 	// check params
 	var cartItem CartItemParams
-	if err := c.ShouldBindJSON(&cartItem); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &cartItem); err != nil {
 		return
 	}
 
@@ -64,7 +62,7 @@ func AddCartItem(c *gin.Context) {
 	goods.ID = cartItem.GoodsID
 	exist := goods.IsExist()
 	if !exist {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("商品不存在或者已下架"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "商品不存在或者已下架")
 		return
 	}
 
@@ -75,7 +73,7 @@ func AddCartItem(c *gin.Context) {
 		item.UserID = user.ID
 		err := models.Create(&item)
 		if err != nil {
-			apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+			apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 			return
 		}
 	} else {
@@ -97,8 +95,7 @@ func CheckCartItem(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
 	// check params
 	var itemID CartItemIDParams
-	if err := c.ShouldBindJSON(&itemID); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &itemID); err != nil {
 		return
 	}
 
@@ -120,8 +117,7 @@ func CheckCartItem(c *gin.Context) {
 func UnCheckCartItem(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
 	var itemID CartItemIDParams
-	if err := c.ShouldBindJSON(&itemID); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &itemID); err != nil {
 		return
 	}
 
@@ -144,8 +140,7 @@ func DeleteCartItem(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
 	// check params
 	var itemID CartItemIDParams
-	if err := c.ShouldBindJSON(&itemID); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &itemID); err != nil {
 		return
 	}
 
@@ -157,7 +152,7 @@ func DeleteCartItem(c *gin.Context) {
 	err := models.DestroyAll(&[]models.CarItem{}, Query{Conditions: ids})
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 	apiHelpers.ResponseOK(c)
@@ -175,14 +170,13 @@ func UpdateCartItemQty(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
 
 	var itemParams CartItemQtyParams
-	if err := c.ShouldBindJSON(&itemParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &itemParams); err != nil {
 		return
 	}
 
 	item, err := user.GetShoppingCartItemByID(itemParams.ItemID)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -190,7 +184,7 @@ func UpdateCartItemQty(c *gin.Context) {
 
 	err = models.Update(&item, &changedAttrs)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 	apiHelpers.ResponseOK(c)

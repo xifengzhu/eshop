@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
@@ -37,8 +36,7 @@ type QueryCategoryParams struct {
 func AddCategory(c *gin.Context) {
 	var err error
 	var categoryParams CategoryParams
-	if err = c.ShouldBind(&categoryParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &categoryParams); err != nil {
 		return
 	}
 
@@ -47,7 +45,7 @@ func AddCategory(c *gin.Context) {
 
 	err = models.Save(&category)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, category)
@@ -69,7 +67,7 @@ func DeleteCategory(c *gin.Context) {
 	callbacks = append(callbacks, category.RemoveChildrenRefer)
 	err := models.DestroyWithCallbacks(&category, Query{Callbacks: callbacks})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, nil)
@@ -88,7 +86,7 @@ func GetCategory(c *gin.Context) {
 	category.ID = id
 	err := models.Find(&category, Query{Preloads: []string{"Parent", "Children"}})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -126,13 +124,13 @@ func GetCategories(c *gin.Context) {
 // @Security ApiKeyAuth
 func UpdateCategory(c *gin.Context) {
 	if c.Param("id") == "" {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("id 不能为空"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "id 不能为空")
 		return
 	}
 	var err error
 	var categoryParams CategoryParams
-	if err = c.ShouldBindJSON(&categoryParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+
+	if err := apiHelpers.ValidateParams(c, &categoryParams); err != nil {
 		return
 	}
 
@@ -141,7 +139,7 @@ func UpdateCategory(c *gin.Context) {
 	category.ID = id
 	err = models.Find(&category, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -149,7 +147,7 @@ func UpdateCategory(c *gin.Context) {
 
 	err = models.Save(&category)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, category)

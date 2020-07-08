@@ -68,7 +68,7 @@ func GetProduct(c *gin.Context) {
 	err := models.Find(&product, Query{Preloads: []string{"Goodses"}})
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 

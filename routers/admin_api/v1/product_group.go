@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	// "fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
@@ -37,8 +36,7 @@ type QueryProductGroupParams struct {
 func AddProductGroup(c *gin.Context) {
 	var err error
 	var productGroupParams ProductGroupParams
-	if err = c.ShouldBind(&productGroupParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err = apiHelpers.ValidateParams(c, &productGroupParams); err != nil {
 		return
 	}
 
@@ -47,7 +45,7 @@ func AddProductGroup(c *gin.Context) {
 
 	err = models.Save(&productGroup)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, productGroup)
@@ -67,7 +65,7 @@ func DeleteProductGroup(c *gin.Context) {
 
 	err := models.Destroy(&productGroup)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, nil)
@@ -86,7 +84,7 @@ func GetProductGroup(c *gin.Context) {
 	productGroup.ID = id
 	err := models.Find(&productGroup, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -126,13 +124,12 @@ func GetProductGroups(c *gin.Context) {
 // @Security ApiKeyAuth
 func UpdateProductGroup(c *gin.Context) {
 	if c.Param("id") == "" {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("id 不能为空"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "id 不能为空")
 		return
 	}
 	var err error
 	var productGroupParams ProductGroupParams
-	if err = c.ShouldBindJSON(&productGroupParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err = apiHelpers.ValidateParams(c, &productGroupParams); err != nil {
 		return
 	}
 
@@ -141,7 +138,7 @@ func UpdateProductGroup(c *gin.Context) {
 	productGroup.ID = id
 	err = models.Find(&productGroup, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -149,7 +146,7 @@ func UpdateProductGroup(c *gin.Context) {
 
 	err = models.Save(&productGroup)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, productGroup)

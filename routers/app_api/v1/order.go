@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
@@ -70,7 +69,7 @@ func GetOrder(c *gin.Context) {
 
 	order, err := user.GetOrder(orderID)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -98,7 +97,7 @@ func PreOrder(c *gin.Context) {
 		err = models.Find(&goods, Query{})
 		log.Println("===goods.Find:===", goods)
 		if err != nil {
-			apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, errors.New("商品不存在或被下架"))
+			apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, "商品不存在或被下架")
 			return
 		}
 		orderItem := models.OrderItem{GoodsName: goods.Name, GoodsPrice: goods.Price, LinePrice: goods.LinePrice, GoodsWeight: goods.Weight, GoodsAttr: goods.PropertiesText, TotalNum: item.Quantity, DeductStockType: 10, GoodsID: item.GoodsID, Cover: goods.Image}
@@ -140,15 +139,15 @@ func CreateOrder(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
 
 	var orderParams OrderParams
-	if err := c.ShouldBindJSON(&orderParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+
+	if err := apiHelpers.ValidateParams(c, &orderParams); err != nil {
 		return
 	}
 
 	address, err := user.GetAddressByID(orderParams.AddressID)
 	receiverProperties := address.DisplayString()
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 
@@ -161,7 +160,7 @@ func CreateOrder(c *gin.Context) {
 		goods.ID = item.GoodsID
 		err = models.Find(&goods, Query{})
 		if err != nil {
-			apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, errors.New("商品不存在或被下架"))
+			apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, "商品不存在或被下架")
 			return
 		}
 		orderItem := models.OrderItem{GoodsName: goods.Name, GoodsPrice: goods.Price, LinePrice: goods.LinePrice, GoodsWeight: goods.Weight, GoodsAttr: goods.PropertiesText, TotalNum: item.Quantity, DeductStockType: 10, GoodsID: item.GoodsID, Cover: goods.Image}
@@ -180,7 +179,7 @@ func CreateOrder(c *gin.Context) {
 
 	err = models.Create(&order)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 
@@ -197,18 +196,18 @@ func CreateOrder(c *gin.Context) {
 func RequestPayment(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
 	var params OrderIDParams
-	if err := c.BindJSON(&params); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &params); err != nil {
 		return
 	}
+
 	order, err := user.GetOrder(params.OrderID)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, errors.New("订单不存在或已过期"))
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, "订单不存在或已过期")
 		return
 	}
 	paymentParams, err := order.RequestPayment()
 	if err != nil {
-		apiHelpers.ResponseError(c, e.WECHAT_PAY_ERROR, err)
+		apiHelpers.ResponseError(c, e.WECHAT_PAY_ERROR, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, paymentParams)
@@ -230,7 +229,7 @@ func DeleteOrder(c *gin.Context) {
 	err := models.Find(&order, Query{Conditions: parmMap})
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, errors.New("资源不存在"))
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, "资源不存在")
 		return
 	}
 
@@ -251,8 +250,7 @@ func CloseOrder(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
 
 	var params OrderIDParams
-	if err := c.BindJSON(&params); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &params); err != nil {
 		return
 	}
 
@@ -261,7 +259,7 @@ func CloseOrder(c *gin.Context) {
 	err = order.Close()
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 

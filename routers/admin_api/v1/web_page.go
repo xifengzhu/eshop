@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
@@ -26,8 +25,7 @@ type WebPageParams struct {
 func AddWebPage(c *gin.Context) {
 	var err error
 	var wpParams WebPageParams
-	if err = c.ShouldBind(&wpParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err = apiHelpers.ValidateParams(c, &wpParams); err != nil {
 		return
 	}
 
@@ -36,7 +34,7 @@ func AddWebPage(c *gin.Context) {
 
 	err = models.Save(&webPage)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, webPage)
@@ -56,7 +54,7 @@ func DeleteWebPage(c *gin.Context) {
 
 	err := models.Destroy(&webPage)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, nil)
@@ -75,7 +73,7 @@ func GetWebPage(c *gin.Context) {
 	webPage.ID = id
 	err := models.Find(&webPage, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -111,13 +109,12 @@ func GetWebPages(c *gin.Context) {
 // @Security ApiKeyAuth
 func UpdateWebPage(c *gin.Context) {
 	if c.Param("id") == "" {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("id 不能为空"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "id 不能为空")
 		return
 	}
 	var err error
 	var webPageParams WebPageParams
-	if err = c.ShouldBindJSON(&webPageParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &webPageParams); err != nil {
 		return
 	}
 
@@ -126,7 +123,7 @@ func UpdateWebPage(c *gin.Context) {
 	webPage.ID = id
 	err = models.Find(&webPage, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -134,7 +131,7 @@ func UpdateWebPage(c *gin.Context) {
 
 	err = models.Save(&webPage)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, webPage)

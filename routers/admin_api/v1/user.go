@@ -51,7 +51,7 @@ func GetUser(c *gin.Context) {
 
 	err := models.Find(&user, Query{Preloads: []string{"Orders"}})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 

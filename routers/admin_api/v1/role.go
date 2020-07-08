@@ -39,14 +39,15 @@ func AddPermissionToRole(c *gin.Context) {
 	role.ID = id
 	err := models.Find(&role, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
 	var params AddPermisisonsParams
-	if err := c.ShouldBindJSON(&params); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err = apiHelpers.ValidateParams(c, &params); err != nil {
+		return
 	}
+
 	for _, permit := range params.Permissions {
 		models.Enforcer.AddPermissionForUser(role.AuthKey(), permit)
 	}
@@ -66,7 +67,7 @@ func GetRole(c *gin.Context) {
 	role.ID = id
 	err := models.Find(&role, Query{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 	permissions := role.GetPermissions()

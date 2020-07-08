@@ -22,7 +22,7 @@ func GetWebPage(c *gin.Context) {
 	err := models.Find(&webPage, Query{Conditions: parmMap})
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 

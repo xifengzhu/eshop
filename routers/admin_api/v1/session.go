@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"errors"
-
 	"github.com/gin-gonic/gin"
 	"github.com/xifengzhu/eshop/helpers/e"
 	"github.com/xifengzhu/eshop/helpers/utils"
@@ -44,21 +42,16 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// if err := c.ShouldBindJSON(&login); err != nil {
-	// 	apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
-	// 	return
-	// }
-
 	valid := config.CaptchaVerify(login.CaptchaID, login.CaptchaValue)
 	if !valid {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("验证码错误"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "验证码错误")
 		return
 	}
 
 	var admin models.AdminUser
 	err := admin.GetAdminUserByEmail(login.Email)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("账号不存在"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "账号不存在")
 		return
 	}
 
@@ -68,7 +61,7 @@ func Login(c *gin.Context) {
 		apiHelpers.ResponseSuccess(c, token)
 		return
 	}
-	apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("密码错误"))
+	apiHelpers.ResponseError(c, e.INVALID_PARAMS, "密码错误")
 }
 
 // @Summary 当前管理员
@@ -90,21 +83,20 @@ func GetCurrentAdminUser(c *gin.Context) {
 // @Router /admin_api/v1/sessions/forget_password [post]
 func ForgetPassword(c *gin.Context) {
 	var resetParam ForgetPasswordParams
-	if err := c.ShouldBindJSON(&resetParam); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &resetParam); err != nil {
 		return
 	}
 
 	valid := config.CaptchaVerify(resetParam.CaptchaID, resetParam.CaptchaValue)
 	if !valid {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("验证码错误"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "验证码错误")
 		return
 	}
 
 	var admin models.AdminUser
 	err := admin.GetAdminUserByEmail(resetParam.Email)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("账号不存在"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "账号不存在")
 		return
 	}
 	// TODO: send email

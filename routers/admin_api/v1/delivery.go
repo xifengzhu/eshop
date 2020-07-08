@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
@@ -45,8 +44,7 @@ type QueryDeliveryParams struct {
 func AddDelivery(c *gin.Context) {
 	var err error
 	var deliveryParams DeliveryParams
-	if err = c.ShouldBindJSON(&deliveryParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &deliveryParams); err != nil {
 		return
 	}
 
@@ -56,7 +54,7 @@ func AddDelivery(c *gin.Context) {
 	err = models.Save(&delivery)
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, delivery)
@@ -79,7 +77,7 @@ func DeleteDelivery(c *gin.Context) {
 	err := models.DestroyWithCallbacks(&delivery, Query{Callbacks: callbacks})
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, nil)
@@ -99,7 +97,7 @@ func GetDelivery(c *gin.Context) {
 
 	err := models.Find(&delivery, Query{Preloads: []string{"DeliveryRules"}})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -138,12 +136,11 @@ func GetDeliveries(c *gin.Context) {
 // @Security ApiKeyAuth
 func UpdateDelivery(c *gin.Context) {
 	if c.Param("id") == "" {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errors.New("id 不能为空"))
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "id 不能为空")
 	}
 	var err error
 	var deliveryParams DeliveryParams
-	if err = c.ShouldBindJSON(&deliveryParams); err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+	if err := apiHelpers.ValidateParams(c, &deliveryParams); err != nil {
 		return
 	}
 
@@ -155,7 +152,7 @@ func UpdateDelivery(c *gin.Context) {
 	err = models.Find(&delivery, Query{})
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err)
+		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
@@ -170,7 +167,7 @@ func UpdateDelivery(c *gin.Context) {
 	err = delivery.NestUpdate()
 	delivery.Reload()
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err)
+		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 	apiHelpers.ResponseSuccess(c, delivery)
