@@ -24,7 +24,6 @@ func init() {
 	pool.Middleware((*Context).FindCustomer)
 
 	// Map the name of jobs to handler functions
-	pool.Job("send_email", (*Context).SendEmail)
 	pool.Job("close_order", (*Context).CloseOrder)
 	pool.Job("confirm_order", (*Context).ConfirmOrder)
 	pool.Job("refresh_wechat_access_token", (*Context).RefreshWechatAccessToken)
