@@ -46,9 +46,13 @@ func ValidateParams(c *gin.Context, params interface{}) (err error) {
 		en_translations.RegisterDefaultTranslations(Validate, translator)
 	}
 
-	c.ShouldBindJSON(params)
-	err = Validate.Struct(params)
+	err = c.BindJSON(params)
+	if err != nil {
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
+		return
+	}
 
+	err = Validate.Struct(params)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		var errMsg string
