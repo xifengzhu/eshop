@@ -47,14 +47,6 @@ func InitAppAPI(r *gin.Engine) {
 	}
 
 	apiv1.Use(jwt.JWTAuth())
-	// tag router
-	{
-		apiv1.GET("/tags", v1.GetTags)
-		apiv1.GET("/tags/:id", v1.GetTag)
-		apiv1.POST("/tags", v1.AddTag)
-		apiv1.PUT("/tags/:id", v1.EditTag)
-		apiv1.DELETE("/tags", v1.DeleteTag)
-	}
 	// user router
 	{
 		apiv1.GET("/users/mine", v1.GetUser)

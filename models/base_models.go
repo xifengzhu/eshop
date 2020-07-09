@@ -51,7 +51,7 @@ func init() {
 
 func migration() {
 	//Migrate the schema
-	db.AutoMigrate(&User{}, &Tag{}, &Address{}, &WxpaySetting{}, &CarItem{}, &Category{}, &City{}, &Delivery{}, &DeliveryRule{}, &Goods{}, &Logistic{}, &Order{}, &OrderItem{}, &Product{}, &PropertyName{}, &PropertyValue{}, &Province{}, &Region{}, &Tag{}, &User{}, &WebPage{}, &WxappPage{}, &Express{}, &AdminUser{}, &transition.StateChangeLog{}, &ProductGroup{}, &GlobalSetting{}, &Role{})
+	db.AutoMigrate(&User{}, &Address{}, &WxpaySetting{}, &CarItem{}, &Category{}, &City{}, &Delivery{}, &DeliveryRule{}, &Goods{}, &Logistic{}, &Order{}, &OrderItem{}, &Product{}, &PropertyName{}, &PropertyValue{}, &Province{}, &Region{}, &User{}, &WebPage{}, &WxappPage{}, &Express{}, &AdminUser{}, &transition.StateChangeLog{}, &ProductGroup{}, &GlobalSetting{}, &Role{})
 }
 
 func CloseDB() {
