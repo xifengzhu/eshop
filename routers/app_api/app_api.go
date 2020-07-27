@@ -13,8 +13,6 @@ func InitAppAPI(r *gin.Engine) {
 	// get address data
 	{
 		apiv1.GET("/provinces", v1.GetProvinces)
-		apiv1.GET("/cities", v1.GetCities)
-		apiv1.GET("/regions", v1.GetRegions)
 	}
 
 	{

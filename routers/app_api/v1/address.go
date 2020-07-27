@@ -9,7 +9,7 @@ import (
 	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
 	appApiHelper "github.com/xifengzhu/eshop/routers/app_api/api_helpers"
 	// "log"
-	"net/http"
+	// "net/http"
 	"strconv"
 )
 
@@ -20,7 +20,7 @@ type AddressParams struct {
 	City      string `json:"city" validate:"required"`
 	Detail    string `json:"detail" validate:"required"`
 	isDefault bool   `json:"is_default" validate:"required"`
-	Phone     string `json:"phone" validate:"required,checkMobile"`
+	Phone     string `json:"phone" validate:"required"`
 	Receiver  string `json:"receiver" validate:"required"`
 }
 
@@ -162,46 +162,7 @@ func DeleteAddress(c *gin.Context) {
 // @Router /app_api/v1/provinces [get]
 func GetProvinces(c *gin.Context) {
 	var provinces []models.Province
-	models.All(&provinces, Query{})
+	models.All(&provinces, Query{Preloads: []string{"Cities", "Cities.Regions"}})
 	response := apiHelpers.Collection{List: provinces}
 	apiHelpers.ResponseSuccess(c, response)
-}
-
-// @Summary 根据省ID获取城市列表信息
-// @Produce  json
-// @Tags 地址
-// @Param province_id query string true "province id"
-// @Success 200 {object} apiHelpers.Response
-// @Router /app_api/v1/cities [get]
-func GetCities(c *gin.Context) {
-	provinceID := c.Query("province_id")
-	checkEmptyParams(provinceID, c)
-	var cities []models.City
-	parmMap := map[string]interface{}{"province_id": provinceID}
-	models.Where(Query{Conditions: parmMap}).Find(&cities)
-	apiHelpers.ResponseSuccess(c, cities)
-}
-
-// @Summary 根据市ID获取下级城市列表信息
-// @Produce  json
-// @Tags 地址
-// @Param city_id query string true "city id"
-// @Success 200 {object} apiHelpers.Response
-// @Router /app_api/v1/regions [get]
-func GetRegions(c *gin.Context) {
-	cityID := c.Query("city_id")
-	checkEmptyParams(cityID, c)
-	var regions []models.Region
-	parmMap := map[string]interface{}{"city_id": cityID}
-	models.Where(Query{Conditions: parmMap}).Find(&regions)
-
-	apiHelpers.ResponseSuccess(c, regions)
-}
-
-func checkEmptyParams(param string, c *gin.Context) {
-	if param == "" {
-		response := apiHelpers.Response{Code: e.INVALID_PARAMS, Data: nil, Msg: e.GetMsg(e.INVALID_PARAMS)}
-		c.AbortWithStatusJSON(http.StatusBadRequest, response)
-		return
-	}
 }
