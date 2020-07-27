@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/jinzhu/gorm"
 	// "github.com/xifengzhu/eshop/helpers/utils"
+	"errors"
 )
 
 type User struct {
@@ -116,6 +117,31 @@ func (user User) GetCheckedShoppingCartItems() (cartItems []CarItem, err error) 
 
 func (user User) FindShoppingCartItemByGoodsID(goodsID int) (cartItem CarItem, err error) {
 	err = db.Where("user_id = ? AND goods_id = ?", user.ID, goodsID).First(&cartItem).Error
+	return
+}
+
+func (user User) CatchCoupon(couponTemplateID int) (bool, error) {
+	var template CouponTemplate
+	template.ID = couponTemplateID
+	err := Find(&template, Options{})
+	if err != nil {
+		return false, errors.New("优惠券不存在~")
+	}
+	if template.Stock <= template.CouponsCount {
+		return false, errors.New("优惠券已经领完~")
+	}
+	if template.CatchLimit > template.CatchCountForUser(user.ID) {
+		coupon := template.GenerateCouponsData(1)[0]
+		coupon.UserID = user.ID
+		db.Create(&coupon)
+		return true, nil
+	} else {
+		return false, errors.New("您已超过限制领取次数！")
+	}
+}
+
+func (user User) GetActivedCoupons() (coupons []Coupon) {
+	db.Model(&Coupon{}).Where("user_id = ? AND state = 'actived'", user.ID).Find(&coupons)
 	return
 }
 

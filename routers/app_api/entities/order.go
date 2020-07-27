@@ -20,11 +20,14 @@ type OrderEntity struct {
 	WxappId           string             `json:"wxapp_id"`
 	OrderNo           string             `json:"order_no"`
 	State             string             `json:"state"`
-	ExpressAmount     float32            `json:"express_amount"`
-	PayAmount         float32            `json:"pay_amount"`
-	TotalAmount       float32            `json:"total_amount"`
+	ExpressFee        float64            `json:"express_fee"`
+	PayAmount         float64            `json:"pay_amount"`
+	ProductAmount     float64            `json:"product_amount"`
 	LatestPaymentTime *time.Time         `json:"latest_payment_time"`
 	OrderItems        []models.OrderItem `json:"order_items"`
+	Coupon            models.Coupon      `json:"coupon"`
+	Coupons           []models.Coupon    `json:"coupons,omitempty"`
+	Address           models.Address     `json:"address"`
 }
 
 type OrderIDEntity struct {

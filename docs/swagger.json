@@ -79,21 +79,6 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[email_cont]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "name": "q[created_at_gteq]",
                         "in": "query"
                     },
@@ -112,12 +97,27 @@
                     },
                     {
                         "type": "integer",
-                        "name": "page",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "name": "per_page",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[email_cont]",
                         "in": "query"
                     }
                 ],
@@ -395,26 +395,6 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[name]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[created_at_gteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[created_at_lteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "q[parent_id_eq]",
                         "in": "query"
                     },
@@ -431,6 +411,26 @@
                     {
                         "type": "string",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[name]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[created_at_gteq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[created_at_lteq]",
                         "in": "query"
                     }
                 ],
@@ -609,6 +609,234 @@
                 }
             }
         },
+        "/admin_api/v1/coupon_templates": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台优惠券模板管理"
+                ],
+                "summary": "优惠券模板列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[name_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台优惠券模板管理"
+                ],
+                "summary": "添加优惠券模板",
+                "parameters": [
+                    {
+                        "description": "coupon template params",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.CouponTemplateParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/coupon_templates/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台优惠券模板管理"
+                ],
+                "summary": "优惠券模板详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "template id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台优惠券模板管理"
+                ],
+                "summary": "更新优惠券模板",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "template params",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.CouponTemplateParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台优惠券模板管理"
+                ],
+                "summary": "删除优惠券模板",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "template id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_api/v1/coupon_templates/{id}/generate_coupons": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台优惠券模板管理"
+                ],
+                "summary": "创建优惠券",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "quantity",
+                        "name": "qty",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin_api/v1/dashboard": {
             "get": {
                 "produces": [
@@ -645,22 +873,22 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "total",
                         "in": "query"
                     },
                     {
                         "type": "integer",
                         "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
                         "in": "query"
                     },
                     {
@@ -847,6 +1075,11 @@
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "q[name_cont]",
                         "in": "query"
@@ -854,11 +1087,6 @@
                     {
                         "type": "string",
                         "name": "q[code_cont]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
                         "in": "query"
                     }
                 ],
@@ -1045,12 +1273,7 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
+                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -1065,12 +1288,17 @@
                     },
                     {
                         "type": "integer",
-                        "name": "total",
+                        "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "name": "page",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -1133,13 +1361,8 @@
                 "summary": "获取订单列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "q[order_no_cont]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[created_at_gteq]",
+                        "type": "integer",
+                        "name": "page",
                         "in": "query"
                     },
                     {
@@ -1148,36 +1371,18 @@
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "q[user_id_eq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[created_at_lteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "sort",
                         "in": "query"
                     },
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "name": "q[state_in]",
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[state]",
                         "in": "query"
                     }
                 ],
@@ -1340,22 +1545,22 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "total",
                         "in": "query"
                     },
                     {
                         "type": "integer",
                         "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
                         "in": "query"
                     },
                     {
@@ -1537,6 +1742,16 @@
                 "summary": "产品列表",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "q[is_online_eq]",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "q[name_cont]",
                         "in": "query"
@@ -1552,16 +1767,6 @@
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "name": "page",
                         "in": "query"
@@ -1572,8 +1777,8 @@
                         "in": "query"
                     },
                     {
-                        "type": "boolean",
-                        "name": "q[is_online_eq]",
+                        "type": "string",
+                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -2294,12 +2499,17 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "q[created_at_lteq]",
+                        "name": "q[username_cont]",
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "name": "per_page",
+                        "type": "string",
+                        "name": "q[created_at_gteq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[created_at_lteq]",
                         "in": "query"
                     },
                     {
@@ -2318,18 +2528,13 @@
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "q[open_id_eq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[username_cont]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[created_at_gteq]",
                         "in": "query"
                     }
                 ],
@@ -3024,6 +3229,16 @@
                 "summary": "获取分类商品列表",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "sort",
                         "in": "query"
@@ -3037,16 +3252,6 @@
                         "type": "string",
                         "name": "cagegory_id",
                         "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -3059,20 +3264,64 @@
                 }
             }
         },
-        "/app_api/v1/cities": {
+        "/app_api/v1/coupons": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "地址"
+                    "优惠券"
                 ],
-                "summary": "根据省ID获取城市列表信息",
+                "summary": "获取用户的优惠券",
+                "parameters": [
+                    {
+                        "enum": [
+                            "actived",
+                            "expired",
+                            "used"
+                        ],
+                        "type": "string",
+                        "default": "actived",
+                        "description": "优惠券状态",
+                        "name": "status",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/app_api/v1/coupons/receive": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "优惠券"
+                ],
+                "summary": "领取优惠券",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "province id",
-                        "name": "province_id",
+                        "description": "优惠券模板code",
+                        "name": "code",
                         "in": "query",
                         "required": true
                     }
@@ -3103,29 +3352,6 @@
                 "summary": "获取订单列表",
                 "parameters": [
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "name": "q[state_in]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[created_at_gteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[created_at_lteq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "sort",
                         "in": "query"
@@ -3137,17 +3363,17 @@
                     },
                     {
                         "type": "integer",
-                        "name": "per_page",
+                        "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "name": "q[user_id_eq]",
+                        "name": "per_page",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "name": "q[order_no_cont]",
+                        "name": "q[state]",
                         "in": "query"
                     }
                 ],
@@ -3412,11 +3638,6 @@
                 "summary": "获取产品列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "name": "total",
                         "in": "query"
@@ -3434,6 +3655,11 @@
                     {
                         "type": "string",
                         "name": "q[name_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -3484,34 +3710,6 @@
                     "地址"
                 ],
                 "summary": "获取所有的省份信息",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/app_api/v1/regions": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "地址"
-                ],
-                "summary": "根据市ID获取下级城市列表信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "city id",
-                        "name": "city_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -3721,128 +3919,19 @@
                 }
             }
         },
-        "/app_api/v1/tags": {
+        "/app_api/v1/test/coupons/{id}": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "标签"
+                    "test"
                 ],
-                "summary": "新增文章标签",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Name",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "State",
-                        "name": "state",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\":200,\"data\":{\"list\": [{\"id\": 1}], \"total\": 6},\"msg\":\"ok\"}",
-                        "schema": {
-                            "type": "json"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "标签"
-                ],
-                "summary": "新增文章标签",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Name",
-                        "name": "name",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "State",
-                        "name": "state",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "modified_by",
-                        "name": "created_by",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\":200,\"data\":{},\"msg\":\"ok\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "标签"
-                ],
-                "summary": "新增文章标签",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Name",
-                        "name": "name",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "State",
-                        "name": "state",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "CreatedBy",
-                        "name": "created_by",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\":200,\"data\":{},\"msg\":\"ok\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/app_api/v1/tags/{id}": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "标签"
-                ],
-                "summary": "通过id获取标签",
+                "summary": "test",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "id",
+                        "description": "coupon id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -3850,35 +3939,9 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"code\":200,\"data\":{},\"msg\":\"ok\"}",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "标签"
-                ],
-                "summary": "删除标签",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\":200,\"data\":{\"list\": [{\"id\": 1}], \"total\": 6},\"msg\":\"ok\"}",
-                        "schema": {
-                            "type": "json"
+                            "$ref": "#/definitions/apiHelpers.Response"
                         }
                     }
                 }
@@ -4424,6 +4487,87 @@
                 }
             }
         },
+        "v1.Config": {
+            "type": "object",
+            "required": [
+                "date_type",
+                "min_amount"
+            ],
+            "properties": {
+                "date_type": {
+                    "type": "string"
+                },
+                "end_at": {
+                    "type": "string"
+                },
+                "fix_term": {
+                    "type": "integer"
+                },
+                "min_amount": {
+                    "type": "number"
+                },
+                "percentage": {
+                    "type": "integer"
+                },
+                "reduce_amount": {
+                    "type": "number"
+                },
+                "resource_type": {
+                    "type": "string"
+                },
+                "resources": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "start_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.CouponTemplateParams": {
+            "type": "object",
+            "required": [
+                "catch_limit",
+                "configs",
+                "end_at",
+                "kind",
+                "name",
+                "start_at",
+                "stock"
+            ],
+            "properties": {
+                "catch_limit": {
+                    "type": "integer"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "configs": {
+                    "type": "object",
+                    "$ref": "#/definitions/v1.Config"
+                },
+                "creator": {
+                    "type": "string"
+                },
+                "end_at": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "start_at": {
+                    "type": "string"
+                },
+                "stock": {
+                    "type": "integer"
+                }
+            }
+        },
         "v1.DeliveryParams": {
             "type": "object",
             "required": [
@@ -4588,15 +4732,15 @@
         },
         "v1.OrderParams": {
             "type": "object",
-            "required": [
-                "address_id"
-            ],
             "properties": {
                 "address_id": {
                     "type": "integer"
                 },
                 "buyer_message": {
                     "type": "string"
+                },
+                "coupon_id": {
+                    "type": "integer"
                 },
                 "express_id": {
                     "type": "integer"
@@ -4811,6 +4955,26 @@
                 }
             }
         },
+        "v1.QueryCouponTemplateParams": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer"
+                },
+                "per_page": {
+                    "type": "integer"
+                },
+                "q[name_cont]": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "v1.QueryDeliveryParams": {
             "type": "object",
             "properties": {
@@ -4886,23 +5050,8 @@
                 "per_page": {
                     "type": "integer"
                 },
-                "q[created_at_gteq]": {
+                "q[state]": {
                     "type": "string"
-                },
-                "q[created_at_lteq]": {
-                    "type": "string"
-                },
-                "q[order_no_cont]": {
-                    "type": "string"
-                },
-                "q[state_in]": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "q[user_id_eq]": {
-                    "type": "integer"
                 },
                 "sort": {
                     "type": "string"

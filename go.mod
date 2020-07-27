@@ -8,6 +8,7 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496 // indirect
 	github.com/astaxie/beego v1.12.0
 	github.com/aws/aws-sdk-go v1.31.12 // indirect
+	github.com/captaincodeman/couponcode v0.0.0-20151210201246-fdb16cdc1189
 	github.com/casbin/casbin/v2 v2.2.1
 	github.com/casbin/gorm-adapter/v2 v2.0.3
 	github.com/certifi/gocertifi v0.0.0-20200211180108-c7c1fbc02894 // indirect
@@ -32,6 +33,7 @@ require (
 	github.com/jinzhu/gorm v1.9.12
 	github.com/joho/godotenv v1.3.0
 	github.com/lib/pq v1.3.0 // indirect
+	github.com/looplab/fsm v0.1.0
 	github.com/mailru/easyjson v0.7.0 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/mojocn/base64Captcha v1.3.1

@@ -18,9 +18,9 @@ type Goods struct {
 	SkuNo          string  `gorm:"type: varchar(50); not null; unique" json:"sku_no"`
 	StockNum       int     `gorm:"type: int; default 1" json:"stock_num"`
 	Position       int     `gorm:"type: int; " json:"position"`
-	Price          float32 `gorm:"type: decimal(10,2); " json:"price"`
-	LinePrice      float32 `gorm:"type: decimal(10,2); " json:"line_price"`
-	Weight         float32 `gorm:"type: double; " json:"weight"`
+	Price          float64 `gorm:"type: decimal(10,2); " json:"price"`
+	LinePrice      float64 `gorm:"type: decimal(10,2); " json:"line_price"`
+	Weight         float64 `gorm:"type: double; " json:"weight"`
 	ProductID      int     `gorm:"type: int; " json:"product_id"`
 	Destroy        bool    `sql:"-" json:"_destroy,omitempty"`
 	OnSale         bool    `sql:"-" json:"on_sale"`

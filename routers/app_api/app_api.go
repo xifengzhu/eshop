@@ -77,4 +77,9 @@ func InitAppAPI(r *gin.Engine) {
 		apiv1.POST("/orders/close", v1.CloseOrder)
 		apiv1.DELETE("/orders/:id", v1.DeleteOrder)
 	}
+
+	{
+		apiv1.POST("/coupons/receive", v1.CaptchCoupon)
+		apiv1.GET("/coupons", v1.GetCoupons)
+	}
 }

@@ -1,38 +1,60 @@
 ## Eshop
 ### Project Structure
 ```
+├── Dockerfile
 ├── README.md
 ├── conf
+│   ├── permissions.json
 │   └── rbac_model.conf
+├── docker-compose.yml
 ├── docs
 │   ├── docs.go
 │   ├── swagger.json
 │   └── swagger.yaml
+├── eshop
+├── export
+├── gin-bin
 ├── go.mod
 ├── go.sum
 ├── helpers
 │   ├── e
+│   ├── export
+│   └── utils
+├── initializers
+│   ├── captcha.go
+│   ├── permission.go
+│   ├── qiniu.go
+│   ├── redis_pool.go
 │   ├── setting
-│   ├── utils
-│   └── wechat
+│   ├── wechat
+│   └── wechat.go
+├── log
 ├── main.go
 ├── middleware
+│   ├── ip_filter
 │   ├── jwt
+│   ├── logger
 │   └── role
 ├── models
+│   ├── address.go
+│   ├── admin_user.go
 │   ├── base_models.go
-│   ├── casbin_rule.go
-│   └── crud.go
+│   ├── ...
 ├── routers
-│   ├── admin_api
-│   ├── api_helpers
-│   ├── app_api
+│   ├── admin_api/
+│   ├── api_helpers/
+│   ├── app_api/
 │   └── router.go
 ├── seeds
 │   └── data
+├── tmp
+│   ├── air_errors.log
+│   └── main
+├── uploads
 └── workers
+    ├── export_job.go
+    ├── order_job.go
     ├── refresh_wechat_token_job.go
-    ├── send_email_job.go
     └── worker.go
 ```
 
@@ -50,7 +72,7 @@ workwebui -redis="redis:6379" -ns="eshop" -listen=":5040"
 #### url
 visit: http://127.0.0.1:8000/swagger/index.html
 
-#### Update document
+#### Update swagger document
 ```
 swag init
 ```

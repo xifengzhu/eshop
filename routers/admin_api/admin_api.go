@@ -12,7 +12,7 @@ import (
 func InitAdminAPI(r *gin.Engine) {
 
 	admin_export := r.Group("/export")
-	// admin_export.Use(jwt.JWTAuth())
+	admin_export.Use(jwt.JWTAuth())
 	admin_export.StaticFS("/", http.Dir(export.GetExcelFullPath()))
 
 	admin_apiv1 := r.Group("/admin_api/v1")
@@ -20,7 +20,7 @@ func InitAdminAPI(r *gin.Engine) {
 	admin_apiv1.POST("/sessions/forget_password", v1.ForgetPassword)
 	admin_apiv1.PUT("/sessions/reset_password", v1.ResetPassword)
 	admin_apiv1.GET("/get_captcha", v1.GetCaptcha)
-	admin_apiv1.Use(jwt.JWTAuth())
+	// admin_apiv1.Use(jwt.JWTAuth())
 	// admin_apiv1.Use(role.AuthCheckRole())
 	{
 		admin_apiv1.GET("/orders", v1.GetOrders)
@@ -147,5 +147,14 @@ func InitAdminAPI(r *gin.Engine) {
 	{
 		admin_apiv1.GET("/logistics", v1.GetLogistics)
 		admin_apiv1.GET("/logistics/:id", v1.GetLogistic)
+	}
+
+	{
+		admin_apiv1.POST("/coupon_templates", v1.AddCouponTemplate)
+		admin_apiv1.GET("/coupon_templates/:id", v1.GetCouponTemplate)
+		admin_apiv1.DELETE("/coupon_templates/:id", v1.DeleteCouponTemplate)
+		admin_apiv1.GET("/coupon_templates", v1.GetCouponTemplates)
+		admin_apiv1.PUT("/coupon_templates/:id", v1.UpdateCouponTemplate)
+		admin_apiv1.POST("/coupon_templates/:id/generate_coupons", v1.GenerateCoupons)
 	}
 }

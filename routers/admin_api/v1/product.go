@@ -20,9 +20,9 @@ type GoodsParams struct {
 	SkuNo      string  `json:"sku_no"`
 	StockNum   int     `json:"stock_num"`
 	Position   int     `json:"position"`
-	Price      float32 `json:"price"`
-	LinePrice  float32 `json:"line_price"`
-	Weight     float32 `json:"weight"`
+	Price      float64 `json:"price"`
+	LinePrice  float64 `json:"line_price"`
+	Weight     float64 `json:"weight"`
 	Destroy    bool    `json:"_destroy,omitempty"`
 }
 
@@ -32,7 +32,7 @@ type ProductParams struct {
 	DeductStockType int           `json:"deduct_stock_type"`
 	SalesInitial    int           `json:"sales_initial"`
 	Position        int           `json:"position"`
-	Price           float32       `json:"price"`
+	Price           float64       `json:"price"`
 	IsOnline        bool          `json:"is_online"`
 	DeliveryID      int           `json:"delivery_id"`
 	Goodses         []GoodsParams `json:"goodses"`
@@ -47,8 +47,8 @@ type QueryProductParams struct {
 	utils.Pagination
 	IsOnline   bool    `json:"q[is_online_eq]"`
 	Name       string  `json:"q[name_cont]"`
-	Price_gteq float32 `json:"q[price_gteq]"`
-	Price_lteq float32 `json:"q[price_lteq]"`
+	Price_gteq float64 `json:"q[price_gteq]"`
+	Price_lteq float64 `json:"q[price_lteq]"`
 }
 
 // @Summary 添加产品

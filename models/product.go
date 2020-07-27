@@ -22,7 +22,7 @@ type Product struct {
 	SalesInitial   int             `gorm:"type: int; default 1" json:"sales_initial"`
 	SalesActual    int             `gorm:"type: int; default 1" json:"sales_actual"`
 	Position       int             `gorm:"type: int; " json:"position"`
-	Price          float32         `gorm:"type: decimal(10,2); " json:"price"`
+	Price          float64         `gorm:"type: decimal(10,2); " json:"price"`
 	IsOnline       bool            `gorm:"type: boolean; default true" json:"is_online"`
 	DeletedAt      *time.Time      `gorm:"type: datetime; " json:"deleted_at"`
 	DeliveryID     int             `gorm:"type: int; " json:"delivery_id"`

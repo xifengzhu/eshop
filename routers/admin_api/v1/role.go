@@ -5,7 +5,6 @@ import (
 	"github.com/xifengzhu/eshop/helpers/e"
 	"github.com/xifengzhu/eshop/models"
 	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
-	"log"
 	"strconv"
 )
 
@@ -71,7 +70,6 @@ func GetRole(c *gin.Context) {
 		return
 	}
 	permissions := role.GetPermissions()
-	log.Println("======permission=====", permissions)
 	role.Permissions = permissions
 	apiHelpers.ResponseSuccess(c, role)
 }

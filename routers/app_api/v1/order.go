@@ -20,8 +20,9 @@ type QueryOrderParams struct {
 }
 
 type OrderParams struct {
-	AddressID    int    `json:"address_id" validate:"required"`
+	AddressID    int    `json:"address_id"`
 	ExpressID    int    `json:"express_id"`
+	CouponID     int    `json:"coupon_id"`
 	BuyerMessage string `json:"buyer_message"`
 }
 
@@ -87,20 +88,37 @@ func GetOrder(c *gin.Context) {
 // @Security ApiKeyAuth
 func PreOrder(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
+	var err error
+
+	// 检查参数
+	var orderParams OrderParams
+	if err := apiHelpers.ValidateParams(c, &orderParams); err != nil {
+		return
+	}
+
+	// 1. 检查购物车中产品是否下架
+	// 2. 构建orderItem数据结构
 	var orderItems []models.OrderItem
 	carItems, _ := user.GetCheckedShoppingCartItems()
-
-	var err error
 	for _, item := range carItems {
 		var goods models.Goods
 		goods.ID = item.GoodsID
 		err = models.Find(&goods, Query{})
-		log.Println("===goods.Find:===", goods)
 		if err != nil {
 			apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, "商品不存在或被下架")
 			return
 		}
-		orderItem := models.OrderItem{GoodsName: goods.Name, GoodsPrice: goods.Price, LinePrice: goods.LinePrice, GoodsWeight: goods.Weight, GoodsAttr: goods.PropertiesText, TotalNum: item.Quantity, DeductStockType: 10, GoodsID: item.GoodsID, Cover: goods.Image}
+		orderItem := models.OrderItem{
+			GoodsName:       goods.Name,
+			GoodsPrice:      goods.Price,
+			LinePrice:       goods.LinePrice,
+			GoodsWeight:     goods.Weight,
+			GoodsAttr:       goods.PropertiesText,
+			TotalNum:        item.Quantity,
+			DeductStockType: 10,
+			GoodsID:         item.GoodsID,
+			Cover:           goods.Image,
+		}
 		orderItems = append(orderItems, orderItem)
 	}
 
@@ -108,24 +126,33 @@ func PreOrder(c *gin.Context) {
 		WxappId:    "001",
 		UserID:     user.ID,
 		OrderItems: orderItems,
+		User:       &user,
 	}
 
-	var orderParams OrderParams
-	err = c.ShouldBindJSON(&orderParams)
+	// 检查coupon
+	var coupon models.Coupon
+	if orderParams.CouponID != 0 {
+		log.Println("========orderParams couponid id is valid======")
+		coupon.ID = orderParams.CouponID
+		err = models.Find(&coupon, Query{})
+		if err != nil || coupon.State != "actived" {
+			apiHelpers.ResponseError(c, e.INVALID_PARAMS, "invalid coupon")
+			return
+		}
+		order.Coupon = &coupon
+	}
 
+	// 检查地址是否存在
 	if orderParams.AddressID != 0 {
 		address, _ := user.GetAddressByID(orderParams.AddressID)
 		order.AddressID = orderParams.AddressID
 		order.Address = &address
 	}
 
-	for index, _ := range order.OrderItems {
-		order.OrderItems[index].BeforeSave()
-	}
-
 	order.PreOrder()
-
-	apiHelpers.ResponseSuccess(c, order)
+	orderEntity := transferOrderToEntity(order)
+	// orderEntity.Coupons = order.AvaliableCoupons()
+	apiHelpers.ResponseSuccess(c, orderEntity)
 }
 
 // @Summary 创建订单
@@ -163,8 +190,29 @@ func CreateOrder(c *gin.Context) {
 			apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, "商品不存在或被下架")
 			return
 		}
-		orderItem := models.OrderItem{GoodsName: goods.Name, GoodsPrice: goods.Price, LinePrice: goods.LinePrice, GoodsWeight: goods.Weight, GoodsAttr: goods.PropertiesText, TotalNum: item.Quantity, DeductStockType: 10, GoodsID: item.GoodsID, Cover: goods.Image}
+		orderItem := models.OrderItem{
+			GoodsName:       goods.Name,
+			GoodsPrice:      goods.Price,
+			LinePrice:       goods.LinePrice,
+			GoodsWeight:     goods.Weight,
+			GoodsAttr:       goods.PropertiesText,
+			TotalNum:        item.Quantity,
+			DeductStockType: 10,
+			GoodsID:         item.GoodsID,
+			Cover:           goods.Image,
+		}
 		orderItems = append(orderItems, orderItem)
+	}
+
+	// 检查coupon
+	var coupon models.Coupon
+	if orderParams.CouponID != 0 {
+		coupon.ID = orderParams.CouponID
+		err = models.Find(&coupon, Query{})
+		if err != nil || coupon.State != "actived" {
+			apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, "invalid coupon")
+			return
+		}
 	}
 
 	order := models.Order{
@@ -175,6 +223,7 @@ func CreateOrder(c *gin.Context) {
 		ReceiverProperties: receiverProperties,
 		BuyerMessage:       orderParams.BuyerMessage,
 		OrderItems:         orderItems,
+		CouponID:           orderParams.CouponID,
 	}
 
 	err = models.Create(&order)
@@ -205,7 +254,7 @@ func RequestPayment(c *gin.Context) {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, "订单不存在或已过期")
 		return
 	}
-	paymentParams, err := order.RequestPayment()
+	paymentParams, err := order.RequestPayment(c.ClientIP())
 	if err != nil {
 		apiHelpers.ResponseError(c, e.WECHAT_PAY_ERROR, err.Error())
 		return
@@ -302,7 +351,7 @@ func transferOrdersToEntity(orders []models.Order) (orderEntities []entities.Ord
 	return
 }
 
-func transferOrderToEntity(order models.Order) (orderEntity entities.OrderEntity) {
+func transferOrderToEntity(order models.Order) (orderEntity entities.OrderDetailEntity) {
 	copier.Copy(&orderEntity, &order)
 	return
 }

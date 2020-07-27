@@ -172,6 +172,62 @@ definitions:
       total:
         type: integer
     type: object
+  v1.Config:
+    properties:
+      date_type:
+        type: string
+      end_at:
+        type: string
+      fix_term:
+        type: integer
+      min_amount:
+        type: number
+      percentage:
+        type: integer
+      reduce_amount:
+        type: number
+      resource_type:
+        type: string
+      resources:
+        items:
+          type: integer
+        type: array
+      start_at:
+        type: string
+    required:
+    - date_type
+    - min_amount
+    type: object
+  v1.CouponTemplateParams:
+    properties:
+      catch_limit:
+        type: integer
+      code:
+        type: string
+      configs:
+        $ref: '#/definitions/v1.Config'
+        type: object
+      creator:
+        type: string
+      end_at:
+        type: string
+      kind:
+        type: string
+      name:
+        type: string
+      start_at:
+        type: string
+      stock:
+        type: integer
+    required:
+    - catch_limit
+    - configs
+    - end_at
+    - kind
+    - name
+    - start_at
+    - stock
+    type: object
   v1.DeliveryParams:
     properties:
       delivery_rules:
@@ -288,10 +344,10 @@ definitions:
         type: integer
       buyer_message:
         type: string
+      coupon_id:
+        type: integer
       express_id:
         type: integer
-    required:
-    - address_id
     type: object
   v1.PolicyRuleParams:
     properties:
@@ -430,6 +486,19 @@ definitions:
       total:
         type: integer
     type: object
+  v1.QueryCouponTemplateParams:
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      q[name_cont]:
+        type: string
+      sort:
+        type: string
+      total:
+        type: integer
+    type: object
   v1.QueryDeliveryParams:
     properties:
       page:
@@ -479,18 +548,8 @@ definitions:
         type: integer
       per_page:
         type: integer
-      q[created_at_gteq]:
+      q[state]:
         type: string
-      q[created_at_lteq]:
-        type: string
-      q[order_no_cont]:
-        type: string
-      q[state_in]:
-        items:
-          type: string
-        type: array
-      q[user_id_eq]:
-        type: integer
       sort:
         type: string
       total:
@@ -655,15 +714,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: sort
-        type: string
-      - in: query
-        name: total
-        type: integer
-      - in: query
-        name: q[email_cont]
-        type: string
-      - in: query
         name: q[created_at_gteq]
         type: string
       - in: query
@@ -675,11 +725,20 @@ paths:
         name: q[status_in]
         type: array
       - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
         name: page
         type: integer
       - in: query
-        name: per_page
-        type: integer
+        name: q[email_cont]
+        type: string
       produces:
       - application/json
       responses:
@@ -847,18 +906,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: total
-        type: integer
-      - in: query
-        name: q[name]
-        type: string
-      - in: query
-        name: q[created_at_gteq]
-        type: string
-      - in: query
-        name: q[created_at_lteq]
-        type: string
-      - in: query
         name: q[parent_id_eq]
         type: integer
       - in: query
@@ -869,6 +916,18 @@ paths:
         type: integer
       - in: query
         name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
+        name: q[name]
+        type: string
+      - in: query
+        name: q[created_at_gteq]
+        type: string
+      - in: query
+        name: q[created_at_lteq]
         type: string
       produces:
       - application/json
@@ -984,6 +1043,145 @@ paths:
       summary: 根据省ID获取城市列表信息
       tags:
       - 后台管理地址
+  /admin_api/v1/coupon_templates:
+    get:
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: q[name_cont]
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 优惠券模板列表
+      tags:
+      - 后台优惠券模板管理
+    post:
+      parameters:
+      - description: coupon template params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CouponTemplateParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加优惠券模板
+      tags:
+      - 后台优惠券模板管理
+  /admin_api/v1/coupon_templates/{id}:
+    delete:
+      parameters:
+      - description: template id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除优惠券模板
+      tags:
+      - 后台优惠券模板管理
+    get:
+      parameters:
+      - description: template id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 优惠券模板详情
+      tags:
+      - 后台优惠券模板管理
+    put:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: template params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CouponTemplateParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新优惠券模板
+      tags:
+      - 后台优惠券模板管理
+  /admin_api/v1/coupon_templates/{id}/generate_coupons:
+    post:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: quantity
+        in: query
+        name: qty
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 创建优惠券
+      tags:
+      - 后台优惠券模板管理
   /admin_api/v1/dashboard:
     get:
       produces:
@@ -1000,17 +1198,17 @@ paths:
     get:
       parameters:
       - in: query
-        name: per_page
-        type: integer
-      - in: query
-        name: sort
-        type: string
-      - in: query
         name: total
         type: integer
       - in: query
         name: page
         type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
       - in: query
         name: q[name_cont]
         type: string
@@ -1123,14 +1321,14 @@ paths:
         name: total
         type: integer
       - in: query
+        name: page
+        type: integer
+      - in: query
         name: q[name_cont]
         type: string
       - in: query
         name: q[code_cont]
         type: string
-      - in: query
-        name: page
-        type: integer
       produces:
       - application/json
       responses:
@@ -1243,11 +1441,8 @@ paths:
     get:
       parameters:
       - in: query
-        name: per_page
+        name: total
         type: integer
-      - in: query
-        name: sort
-        type: string
       - in: query
         name: q[express_company_cont]
         type: string
@@ -1255,11 +1450,14 @@ paths:
         name: q[express_no_cont]
         type: string
       - in: query
-        name: total
-        type: integer
-      - in: query
         name: page
         type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
       produces:
       - application/json
       responses:
@@ -1296,34 +1494,20 @@ paths:
     get:
       parameters:
       - in: query
-        name: q[order_no_cont]
-        type: string
-      - in: query
-        name: q[created_at_gteq]
-        type: string
+        name: page
+        type: integer
       - in: query
         name: per_page
-        type: integer
-      - in: query
-        name: total
-        type: integer
-      - in: query
-        name: q[user_id_eq]
-        type: integer
-      - in: query
-        name: q[created_at_lteq]
-        type: string
-      - in: query
-        name: page
         type: integer
       - in: query
         name: sort
         type: string
       - in: query
-        items:
-          type: string
-        name: q[state_in]
-        type: array
+        name: total
+        type: integer
+      - in: query
+        name: q[state]
+        type: string
       produces:
       - application/json
       responses:
@@ -1420,17 +1604,17 @@ paths:
     get:
       parameters:
       - in: query
-        name: per_page
-        type: integer
-      - in: query
-        name: sort
-        type: string
-      - in: query
         name: total
         type: integer
       - in: query
         name: page
         type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
       - in: query
         name: q[name]
         type: string
@@ -1540,6 +1724,12 @@ paths:
     get:
       parameters:
       - in: query
+        name: total
+        type: integer
+      - in: query
+        name: q[is_online_eq]
+        type: boolean
+      - in: query
         name: q[name_cont]
         type: string
       - in: query
@@ -1549,20 +1739,14 @@ paths:
         name: q[price_lteq]
         type: number
       - in: query
-        name: sort
-        type: string
-      - in: query
-        name: total
-        type: integer
-      - in: query
         name: page
         type: integer
       - in: query
         name: per_page
         type: integer
       - in: query
-        name: q[is_online_eq]
-        type: boolean
+        name: sort
+        type: string
       produces:
       - application/json
       responses:
@@ -2002,11 +2186,14 @@ paths:
     get:
       parameters:
       - in: query
-        name: q[created_at_lteq]
+        name: q[username_cont]
         type: string
       - in: query
-        name: per_page
-        type: integer
+        name: q[created_at_gteq]
+        type: string
+      - in: query
+        name: q[created_at_lteq]
+        type: string
       - in: query
         name: sort
         type: string
@@ -2017,13 +2204,10 @@ paths:
         name: page
         type: integer
       - in: query
+        name: per_page
+        type: integer
+      - in: query
         name: q[open_id_eq]
-        type: string
-      - in: query
-        name: q[username_cont]
-        type: string
-      - in: query
-        name: q[created_at_gteq]
         type: string
       produces:
       - application/json
@@ -2450,6 +2634,12 @@ paths:
     get:
       parameters:
       - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
         name: sort
         type: string
       - in: query
@@ -2458,12 +2648,6 @@ paths:
       - in: query
         name: cagegory_id
         type: string
-      - in: query
-        name: page
-        type: integer
-      - in: query
-        name: per_page
-        type: integer
       produces:
       - application/json
       responses:
@@ -2474,12 +2658,17 @@ paths:
       summary: 获取分类商品列表
       tags:
       - 分类
-  /app_api/v1/cities:
+  /app_api/v1/coupons:
     get:
       parameters:
-      - description: province id
+      - default: actived
+        description: 优惠券状态
+        enum:
+        - actived
+        - expired
+        - used
         in: query
-        name: province_id
+        name: status
         required: true
         type: string
       produces:
@@ -2489,26 +2678,34 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/apiHelpers.Response'
-      summary: 根据省ID获取城市列表信息
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户的优惠券
       tags:
-      - 地址
+      - 优惠券
+  /app_api/v1/coupons/receive:
+    post:
+      parameters:
+      - description: 优惠券模板code
+        in: query
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 领取优惠券
+      tags:
+      - 优惠券
   /app_api/v1/orders:
     get:
       parameters:
-      - in: query
-        items:
-          type: string
-        name: q[state_in]
-        type: array
-      - in: query
-        name: q[created_at_gteq]
-        type: string
-      - in: query
-        name: q[created_at_lteq]
-        type: string
-      - in: query
-        name: page
-        type: integer
       - in: query
         name: sort
         type: string
@@ -2516,13 +2713,13 @@ paths:
         name: total
         type: integer
       - in: query
+        name: page
+        type: integer
+      - in: query
         name: per_page
         type: integer
       - in: query
-        name: q[user_id_eq]
-        type: integer
-      - in: query
-        name: q[order_no_cont]
+        name: q[state]
         type: string
       produces:
       - application/json
@@ -2686,9 +2883,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: sort
-        type: string
-      - in: query
         name: total
         type: integer
       - in: query
@@ -2699,6 +2893,9 @@ paths:
         type: integer
       - in: query
         name: q[name_cont]
+        type: string
+      - in: query
+        name: sort
         type: string
       produces:
       - application/json
@@ -2738,24 +2935,6 @@ paths:
           schema:
             $ref: '#/definitions/apiHelpers.Response'
       summary: 获取所有的省份信息
-      tags:
-      - 地址
-  /app_api/v1/regions:
-    get:
-      parameters:
-      - description: city id
-        in: query
-        name: city_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/apiHelpers.Response'
-      summary: 根据市ID获取下级城市列表信息
       tags:
       - 地址
   /app_api/v1/shopping_cart/add:
@@ -2877,81 +3056,10 @@ paths:
       summary: 取消购物车项
       tags:
       - 购物车
-  /app_api/v1/tags:
+  /app_api/v1/test/coupons/{id}:
     get:
       parameters:
-      - description: Name
-        in: query
-        name: name
-        type: string
-      - description: State
-        in: query
-        name: state
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"code":200,"data":{"list": [{"id": 1}], "total": 6},"msg":"ok"}'
-          schema:
-            type: json
-      summary: 新增文章标签
-      tags:
-      - 标签
-    post:
-      parameters:
-      - description: Name
-        in: query
-        name: name
-        required: true
-        type: string
-      - description: State
-        in: query
-        name: state
-        type: integer
-      - description: CreatedBy
-        in: query
-        name: created_by
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"code":200,"data":{},"msg":"ok"}'
-          schema:
-            type: string
-      summary: 新增文章标签
-      tags:
-      - 标签
-    put:
-      parameters:
-      - description: Name
-        in: query
-        name: name
-        required: true
-        type: string
-      - description: State
-        in: query
-        name: state
-        type: integer
-      - description: modified_by
-        in: query
-        name: created_by
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"code":200,"data":{},"msg":"ok"}'
-          schema:
-            type: string
-      summary: 新增文章标签
-      tags:
-      - 标签
-  /app_api/v1/tags/{id}:
-    delete:
-      parameters:
-      - description: id
+      - description: coupon id
         in: path
         name: id
         required: true
@@ -2960,29 +3068,12 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"code":200,"data":{"list": [{"id": 1}], "total": 6},"msg":"ok"}'
+          description: OK
           schema:
-            type: json
-      summary: 删除标签
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: test
       tags:
-      - 标签
-    get:
-      parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"code":200,"data":{},"msg":"ok"}'
-          schema:
-            type: string
-      summary: 通过id获取标签
-      tags:
-      - 标签
+      - test
   /app_api/v1/user/auth:
     post:
       consumes:

@@ -118,7 +118,7 @@ func PayOrder(c *gin.Context) {
 	var order models.Order
 	order.ID, _ = strconv.Atoi(c.Param("id"))
 
-	err := models.Find(&order, Query{})
+	err := models.Find(&order, Query{Preloads: []string{"Coupons"}})
 	if err != nil {
 		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return

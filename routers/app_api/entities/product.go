@@ -16,7 +16,7 @@ type ProductDetailEntity struct {
 	SalesInitial    int                    `json:"sales_initial"`
 	SalesActual     int                    `json:"sales_actual"`
 	Position        int                    `json:"position"`
-	Price           float32                `json:"price"`
+	Price           float64                `json:"price"`
 	IsOnline        bool                   `json:"is_online"`
 	DeletedAt       *time.Time             `json:"deleted_at"`
 	DeliveryID      int                    `json:"delivery_id"`
@@ -35,7 +35,7 @@ type ProductEntity struct {
 	SalesInitial int        `json:"sales_initial"`
 	SalesActual  int        `json:"sales_actual"`
 	Position     int        `json:"position"`
-	Price        float32    `json:"price"`
+	Price        float64    `json:"price"`
 	IsOnline     bool       `json:"is_online"`
 	DeletedAt    *time.Time `json:"deleted_at"`
 	CategoryID   int        `json:"category_id"`

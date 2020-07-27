@@ -10,10 +10,10 @@ type DeliveryRule struct {
 	BaseModel
 
 	WxappId       string    `gorm:"type: varchar(50); not null" json:"wxapp_id"`
-	First         float32   `gorm:"type: decimal(10,2); " json:"first"` // 首件/首重
-	FirstFee      float32   `gorm:"type: decimal(10,2); " json:"first_fee"`
-	Additional    float32   `gorm:"type: decimal(10,2);" json:"additional"`     // 续件/续重
-	AdditionalFee float32   `gorm:"type: decimal(10,2);" json:"additional_fee"` // 续件/续重
+	First         float64   `gorm:"type: decimal(10,2); " json:"first"` // 首件/首重
+	FirstFee      float64   `gorm:"type: decimal(10,2); " json:"first_fee"`
+	Additional    float64   `gorm:"type: decimal(10,2);" json:"additional"`     // 续件/续重
+	AdditionalFee float64   `gorm:"type: decimal(10,2);" json:"additional_fee"` // 续件/续重
 	Region        JSON      `sql:"type: json;" json:"region,omitempty"`         // 可配送区域(省id集)
 	DeliveryID    int       `gorm:"type: int;" json:"delivery_id"`
 	Delivery      *Delivery `json:"delivery,omitempty"`

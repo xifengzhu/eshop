@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gocraft/work"
 	"github.com/jinzhu/gorm"
@@ -19,23 +20,29 @@ import (
 type Order struct {
 	BaseModel
 
-	WxappId            string      `gorm:"type: varchar(50); not null" json:"wxapp_id"`
-	OrderNo            string      `gorm:"type: varchar(50); not null; unique_index" json:"order_no"`
-	AddressID          int         `gorm:"-" json:"address_id"`
-	ReceiverProperties string      `gorm:"type: varchar(250); " json:"receiver_properties"`
-	OuterPayId         string      `gorm:"type: varchar(60); " json:"outer_pay_id"`
-	PayAt              *time.Time  `gorm:"type: datetime; " json:"pay_at"`
-	ExpressID          int         `gorm:"type: int;" json:"express_id"`
-	ExpressFee         float32     `gorm:"type: decimal(10,2);" json:"express_fee"`
-	ProductAmount      float32     `gorm:"type: decimal(10,2);" json:"product_amount"`
-	PayAmount          float32     `gorm:"type: decimal(10,2);" json:"pay_amount"`
-	UserID             int         `gorm:"type: int; " json:"user_id"`
-	BuyerMessage       string      `gorm:"type: varchar(120); " json:"buyer_message"`
-	OrderItems         []OrderItem `json:"order_items"`
-	User               *User       `json:"user"`
-	Express            *Express    `json:"express,omitempty"`
-	Address            *Address    `json:"address,omitempty"`
-	LatestPaymentTime  *time.Time  `gorm:"type: datetime;" json:"latest_payment_time"`
+	WxappId            string     `gorm:"type: varchar(50); not null" json:"wxapp_id"`
+	OrderNo            string     `gorm:"type: varchar(50); not null; unique_index" json:"order_no"`
+	AddressID          int        `gorm:"-" json:"address_id"`
+	ReceiverProperties string     `gorm:"type: varchar(250); " json:"receiver_properties"`
+	OuterPayId         string     `gorm:"type: varchar(60); " json:"outer_pay_id"`
+	PayAt              *time.Time `gorm:"type: datetime; " json:"pay_at"`
+	ExpressID          int        `gorm:"type: int;" json:"express_id"`
+	ExpressFee         float64    `gorm:"type: decimal(10,2);" json:"express_fee"`
+	ProductAmount      float64    `gorm:"type: decimal(10,2);" json:"product_amount"`
+	PayAmount          float64    `gorm:"type: decimal(10,2);" json:"pay_amount"`
+	AdjustmentAmount   float64    `gorm:"type: decimal(10,2);" json:"adjustment_amount"`
+	UserID             int        `gorm:"type: int; " json:"user_id"`
+	CouponID           int        `gorm:"type: int; " json:"coupon_id"`
+	BuyerMessage       string     `gorm:"type: varchar(120); " json:"buyer_message"`
+
+	OrderItems        []OrderItem   `json:"order_items"`
+	User              *User         `json:"user"`
+	Coupon            *Coupon       `json:"coupon"`
+	Express           *Express      `json:"express,omitempty"`
+	Address           *Address      `json:"address,omitempty"`
+	LatestPaymentTime *time.Time    `gorm:"type: datetime;" json:"latest_payment_time"`
+	AllAdjustments    []*Adjustment `json:"all_adjustments,omitempty"`
+	DirectAdjustments []*Adjustment `gorm:"direct_polymorphic:Target;" json:"adjustments,omitempty"`
 	transition.Transition
 }
 
@@ -123,30 +130,22 @@ func StateScope(status []string) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-// DB
-func (order *Order) Create() (err error) {
-	err = db.Set("gorm:save_associations", true).Create(&order).Error
-	if err != nil {
-		return
-	}
-	db.Set("gorm:auto_preload", true).Find(&order)
-	return
-}
-
 // Callbacks
 func (order *Order) BeforeCreate() (err error) {
 	fmt.Println("=======order before create=============")
 	order.setOrderNo()    // 生成订单号
 	order.setOrderState() // 设置默认订单状态
+	order.setExpressFee()
+	order.setProductAmount()
+	order.applyCoupon()
+	order.setPayAmount()
 	return
 }
 
 func (order *Order) AfterCreate(tx *gorm.DB) (err error) {
-	fmt.Println("=======order AfterCreate =============")
-	order.setExpressFee(tx)
-	order.setProductAmount(tx)
-	order.setPayAmount(tx)
+	fmt.Println("=======order AfterCreate =============", order.PayAmount)
 	order.setLatestPaymentTime(tx)
+	order.lockCoupon(tx)
 	order.enqueueCloseOrderJob()
 	// order.removeFromCartItem()
 	err = order.reductStock() // if reduceType == 0
@@ -175,9 +174,55 @@ func (order *Order) removeFromCartItem() {
 }
 
 func (order *Order) PreOrder() {
-	order.caculateExpressFee()
-	order.caculateProductAmount()
-	order.caculatePayAmount()
+	order.setExpressFee()
+	order.setProductAmount()
+	order.applyCoupon()
+	order.setPayAmount()
+}
+
+func (order *Order) prepareCouponOrder() (corder CouponOrder) {
+	var coupon Coupon
+	db.First(&coupon, order.CouponID)
+	order.Coupon = &coupon
+	porder := CouponOrder{
+		ProductAmount: order.ProductAmount,
+		FreightFee:    order.ExpressFee,
+	}
+	for _, item := range order.OrderItems {
+		a := CouponOrderItem{
+			ProductAmount: item.TotalAmount,
+			ResourceID:    item.GoodsID,
+			ResourceType:  "goods",
+		}
+		porder.Items = append(porder.Items, a)
+	}
+	corder = coupon.Apply(porder)
+	return
+}
+
+func (order *Order) applyCoupon() {
+	log.Println("=======apply coupon =====", order.CouponID)
+	if order.CouponID != 0 {
+		corder := order.prepareCouponOrder()
+		for _, oi := range corder.Items {
+			for i, item := range order.OrderItems {
+				if oi.ResourceID == item.GoodsID {
+					adjustment := &Adjustment{
+						Amount:     oi.ReduceAmount * -1,
+						Label:      fmt.Sprintf("Coupon: %s", order.Coupon.Name),
+						SourceType: "Coupon",
+						SourceID:   order.CouponID,
+					}
+					order.AllAdjustments = append(order.AllAdjustments, adjustment)
+					order.OrderItems[i].Adjustments = append(order.OrderItems[i].Adjustments, adjustment)
+					order.OrderItems[i].AdjustmentAmount += adjustment.Amount
+					order.OrderItems[i].TotalAmount += adjustment.Amount
+					order.AdjustmentAmount += adjustment.Amount
+					break
+				}
+			}
+		}
+	}
 }
 
 // Private method
@@ -196,6 +241,18 @@ func (order *Order) setLatestPaymentTime(tx *gorm.DB) {
 	return
 }
 
+func (order *Order) lockCoupon(tx *gorm.DB) (err error) {
+	log.Println("========lock coupon id ======", order.CouponID)
+	if order.CouponID != 0 {
+		if order.Coupon.State != "actived" {
+			err = errors.New("invalid coupon")
+		} else {
+			tx.Model(order.Coupon).Updates(Coupon{State: "lock"})
+		}
+	}
+	return
+}
+
 func (order *Order) setOrderState() {
 	order.State = "wait_buyer_pay"
 }
@@ -209,32 +266,48 @@ func (order *Order) generateNo() {
 	order.OrderNo = orderNo
 }
 
-// 计算支付金额
-func (order *Order) caculatePayAmount() (payAmount float32) {
-	payAmount = order.ExpressFee + order.ProductAmount
+func (order *Order) setPayAmount() {
+	payAmount := order.ExpressFee + order.ProductAmount + order.AdjustmentAmount
 	order.PayAmount = payAmount
-	return payAmount
-}
-
-func (order *Order) setPayAmount(tx *gorm.DB) {
-	totalAmount := order.caculatePayAmount()
-	tx.Model(order).Updates(Order{PayAmount: totalAmount})
-	return
 }
 
 // 计算商品金额
-func (order *Order) caculateProductAmount() float32 {
-	var productAmount float32
-	for _, orderItem := range order.OrderItems {
-		productAmount += orderItem.TotalAmount
+func (order *Order) setProductAmount() {
+	var productAmount float64
+	for i, _ := range order.OrderItems {
+		order.OrderItems[i].CaculateTotalAmount()
+		productAmount += order.OrderItems[i].TotalAmount
 	}
 	order.ProductAmount = productAmount
-	return productAmount
 }
 
-func (order *Order) setProductAmount(tx *gorm.DB) {
-	productAmount := order.caculateProductAmount()
-	tx.Model(order).Updates(Order{ProductAmount: productAmount})
+// 可用的优惠券列表
+func (order *Order) AvaliableCoupons() []Coupon {
+	var avaliableCoupons []Coupon
+	corder := order.prepareCouponOrder()
+	coupons := order.User.GetActivedCoupons()
+	for _, coupon := range coupons {
+		result := coupon.Apply(corder)
+		if result.ReduceAmount > 0 || result.ReduceFreight > 0 {
+			avaliableCoupons = append(avaliableCoupons, coupon)
+		}
+	}
+	return avaliableCoupons
+}
+
+// 找优惠力度最大的优惠券
+func (order *Order) BiggestDiscountCoupons() (maxDiscountCoupon Coupon) {
+	var maxReduceAmount float64
+	corder := order.prepareCouponOrder()
+	coupons := order.User.GetActivedCoupons()
+	for _, coupon := range coupons {
+		result := coupon.Apply(corder)
+		reduceTotal := result.ReduceAmount + result.ReduceFreight
+		if reduceTotal > maxReduceAmount {
+			maxDiscountCoupon = coupon
+			maxReduceAmount = reduceTotal
+		}
+	}
 	return
 }
 
@@ -252,22 +325,13 @@ func (order *Order) setProductAmount(tx *gorm.DB) {
 
 // case 3
 // 当我同时购买2件商品A和2kg商品D，商品A按照件数计算运费，商品D按照重量计算运费，则淘宝会比较这两款商品中首件（首公斤）的运费，选择首件（首公斤）运费最大的费用作为首件（首公斤）费用（商品D首公斤运费12元），然后忽略商品A的首件运费，商品A全部按照该商品的续件费用进行计算运费。系统计算的运费应该为： 12元+5元+3元+3元=23元
-func (order *Order) caculateExpressFee() float32 {
-	var expressFee float32
+func (order *Order) setExpressFee() {
+	var expressFee float64
 	eligible := order.eligibleShopFreeFreightSetting()
-	if eligible {
-		expressFee = 0
-	} else {
+	if !eligible {
 		expressFee = order.freightWithDeliveryRule()
 	}
 	order.ExpressFee = expressFee
-	return expressFee
-}
-
-func (order *Order) setExpressFee(tx *gorm.DB) {
-	expressFee := order.caculateExpressFee()
-	tx.Model(order).Update("express_fee", expressFee)
-	return
 }
 
 // TODO:
@@ -277,8 +341,8 @@ func (order *Order) eligibleShopFreeFreightSetting() bool {
 	return order.ProductAmount >= setting.FreeFreightAmount
 }
 
-func (order *Order) freightWithDeliveryRule() float32 {
-	var expressFee float32
+func (order *Order) freightWithDeliveryRule() float64 {
+	var expressFee float64
 	var rules []DeliveryRule
 	m := make(map[int][]OrderItem)
 	for _, orderItem := range order.OrderItems {
@@ -295,7 +359,7 @@ func (order *Order) freightWithDeliveryRule() float32 {
 	firstRule := findMaxRuleFirst(rules)
 	// 首重/首件 费用
 	expressFee += firstRule.FirstFee
-	var additionalAmount float32
+	var additionalAmount float64
 	for ruleID, orderItems := range m {
 		var currentRule DeliveryRule
 		for _, rule := range rules {
@@ -315,20 +379,20 @@ func (order *Order) freightWithDeliveryRule() float32 {
 			} else {
 				additionNum = totalNum
 			}
-			additionalAmount = currentRule.AdditionalFee * float32(math.Ceil(float64(additionNum)/float64(currentRule.Additional)))
+			additionalAmount = currentRule.AdditionalFee * float64(math.Ceil(float64(additionNum)/float64(currentRule.Additional)))
 		} else {
-			var totalWeight float32
+			var totalWeight float64
 			for _, orderItem := range orderItems {
 				totalWeight += orderItem.GoodsWeight
 			}
-			var additionWeight float32
+			var additionWeight float64
 			if currentRule.ID == firstRule.ID {
 				additionWeight = totalWeight - firstRule.First
 			} else {
 				additionWeight = totalWeight
 			}
 			if currentRule.Additional != 0 {
-				additionalAmount = currentRule.AdditionalFee * float32(math.Ceil(float64(additionWeight)/float64(currentRule.Additional)))
+				additionalAmount = currentRule.AdditionalFee * float64(math.Ceil(float64(additionWeight)/float64(currentRule.Additional)))
 			} else {
 				additionalAmount = 0
 			}
@@ -357,12 +421,11 @@ func (order Order) OrderNoIsTaken() bool {
 }
 
 func (order Order) enqueueCloseOrderJob() {
-	enqueuer := work.NewEnqueuer(setting.RedisNamespace, config.RedisPool)
-	enqueuer.EnqueueIn("close_order", 60*15, work.Q{"order_id": order.ID})
+	config.JobEnqueuer.EnqueueIn("close_order", 60*15, work.Q{"order_id": order.ID})
 }
 
-func (order Order) RequestPayment() (map[string]string, error) {
-	payment, err := order.UnifiedOrder()
+func (order Order) RequestPayment(ip string) (map[string]string, error) {
+	payment, err := order.UnifiedOrder(ip)
 	timastamp := strconv.FormatInt(time.Now().Unix(), 10)
 	signParams := make(wxpay.Params)
 	signParams.SetString("package", "prepay_id="+payment["prepay_id"]).
@@ -384,12 +447,12 @@ func (order Order) RequestPayment() (map[string]string, error) {
 	return paymentParams, err
 }
 
-func (order Order) UnifiedOrder() (map[string]string, error) {
+func (order Order) UnifiedOrder(ip string) (map[string]string, error) {
 	params := make(wxpay.Params)
 	params.SetString("body", "eshop 测试订单").
 		SetString("out_trade_no", order.OrderNo).
 		SetInt64("total_fee", int64(order.PayAmount*100)).
-		SetString("spbill_create_ip", "127.0.0.1").
+		SetString("spbill_create_ip", ip).
 		SetString("notify_url", "http://notify.objcoding.com/notify").
 		SetString("trade_type", "JSAPI").
 		SetString("openid", order.User.OpenId)
@@ -432,6 +495,7 @@ func (order Order) Pay() (err error) {
 		tx.Rollback()
 		return err
 	}
+	tx.Model(order.Coupon).Updates(Coupon{State: "used"})
 	// Or commit the transaction
 	tx.Commit()
 	return

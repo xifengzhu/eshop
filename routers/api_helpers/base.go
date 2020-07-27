@@ -34,6 +34,7 @@ func init() {
 	zh := zh.New()
 	Translator = ut.New(zh)
 	Validate = validator.New()
+	RegisterCustomValidations()
 }
 
 func ValidateParams(c *gin.Context, params interface{}) (err error) {
@@ -46,7 +47,7 @@ func ValidateParams(c *gin.Context, params interface{}) (err error) {
 		en_translations.RegisterDefaultTranslations(Validate, translator)
 	}
 
-	err = c.BindJSON(params)
+	err = c.ShouldBindJSON(params)
 	if err != nil {
 		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
@@ -68,7 +69,7 @@ func ValidateParams(c *gin.Context, params interface{}) (err error) {
 func SetDefaultPagination(c *gin.Context) (pagination *utils.Pagination) {
 	perPage := com.StrTo(c.DefaultQuery("per_page", "10")).MustInt()
 	page := com.StrTo(c.DefaultQuery("page", "1")).MustInt()
-	Sort := c.DefaultQuery("order_by", "id desc")
+	Sort := c.DefaultQuery("order_by", "id asc")
 	pagination = &utils.Pagination{Page: page, PerPage: perPage, Sort: Sort}
 	return
 }
