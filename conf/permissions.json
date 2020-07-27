@@ -23,7 +23,7 @@
   "categories.create",
   "property_names.create",
   "product_groups.create",
-  "admin_users.create"
+  "admin_users.create",
   "users.create",
   "users.update",
   "orders.update",
@@ -37,7 +37,7 @@
   "categories.update",
   "property_names.update",
   "product_groups.update",
-  "admin_users.update"
+  "admin_users.update",
   "users.update",
   "users.destroy",
   "orders.destroy",
@@ -51,6 +51,6 @@
   "categories.destroy",
   "property_names.destroy",
   "product_groups.destroy",
-  "admin_users.destroy"
+  "admin_users.destroy",
   "users.destroy"
 ]
