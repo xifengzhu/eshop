@@ -43,7 +43,7 @@ func AddPermissionToRole(c *gin.Context) {
 	}
 
 	var params AddPermisisonsParams
-	if err = apiHelpers.ValidateParams(c, &params); err != nil {
+	if err = apiHelpers.ValidateParams(c, &params, "json"); err != nil {
 		return
 	}
 

@@ -36,7 +36,7 @@ type QueryCategoryParams struct {
 func AddCategory(c *gin.Context) {
 	var err error
 	var categoryParams CategoryParams
-	if err := apiHelpers.ValidateParams(c, &categoryParams); err != nil {
+	if err := apiHelpers.ValidateParams(c, &categoryParams, "json"); err != nil {
 		return
 	}
 
@@ -130,7 +130,7 @@ func UpdateCategory(c *gin.Context) {
 	var err error
 	var categoryParams CategoryParams
 
-	if err := apiHelpers.ValidateParams(c, &categoryParams); err != nil {
+	if err := apiHelpers.ValidateParams(c, &categoryParams, "json"); err != nil {
 		return
 	}
 

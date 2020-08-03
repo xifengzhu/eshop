@@ -40,7 +40,7 @@ func AddAddress(c *gin.Context) {
 	var addressParams AddressParams
 	addressParams.UserID = user.ID
 
-	if err := apiHelpers.ValidateParams(c, &addressParams); err != nil {
+	if err := apiHelpers.ValidateParams(c, &addressParams, "json"); err != nil {
 		return
 	}
 
@@ -77,7 +77,7 @@ func EditAddress(c *gin.Context) {
 	var addressParams AddressParams
 	addressParams.UserID = user.ID
 
-	if err := apiHelpers.ValidateParams(c, &addressParams); err != nil {
+	if err := apiHelpers.ValidateParams(c, &addressParams, "json"); err != nil {
 		return
 	}
 

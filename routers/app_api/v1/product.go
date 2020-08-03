@@ -1,7 +1,6 @@
 package v1
 
 import (
-	// "errors"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
@@ -14,7 +13,8 @@ import (
 
 type ProductQueryParams struct {
 	utils.Pagination
-	Name string `json:"q[name_cont]"`
+	CategoryName string `form:"category_name"`
+	Keyword      string `form:"keyword" validate:"required_without=CategoryName"`
 }
 
 // @Summary 获取产品列表
@@ -28,15 +28,43 @@ func GetProducts(c *gin.Context) {
 	pagination := apiHelpers.SetDefaultPagination(c)
 
 	var model models.Product
-	products := &[]models.Product{}
+	products := []models.Product{}
 
-	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q")}, &products)
+	var err error
+	var productParams ProductQueryParams
+	if err = apiHelpers.ValidateParams(c, &productParams, "query"); err != nil {
+		return
+	}
 
-	result := transferProductToEntity(*products)
+	categoryName := productParams.CategoryName
+	if categoryName != "" {
+		var category models.Category
+
+		parmMap := map[string]interface{}{"name": categoryName}
+		models.Where(Query{Conditions: parmMap}).Find(&category)
+		products = category.GetCategoryProducts(pagination)
+	} else {
+		parmMap := map[string]string{"name_cont": productParams.Keyword}
+		models.Search(&model, &Search{Pagination: pagination, Conditions: parmMap}, &products)
+	}
+
+	result := transferProductToEntity(products)
 	response := apiHelpers.Collection{Pagination: pagination, List: result}
 
 	apiHelpers.ResponseSuccess(c, response)
 
+}
+
+// @Summary 获取推荐列表
+// @Produce  json
+// @Tags 产品
+// @Success 200 {object} apiHelpers.Response
+// @Router /app_api/v1/recommend_products [get]
+func GetRecommendProducts(c *gin.Context) {
+	pagination := apiHelpers.SetDefaultPagination(c)
+	products := &[]models.Product{}
+	response := apiHelpers.Collection{Pagination: pagination, List: products}
+	apiHelpers.ResponseSuccess(c, response)
 }
 
 // @Summary 批量获取产品

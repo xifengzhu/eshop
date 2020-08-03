@@ -25,7 +25,7 @@ type WebPageParams struct {
 func AddWebPage(c *gin.Context) {
 	var err error
 	var wpParams WebPageParams
-	if err = apiHelpers.ValidateParams(c, &wpParams); err != nil {
+	if err = apiHelpers.ValidateParams(c, &wpParams, "json"); err != nil {
 		return
 	}
 
@@ -114,7 +114,7 @@ func UpdateWebPage(c *gin.Context) {
 	}
 	var err error
 	var webPageParams WebPageParams
-	if err := apiHelpers.ValidateParams(c, &webPageParams); err != nil {
+	if err := apiHelpers.ValidateParams(c, &webPageParams, "json"); err != nil {
 		return
 	}
 

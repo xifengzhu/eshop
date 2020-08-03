@@ -53,7 +53,7 @@ func EditUser(c *gin.Context) {
 	var userInfo UserInfo
 	currentUser, _ := c.Get("resource")
 	user := currentUser.(models.User)
-	if err := apiHelpers.ValidateParams(c, &userInfo); err != nil {
+	if err := apiHelpers.ValidateParams(c, &userInfo, "json"); err != nil {
 		return
 	}
 
@@ -79,7 +79,7 @@ func EditUser(c *gin.Context) {
 // @Router /app_api/v1/user/auth [post]
 func AuthWithWechat(c *gin.Context) {
 	var auth AuthParams
-	if err := apiHelpers.ValidateParams(c, &auth); err != nil {
+	if err := apiHelpers.ValidateParams(c, &auth, "json"); err != nil {
 		return
 	}
 

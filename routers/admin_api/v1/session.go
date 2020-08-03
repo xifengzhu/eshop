@@ -38,7 +38,7 @@ type ResetPasswordParams struct {
 func Login(c *gin.Context) {
 	var login LoginParams
 
-	if err := apiHelpers.ValidateParams(c, &login); err != nil {
+	if err := apiHelpers.ValidateParams(c, &login, "json"); err != nil {
 		return
 	}
 
@@ -83,7 +83,7 @@ func GetCurrentAdminUser(c *gin.Context) {
 // @Router /admin_api/v1/sessions/forget_password [post]
 func ForgetPassword(c *gin.Context) {
 	var resetParam ForgetPasswordParams
-	if err := apiHelpers.ValidateParams(c, &resetParam); err != nil {
+	if err := apiHelpers.ValidateParams(c, &resetParam, "json"); err != nil {
 		return
 	}
 

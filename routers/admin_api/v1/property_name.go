@@ -32,7 +32,7 @@ type QueryPropertyParams struct {
 func AddPropertyName(c *gin.Context) {
 	var err error
 	var pnp PropertyParams
-	if err = apiHelpers.ValidateParams(c, &pnp); err != nil {
+	if err = apiHelpers.ValidateParams(c, &pnp, "json"); err != nil {
 		return
 	}
 
@@ -125,7 +125,7 @@ func UpdatePropertyName(c *gin.Context) {
 	}
 	var err error
 	var propertyParams PropertyParams
-	if err = apiHelpers.ValidateParams(c, &propertyParams); err != nil {
+	if err = apiHelpers.ValidateParams(c, &propertyParams, "json"); err != nil {
 		return
 	}
 

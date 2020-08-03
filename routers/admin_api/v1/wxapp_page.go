@@ -28,7 +28,7 @@ type WxAppPageParams struct {
 func AddWxAppPage(c *gin.Context) {
 	var err error
 	var wpParams WxAppPageParams
-	if err = apiHelpers.ValidateParams(c, &wpParams); err != nil {
+	if err = apiHelpers.ValidateParams(c, &wpParams, "json"); err != nil {
 		return
 	}
 
@@ -118,7 +118,7 @@ func UpdateWxAppPage(c *gin.Context) {
 	}
 	var err error
 	var wxAppPageParams WxAppPageParams
-	if err = apiHelpers.ValidateParams(c, &wxAppPageParams); err != nil {
+	if err = apiHelpers.ValidateParams(c, &wxAppPageParams, "json"); err != nil {
 		return
 	}
 

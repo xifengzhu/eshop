@@ -26,7 +26,7 @@ type PropertyValueParams struct {
 func AddPropertyValue(c *gin.Context) {
 	var err error
 	var pvp PropertyValueParams
-	if err = apiHelpers.ValidateParams(c, &pvp); err != nil {
+	if err = apiHelpers.ValidateParams(c, &pvp, "json"); err != nil {
 		return
 	}
 

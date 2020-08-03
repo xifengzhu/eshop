@@ -44,7 +44,7 @@ type QueryDeliveryParams struct {
 func AddDelivery(c *gin.Context) {
 	var err error
 	var deliveryParams DeliveryParams
-	if err := apiHelpers.ValidateParams(c, &deliveryParams); err != nil {
+	if err := apiHelpers.ValidateParams(c, &deliveryParams, "json"); err != nil {
 		return
 	}
 
@@ -140,7 +140,7 @@ func UpdateDelivery(c *gin.Context) {
 	}
 	var err error
 	var deliveryParams DeliveryParams
-	if err := apiHelpers.ValidateParams(c, &deliveryParams); err != nil {
+	if err := apiHelpers.ValidateParams(c, &deliveryParams, "json"); err != nil {
 		return
 	}
 

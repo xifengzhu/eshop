@@ -52,7 +52,7 @@ type CouponTemplateParams struct {
 func AddCouponTemplate(c *gin.Context) {
 	var err error
 	var templateParams CouponTemplateParams
-	if err := apiHelpers.ValidateParams(c, &templateParams); err != nil {
+	if err := apiHelpers.ValidateParams(c, &templateParams, "json"); err != nil {
 		return
 	}
 
@@ -147,7 +147,7 @@ func UpdateCouponTemplate(c *gin.Context) {
 	}
 	var err error
 	var params CouponTemplateParams
-	if err = apiHelpers.ValidateParams(c, &params); err != nil {
+	if err = apiHelpers.ValidateParams(c, &params, "json"); err != nil {
 		return
 	}
 

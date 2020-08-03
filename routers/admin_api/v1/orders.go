@@ -49,7 +49,7 @@ func ShipOrder(c *gin.Context) {
 	}
 
 	var ship ShipOrderParams
-	if err = apiHelpers.ValidateParams(c, &ship); err != nil {
+	if err = apiHelpers.ValidateParams(c, &ship, "json"); err != nil {
 		return
 	}
 

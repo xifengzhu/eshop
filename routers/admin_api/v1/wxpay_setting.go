@@ -39,7 +39,7 @@ func GetWxpaySetting(c *gin.Context) {
 func UpdateWxpaySetting(c *gin.Context) {
 	var err error
 	var settingParams entities.WxpaySettingParams
-	if err := apiHelpers.ValidateParams(c, &settingParams); err != nil {
+	if err := apiHelpers.ValidateParams(c, &settingParams, "json"); err != nil {
 		return
 	}
 

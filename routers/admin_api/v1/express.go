@@ -31,7 +31,7 @@ type QueryExpressParams struct {
 func AddExpress(c *gin.Context) {
 	var err error
 	var expressParams ExpressParams
-	if err := apiHelpers.ValidateParams(c, &expressParams); err != nil {
+	if err := apiHelpers.ValidateParams(c, &expressParams, "json"); err != nil {
 		return
 	}
 
@@ -122,7 +122,7 @@ func UpdateExpress(c *gin.Context) {
 	}
 	var err error
 	var expressParams ExpressParams
-	if err = apiHelpers.ValidateParams(c, &expressParams); err != nil {
+	if err = apiHelpers.ValidateParams(c, &expressParams, "json"); err != nil {
 		return
 	}
 

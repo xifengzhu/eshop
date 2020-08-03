@@ -7,10 +7,10 @@ import (
 )
 
 type Pagination struct {
-	Page    int    `json:"page" validate:"gte=0"`
-	PerPage int    `json:"per_page" validate:"lt=100"`
-	Sort    string `json:"sort"`
-	Total   int    `json:"total"`
+	Page    int    `form:"page" json:"page" validate:"gte=0"`
+	PerPage int    `form:"per_page" json:"per_page" validate:"lt=100"`
+	Sort    string `form:"sort" json:"sort"`
+	Total   int    `form:"total" json:"total"`
 }
 
 func GetPage(c *gin.Context) int {

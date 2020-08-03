@@ -53,7 +53,7 @@ func AddCartItem(c *gin.Context) {
 
 	// check params
 	var cartItem CartItemParams
-	if err := apiHelpers.ValidateParams(c, &cartItem); err != nil {
+	if err := apiHelpers.ValidateParams(c, &cartItem, "json"); err != nil {
 		return
 	}
 
@@ -95,7 +95,7 @@ func CheckCartItem(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
 	// check params
 	var itemID CartItemIDParams
-	if err := apiHelpers.ValidateParams(c, &itemID); err != nil {
+	if err := apiHelpers.ValidateParams(c, &itemID, "json"); err != nil {
 		return
 	}
 
@@ -117,7 +117,7 @@ func CheckCartItem(c *gin.Context) {
 func UnCheckCartItem(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
 	var itemID CartItemIDParams
-	if err := apiHelpers.ValidateParams(c, &itemID); err != nil {
+	if err := apiHelpers.ValidateParams(c, &itemID, "json"); err != nil {
 		return
 	}
 
@@ -140,7 +140,7 @@ func DeleteCartItem(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
 	// check params
 	var itemID CartItemIDParams
-	if err := apiHelpers.ValidateParams(c, &itemID); err != nil {
+	if err := apiHelpers.ValidateParams(c, &itemID, "json"); err != nil {
 		return
 	}
 
@@ -170,7 +170,7 @@ func UpdateCartItemQty(c *gin.Context) {
 	user := appApiHelper.CurrentUser(c)
 
 	var itemParams CartItemQtyParams
-	if err := apiHelpers.ValidateParams(c, &itemParams); err != nil {
+	if err := apiHelpers.ValidateParams(c, &itemParams, "json"); err != nil {
 		return
 	}
 

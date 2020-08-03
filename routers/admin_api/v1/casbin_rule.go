@@ -22,7 +22,7 @@ type PolicyRuleParams struct {
 // @Security ApiKeyAuth
 func AddPolicy(c *gin.Context) {
 	var rule PolicyRuleParams
-	if err := apiHelpers.ValidateParams(c, &rule); err != nil {
+	if err := apiHelpers.ValidateParams(c, &rule, "json"); err != nil {
 		return
 	}
 

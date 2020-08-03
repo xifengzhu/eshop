@@ -37,7 +37,7 @@ func init() {
 	RegisterCustomValidations()
 }
 
-func ValidateParams(c *gin.Context, params interface{}) (err error) {
+func ValidateParams(c *gin.Context, params interface{}, bindType string) (err error) {
 
 	locale := c.DefaultQuery("locale", "zh")
 	translator, _ := Translator.GetTranslator(locale)
@@ -47,7 +47,12 @@ func ValidateParams(c *gin.Context, params interface{}) (err error) {
 		en_translations.RegisterDefaultTranslations(Validate, translator)
 	}
 
-	err = c.ShouldBindJSON(params)
+	if bindType == "json" {
+		err = c.ShouldBindJSON(params)
+	} else {
+		err = c.ShouldBindQuery(params)
+	}
+
 	if err != nil {
 		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return

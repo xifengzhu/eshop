@@ -61,7 +61,7 @@ type QueryProductParams struct {
 func AddProduct(c *gin.Context) {
 	var err error
 	var productParams ProductParams
-	if err = apiHelpers.ValidateParams(c, &productParams); err != nil {
+	if err = apiHelpers.ValidateParams(c, &productParams, "json"); err != nil {
 		return
 	}
 
@@ -174,7 +174,7 @@ func UpdateProduct(c *gin.Context) {
 	}
 	var err error
 	var productParams ProductParams
-	if err = apiHelpers.ValidateParams(c, &productParams); err != nil {
+	if err = apiHelpers.ValidateParams(c, &productParams, "json"); err != nil {
 		return
 	}
 
