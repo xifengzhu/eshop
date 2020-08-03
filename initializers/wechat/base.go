@@ -1,6 +1,7 @@
 package wechat
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -44,4 +45,15 @@ func httpGet(path string, params url.Values) (map[string]interface{}, error) {
 		log.Println("request result", result)
 		return result, nil
 	}
+}
+
+func httpPost(url string, params []byte) (*http.Response, error) {
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(params))
+	req.Header.Set("Content-Type", "application/json")
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	return resp, err
 }

@@ -45,7 +45,8 @@ var (
 	QiniuBucket       string
 	QiniuBucketDomain string
 
-	PUBLIC_SAVE_PATH string
+	ExportSavePath string
+	QrcodeSavePath string
 )
 
 func init() {
@@ -69,7 +70,7 @@ func init() {
 	LoadDatabase()
 	LoadRedis()
 	LoadQiniu()
-	LoadExport()
+	LoadPath()
 }
 
 func LoadBase() {
@@ -128,6 +129,7 @@ func LoadQiniu() {
 	QiniuBucketDomain = os.Getenv("BUCKET_DOMAIN")
 }
 
-func LoadExport() {
-	PUBLIC_SAVE_PATH = os.Getenv("EXPORT_SAVE_PATH")
+func LoadPath() {
+	ExportSavePath = os.Getenv("EXPORT_SAVE_PATH")
+	QrcodeSavePath = os.Getenv("QRCODE_SAVE_PATH")
 }

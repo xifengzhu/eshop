@@ -11,9 +11,9 @@ import (
 
 func InitAdminAPI(r *gin.Engine) {
 
-	admin_export := r.Group("/export")
+	admin_export := r.Group("/public")
 	admin_export.Use(jwt.JWTAuth())
-	admin_export.StaticFS("/", http.Dir(export.GetExcelFullPath()))
+	admin_export.StaticFS("/export", http.Dir(export.GetExcelFullPath()))
 
 	admin_apiv1 := r.Group("/admin_api/v1")
 	admin_apiv1.POST("/sessions/login", v1.Login)

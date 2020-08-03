@@ -2,12 +2,18 @@ package app_api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/xifengzhu/eshop/initializers/setting"
 	"github.com/xifengzhu/eshop/middleware/ip_filter"
 	"github.com/xifengzhu/eshop/middleware/jwt"
 	"github.com/xifengzhu/eshop/routers/app_api/v1"
+	"net/http"
 )
 
 func InitAppAPI(r *gin.Engine) {
+
+	api_public := r.Group("/public")
+	api_public.StaticFS("/qrcode", http.Dir(qrcodePath()))
+
 	apiv1 := r.Group("/app_api/v1")
 	apiv1.Use(ip_filter.IPFilter())
 	// get address data
@@ -18,6 +24,10 @@ func InitAppAPI(r *gin.Engine) {
 	{
 		apiv1.GET("/web_page", v1.GetWebPage)
 		apiv1.GET("/wxapp_page", v1.GetWxappPage)
+	}
+
+	{
+		apiv1.GET("/wechat/wxacode", v1.GetWxaCode)
 	}
 
 	// 回调通知接口
@@ -82,4 +92,8 @@ func InitAppAPI(r *gin.Engine) {
 		apiv1.POST("/coupons/receive", v1.CaptchCoupon)
 		apiv1.GET("/coupons", v1.GetCoupons)
 	}
+}
+
+func qrcodePath() string {
+	return setting.RuntimeRootPath + "/public/qrcode/"
 }
