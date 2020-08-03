@@ -49,7 +49,7 @@ func GetExcelFullUrl(name string) string {
 }
 
 func GetExcelPath() string {
-	return setting.ExportSavePath
+	return setting.PUBLIC_SAVE_PATH
 }
 
 func GetExcelFullPath() string {

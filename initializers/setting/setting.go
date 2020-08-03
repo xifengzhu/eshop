@@ -45,7 +45,7 @@ var (
 	QiniuBucket       string
 	QiniuBucketDomain string
 
-	ExportSavePath string
+	PUBLIC_SAVE_PATH string
 )
 
 func init() {
@@ -129,5 +129,5 @@ func LoadQiniu() {
 }
 
 func LoadExport() {
-	ExportSavePath = os.Getenv("EXPORT_SAVE_PATH")
+	PUBLIC_SAVE_PATH = os.Getenv("EXPORT_SAVE_PATH")
 }
