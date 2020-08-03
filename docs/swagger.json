@@ -97,22 +97,22 @@
                     },
                     {
                         "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "total",
                         "in": "query"
                     },
                     {
                         "type": "integer",
                         "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
                         "in": "query"
                     },
                     {
@@ -395,27 +395,7 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "q[parent_id_eq]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -431,6 +411,26 @@
                     {
                         "type": "string",
                         "name": "q[created_at_lteq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "q[parent_id_eq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
                         "in": "query"
                     }
                 ],
@@ -626,17 +626,7 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "per_page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[name_cont]",
                         "in": "query"
                     },
                     {
@@ -647,6 +637,16 @@
                     {
                         "type": "integer",
                         "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[name_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
                         "in": "query"
                     }
                 ],
@@ -873,16 +873,6 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
@@ -892,8 +882,18 @@
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "q[name_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
                         "in": "query"
                     }
                 ],
@@ -1060,6 +1060,16 @@
                 "summary": "快递列表",
                 "parameters": [
                     {
+                        "type": "string",
+                        "name": "q[name_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[code_cont]",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "per_page",
                         "in": "query"
@@ -1077,16 +1087,6 @@
                     {
                         "type": "integer",
                         "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[name_cont]",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[code_cont]",
                         "in": "query"
                     }
                 ],
@@ -1273,6 +1273,16 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "total",
                         "in": "query"
                     },
@@ -1289,16 +1299,6 @@
                     {
                         "type": "integer",
                         "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -1362,6 +1362,11 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "page",
                         "in": "query"
                     },
@@ -1373,11 +1378,6 @@
                     {
                         "type": "string",
                         "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -1545,22 +1545,17 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -1576,6 +1571,11 @@
                     {
                         "type": "string",
                         "name": "q[created_at_lteq]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
                         "in": "query"
                     }
                 ],
@@ -1743,7 +1743,12 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "total",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
                         "in": "query"
                     },
                     {
@@ -1768,17 +1773,12 @@
                     },
                     {
                         "type": "integer",
-                        "name": "page",
+                        "name": "total",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
+                        "name": "page",
                         "in": "query"
                     }
                 ],
@@ -2498,6 +2498,16 @@
                 "summary": "获取用户列表",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[open_id_eq]",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "q[username_cont]",
                         "in": "query"
@@ -2525,16 +2535,6 @@
                     {
                         "type": "integer",
                         "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[open_id_eq]",
                         "in": "query"
                     }
                 ],
@@ -3230,11 +3230,6 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
@@ -3246,6 +3241,11 @@
                     {
                         "type": "integer",
                         "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
                         "in": "query"
                     },
                     {
@@ -3352,6 +3352,11 @@
                 "summary": "获取订单列表",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "sort",
                         "in": "query"
@@ -3364,11 +3369,6 @@
                     {
                         "type": "integer",
                         "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "per_page",
                         "in": "query"
                     },
                     {
@@ -3464,41 +3464,6 @@
                     "微信回调通知"
                 ],
                 "summary": "订单支付结果通知",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/app_api/v1/orders/pre_check": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "订单"
-                ],
-                "summary": "下单预检查(待实现)",
-                "parameters": [
-                    {
-                        "description": "订单参数",
-                        "name": "params",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.OrderParams"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -3639,11 +3604,6 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "page",
                         "in": "query"
                     },
@@ -3654,12 +3614,22 @@
                     },
                     {
                         "type": "string",
-                        "name": "q[name_cont]",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "name": "sort",
+                        "name": "categoryName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "keyword",
                         "in": "query"
                     }
                 ],
@@ -3710,6 +3680,25 @@
                     "地址"
                 ],
                 "summary": "获取所有的省份信息",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/app_api/v1/recommend_products": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "产品"
+                ],
+                "summary": "获取推荐列表",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -3907,34 +3896,6 @@
                         "schema": {
                             "$ref": "#/definitions/v1.CartItemIDParams"
                         }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/app_api/v1/test/coupons/{id}": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "test"
-                ],
-                "summary": "test",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "coupon id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -4187,6 +4148,52 @@
                         "name": "title",
                         "in": "query",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apiHelpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/app_api/v1/wechat/wxacode": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "微信接口"
+                ],
+                "summary": "获取微信二维码",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "scene",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "width",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "isHyaline",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "binary",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "page",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4732,6 +4739,9 @@
         },
         "v1.OrderParams": {
             "type": "object",
+            "required": [
+                "is_preview"
+            ],
             "properties": {
                 "address_id": {
                     "type": "integer"
@@ -4744,6 +4754,9 @@
                 },
                 "express_id": {
                     "type": "integer"
+                },
+                "is_preview": {
+                    "type": "boolean"
                 }
             }
         },
@@ -4836,14 +4849,17 @@
         "v1.ProductQueryParams": {
             "type": "object",
             "properties": {
+                "categoryName": {
+                    "type": "string"
+                },
+                "keyword": {
+                    "type": "string"
+                },
                 "page": {
                     "type": "integer"
                 },
                 "per_page": {
                     "type": "integer"
-                },
-                "q[name_cont]": {
-                    "type": "string"
                 },
                 "sort": {
                     "type": "string"
@@ -4891,6 +4907,26 @@
                 },
                 "value": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.QrCodeParams": {
+            "type": "object",
+            "properties": {
+                "binary": {
+                    "type": "boolean"
+                },
+                "isHyaline": {
+                    "type": "boolean"
+                },
+                "page": {
+                    "type": "string"
+                },
+                "scene": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "integer"
                 }
             }
         },

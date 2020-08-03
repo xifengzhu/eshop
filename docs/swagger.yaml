@@ -348,6 +348,10 @@ definitions:
         type: integer
       express_id:
         type: integer
+      is_preview:
+        type: boolean
+    required:
+    - is_preview
     type: object
   v1.PolicyRuleParams:
     properties:
@@ -408,12 +412,14 @@ definitions:
     type: object
   v1.ProductQueryParams:
     properties:
+      categoryName:
+        type: string
+      keyword:
+        type: string
       page:
         type: integer
       per_page:
         type: integer
-      q[name_cont]:
-        type: string
       sort:
         type: string
       total:
@@ -445,6 +451,19 @@ definitions:
     required:
     - property_name_id
     - value
+    type: object
+  v1.QrCodeParams:
+    properties:
+      binary:
+        type: boolean
+      isHyaline:
+        type: boolean
+      page:
+        type: string
+      scene:
+        type: string
+      width:
+        type: integer
     type: object
   v1.QueryAdminUserParams:
     properties:
@@ -725,17 +744,17 @@ paths:
         name: q[status_in]
         type: array
       - in: query
-        name: per_page
-        type: integer
-      - in: query
-        name: sort
-        type: string
-      - in: query
         name: total
         type: integer
       - in: query
         name: page
         type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
       - in: query
         name: q[email_cont]
         type: string
@@ -906,19 +925,7 @@ paths:
     get:
       parameters:
       - in: query
-        name: q[parent_id_eq]
-        type: integer
-      - in: query
         name: page
-        type: integer
-      - in: query
-        name: per_page
-        type: integer
-      - in: query
-        name: sort
-        type: string
-      - in: query
-        name: total
         type: integer
       - in: query
         name: q[name]
@@ -929,6 +936,18 @@ paths:
       - in: query
         name: q[created_at_lteq]
         type: string
+      - in: query
+        name: q[parent_id_eq]
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
       produces:
       - application/json
       responses:
@@ -1047,19 +1066,19 @@ paths:
     get:
       parameters:
       - in: query
-        name: page
-        type: integer
-      - in: query
         name: per_page
         type: integer
-      - in: query
-        name: q[name_cont]
-        type: string
       - in: query
         name: sort
         type: string
       - in: query
         name: total
+        type: integer
+      - in: query
+        name: q[name_cont]
+        type: string
+      - in: query
+        name: page
         type: integer
       produces:
       - application/json
@@ -1198,20 +1217,20 @@ paths:
     get:
       parameters:
       - in: query
-        name: total
-        type: integer
-      - in: query
-        name: page
-        type: integer
-      - in: query
         name: per_page
         type: integer
       - in: query
         name: sort
         type: string
       - in: query
+        name: total
+        type: integer
+      - in: query
         name: q[name_cont]
         type: string
+      - in: query
+        name: page
+        type: integer
       produces:
       - application/json
       responses:
@@ -1312,6 +1331,12 @@ paths:
     get:
       parameters:
       - in: query
+        name: q[name_cont]
+        type: string
+      - in: query
+        name: q[code_cont]
+        type: string
+      - in: query
         name: per_page
         type: integer
       - in: query
@@ -1323,12 +1348,6 @@ paths:
       - in: query
         name: page
         type: integer
-      - in: query
-        name: q[name_cont]
-        type: string
-      - in: query
-        name: q[code_cont]
-        type: string
       produces:
       - application/json
       responses:
@@ -1441,6 +1460,12 @@ paths:
     get:
       parameters:
       - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
         name: total
         type: integer
       - in: query
@@ -1452,12 +1477,6 @@ paths:
       - in: query
         name: page
         type: integer
-      - in: query
-        name: per_page
-        type: integer
-      - in: query
-        name: sort
-        type: string
       produces:
       - application/json
       responses:
@@ -1494,6 +1513,9 @@ paths:
     get:
       parameters:
       - in: query
+        name: total
+        type: integer
+      - in: query
         name: page
         type: integer
       - in: query
@@ -1502,9 +1524,6 @@ paths:
       - in: query
         name: sort
         type: string
-      - in: query
-        name: total
-        type: integer
       - in: query
         name: q[state]
         type: string
@@ -1604,17 +1623,14 @@ paths:
     get:
       parameters:
       - in: query
-        name: total
-        type: integer
-      - in: query
-        name: page
-        type: integer
-      - in: query
         name: per_page
         type: integer
       - in: query
         name: sort
         type: string
+      - in: query
+        name: total
+        type: integer
       - in: query
         name: q[name]
         type: string
@@ -1624,6 +1640,9 @@ paths:
       - in: query
         name: q[created_at_lteq]
         type: string
+      - in: query
+        name: page
+        type: integer
       produces:
       - application/json
       responses:
@@ -1724,8 +1743,11 @@ paths:
     get:
       parameters:
       - in: query
-        name: total
+        name: per_page
         type: integer
+      - in: query
+        name: sort
+        type: string
       - in: query
         name: q[is_online_eq]
         type: boolean
@@ -1739,14 +1761,11 @@ paths:
         name: q[price_lteq]
         type: number
       - in: query
+        name: total
+        type: integer
+      - in: query
         name: page
         type: integer
-      - in: query
-        name: per_page
-        type: integer
-      - in: query
-        name: sort
-        type: string
       produces:
       - application/json
       responses:
@@ -2186,6 +2205,12 @@ paths:
     get:
       parameters:
       - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: q[open_id_eq]
+        type: string
+      - in: query
         name: q[username_cont]
         type: string
       - in: query
@@ -2203,12 +2228,6 @@ paths:
       - in: query
         name: page
         type: integer
-      - in: query
-        name: per_page
-        type: integer
-      - in: query
-        name: q[open_id_eq]
-        type: string
       produces:
       - application/json
       responses:
@@ -2634,9 +2653,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: page
-        type: integer
-      - in: query
         name: per_page
         type: integer
       - in: query
@@ -2644,6 +2660,9 @@ paths:
         type: string
       - in: query
         name: total
+        type: integer
+      - in: query
+        name: page
         type: integer
       - in: query
         name: cagegory_id
@@ -2707,6 +2726,9 @@ paths:
     get:
       parameters:
       - in: query
+        name: per_page
+        type: integer
+      - in: query
         name: sort
         type: string
       - in: query
@@ -2714,9 +2736,6 @@ paths:
         type: integer
       - in: query
         name: page
-        type: integer
-      - in: query
-        name: per_page
         type: integer
       - in: query
         name: q[state]
@@ -2825,27 +2844,6 @@ paths:
       summary: 订单支付结果通知
       tags:
       - 微信回调通知
-  /app_api/v1/orders/pre_check:
-    post:
-      parameters:
-      - description: 订单参数
-        in: body
-        name: params
-        required: true
-        schema:
-          $ref: '#/definitions/v1.OrderParams'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/apiHelpers.Response'
-      security:
-      - ApiKeyAuth: []
-      summary: 下单预检查(待实现)
-      tags:
-      - 订单
   /app_api/v1/orders/refund_notify:
     post:
       produces:
@@ -2883,19 +2881,22 @@ paths:
     get:
       parameters:
       - in: query
-        name: total
-        type: integer
-      - in: query
         name: page
         type: integer
       - in: query
         name: per_page
         type: integer
       - in: query
-        name: q[name_cont]
+        name: sort
         type: string
       - in: query
-        name: sort
+        name: total
+        type: integer
+      - in: query
+        name: categoryName
+        type: string
+      - in: query
+        name: keyword
         type: string
       produces:
       - application/json
@@ -2937,6 +2938,18 @@ paths:
       summary: 获取所有的省份信息
       tags:
       - 地址
+  /app_api/v1/recommend_products:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 获取推荐列表
+      tags:
+      - 产品
   /app_api/v1/shopping_cart/add:
     post:
       parameters:
@@ -3056,24 +3069,6 @@ paths:
       summary: 取消购物车项
       tags:
       - 购物车
-  /app_api/v1/test/coupons/{id}:
-    get:
-      parameters:
-      - description: coupon id
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/apiHelpers.Response'
-      summary: test
-      tags:
-      - test
   /app_api/v1/user/auth:
     post:
       consumes:
@@ -3235,6 +3230,34 @@ paths:
       summary: 获取webview页面
       tags:
       - 微信页面
+  /app_api/v1/wechat/wxacode:
+    get:
+      parameters:
+      - in: query
+        name: scene
+        type: string
+      - in: query
+        name: width
+        type: integer
+      - in: query
+        name: isHyaline
+        type: boolean
+      - in: query
+        name: binary
+        type: boolean
+      - in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiHelpers.Response'
+      summary: 获取微信二维码
+      tags:
+      - 微信接口
   /app_api/v1/wxapp_page:
     get:
       parameters:
