@@ -55,8 +55,8 @@ func (template *CouponTemplate) GenerateCouponsData(qty int) (coupons []Coupon) 
 		startAt = time.Now()
 		endAt = startAt.AddDate(0, 0, int(configs["fix_term"].(float64)))
 	} else {
-		startAt = configs["start_at"].(time.Time)
-		endAt = configs["end_at"].(time.Time)
+		startAt, _ = time.Parse(time.RFC3339, configs["start_at"].(string))
+		endAt, _ = time.Parse(time.RFC3339, configs["end_at"].(string))
 	}
 
 	for i := 0; i < qty; i++ {

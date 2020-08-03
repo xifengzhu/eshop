@@ -15,6 +15,7 @@ type OrderItem struct {
 	GoodsWeight      float64       `gorm:"type: decimal(10,2);" json:"goods_weight"`
 	GoodsAttr        string        `gorm:"type: varchar(255);" json:"goods_attr"`
 	TotalNum         int           `gorm:"type: int;" json:"total_num"`
+	ProductAmount    float64       `gorm:"type: decimal(10,2);" json:"product_amount"`
 	TotalAmount      float64       `gorm:"type: decimal(10,2);" json:"total_amount"`
 	AdjustmentAmount float64       `gorm:"type: decimal(10,2);" json:"adjustment_amount"`
 	DeductStockType  int           `gorm:"type: tinyint;" json:"deduct_stock_type"`
@@ -44,8 +45,8 @@ func (orderItem OrderItem) GetProduct() (product Product, err error) {
 	return
 }
 
-func (orderItem *OrderItem) CaculateTotalAmount() {
-	orderItem.TotalAmount = orderItem.GoodsPrice * float64(orderItem.TotalNum)
+func (orderItem *OrderItem) CaculateProductAmount() {
+	orderItem.ProductAmount = orderItem.GoodsPrice * float64(orderItem.TotalNum)
 }
 
 // 减库存

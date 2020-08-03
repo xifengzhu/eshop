@@ -82,7 +82,6 @@ func InitAppAPI(r *gin.Engine) {
 		apiv1.GET("/orders", v1.GetOrders)
 		apiv1.POST("/orders", v1.CreateOrder)
 		apiv1.GET("/orders/:id", v1.GetOrder)
-		apiv1.POST("/orders/pre_check", v1.PreOrder)
 		apiv1.POST("/orders/request_payment", v1.RequestPayment)
 		apiv1.POST("/orders/close", v1.CloseOrder)
 		apiv1.DELETE("/orders/:id", v1.DeleteOrder)

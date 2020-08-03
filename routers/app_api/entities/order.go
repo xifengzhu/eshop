@@ -7,12 +7,12 @@ import (
 
 type OrderDetailEntity struct {
 	OrderEntity
-	OuterPayId         string          `json:"outer_pay_id"`
-	PayAt              *time.Time      `json:"pay_at"`
-	ReceiverProperties string          `json:"receiver_properties"`
-	BuyerMessage       string          `json:"buyer_message"`
-	Logistic           models.Logistic `json:"logistic"`
-	UserID             int             `json:"user_id"`
+	OuterPayId         string           `json:"outer_pay_id"`
+	PayAt              *time.Time       `json:"pay_at"`
+	ReceiverProperties string           `json:"receiver_properties"`
+	BuyerMessage       string           `json:"buyer_message"`
+	Logistic           *models.Logistic `json:"logistic,omitempty"`
+	UserID             int              `json:"user_id"`
 }
 
 type OrderEntity struct {
@@ -24,10 +24,10 @@ type OrderEntity struct {
 	PayAmount         float64            `json:"pay_amount"`
 	ProductAmount     float64            `json:"product_amount"`
 	LatestPaymentTime *time.Time         `json:"latest_payment_time"`
-	OrderItems        []models.OrderItem `json:"order_items"`
-	Coupon            models.Coupon      `json:"coupon"`
-	Coupons           []models.Coupon    `json:"coupons,omitempty"`
-	Address           models.Address     `json:"address"`
+	OrderItems        []models.OrderItem `json:"order_items,omitempty"`
+	Coupon            *models.Coupon     `json:"coupon,omitempty"`
+	Coupons           []models.Coupon    `json:"coupons"`
+	Address           *models.Address    `json:"address,omitempty"`
 }
 
 type OrderIDEntity struct {

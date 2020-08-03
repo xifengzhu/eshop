@@ -7,7 +7,6 @@ import (
 	"github.com/xifengzhu/eshop/helpers/utils"
 	config "github.com/xifengzhu/eshop/initializers"
 	// "github.com/xifengzhu/eshop/models/coupons"
-	"log"
 	"time"
 )
 
@@ -61,7 +60,6 @@ func (coupon *Coupon) updateTemplateCounterCache(tx *gorm.DB) (err error) {
 }
 
 func (coupon *Coupon) AfterCreate(tx *gorm.DB) (err error) {
-	log.Println("========coupon after create======")
 	coupon.updateTemplateCounterCache(tx)
 	coupon.enqueueExpireCouponJob()
 	return
@@ -72,7 +70,6 @@ func (c *Coupon) Expire() {
 }
 
 func (coupon *Coupon) enqueueExpireCouponJob() {
-	log.Println("========coupon enqueueExpireCouponJob======")
 	duration := (*coupon.EndAt).Sub(*coupon.StartAt).Seconds()
 	config.JobEnqueuer.EnqueueIn("expire_coupon", int64(duration), work.Q{"coupon_id": coupon.ID})
 }
@@ -81,13 +78,11 @@ func (coupon *Coupon) ConfigJSON() map[string]interface{} {
 	var data map[string]interface{}
 
 	if err := json.Unmarshal(coupon.Configs, &data); err != nil {
-		log.Println("===coupon config err===", err)
 	}
 	return data
 }
 
 // =============  coupon logics ==============
-
 type CouponOrderItem struct {
 	ProductAmount float64 `json:"product_amount"`
 	ReduceAmount  float64 `json:"reduce_amount"`
@@ -182,13 +177,13 @@ func (coupon Coupon) reduceAmount() float64 {
 	if coupon.Kind == "fixed_amount" {
 		return coupon.ConfigJSON()["reduce_amount"].(float64)
 	} else {
-		return coupon.couponAmountInOrder() * (1 - coupon.ConfigJSON()["percentage"].(float64))
+		return coupon.couponAmountInOrder() * (1 - coupon.ConfigJSON()["percentage"].(float64)/100)
 	}
 }
 
 func (coupon *Coupon) caculateItemsReduceAmount() {
 	if coupon.IsEligible() {
-		reduceAmount := coupon.ConfigJSON()["reduce_amount"].(float64)
+		reduceAmount := coupon.reduceAmount()
 		coupon.Order.ReduceAmount = reduceAmount
 		for i, item := range coupon.Order.Items {
 			var itemReduceAmount float64

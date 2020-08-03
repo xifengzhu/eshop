@@ -36,10 +36,10 @@ type Order struct {
 	BuyerMessage       string     `gorm:"type: varchar(120); " json:"buyer_message"`
 
 	OrderItems        []OrderItem   `json:"order_items"`
-	User              *User         `json:"user"`
-	Coupon            *Coupon       `json:"coupon"`
-	Express           *Express      `json:"express,omitempty"`
-	Address           *Address      `json:"address,omitempty"`
+	User              *User         `gorm:"association_autoupdate:false" json:"user"`
+	Coupon            *Coupon       `gorm:"association_autoupdate:false" json:"coupon"`
+	Express           *Express      `gorm:"association_autoupdate:false" json:"express,omitempty"`
+	Address           *Address      `gorm:"association_autoupdate:false" json:"address,omitempty"`
 	LatestPaymentTime *time.Time    `gorm:"type: datetime;" json:"latest_payment_time"`
 	AllAdjustments    []*Adjustment `json:"all_adjustments,omitempty"`
 	DirectAdjustments []*Adjustment `gorm:"direct_polymorphic:Target;" json:"adjustments,omitempty"`
@@ -176,47 +176,53 @@ func (order *Order) removeFromCartItem() {
 func (order *Order) PreOrder() {
 	order.setExpressFee()
 	order.setProductAmount()
-	order.applyCoupon()
+	order.applyOrSetDefaultCoupon()
 	order.setPayAmount()
 }
 
-func (order *Order) prepareCouponOrder() (corder CouponOrder) {
-	var coupon Coupon
-	db.First(&coupon, order.CouponID)
-	order.Coupon = &coupon
-	porder := CouponOrder{
+func (order Order) prepareCouponOrder() (corder CouponOrder) {
+	corder = CouponOrder{
 		ProductAmount: order.ProductAmount,
 		FreightFee:    order.ExpressFee,
 	}
 	for _, item := range order.OrderItems {
 		a := CouponOrderItem{
-			ProductAmount: item.TotalAmount,
+			ProductAmount: item.ProductAmount,
 			ResourceID:    item.GoodsID,
 			ResourceType:  "goods",
 		}
-		porder.Items = append(porder.Items, a)
+		corder.Items = append(corder.Items, a)
 	}
-	corder = coupon.Apply(porder)
 	return
 }
 
+func (order *Order) applyOrSetDefaultCoupon() {
+	if order.CouponID == 0 {
+		coupon := order.biggestDiscountCoupons()
+		order.CouponID = coupon.ID
+		order.Coupon = coupon
+	}
+	order.applyCoupon()
+}
+
 func (order *Order) applyCoupon() {
-	log.Println("=======apply coupon =====", order.CouponID)
-	if order.CouponID != 0 {
+	coupon, err := order.currentCoupon()
+	if err == nil {
 		corder := order.prepareCouponOrder()
-		for _, oi := range corder.Items {
+		result := coupon.Apply(corder)
+		for _, oi := range result.Items {
 			for i, item := range order.OrderItems {
 				if oi.ResourceID == item.GoodsID {
 					adjustment := &Adjustment{
 						Amount:     oi.ReduceAmount * -1,
-						Label:      fmt.Sprintf("Coupon: %s", order.Coupon.Name),
+						Label:      fmt.Sprintf("Coupon: %s", coupon.Name),
 						SourceType: "Coupon",
 						SourceID:   order.CouponID,
 					}
 					order.AllAdjustments = append(order.AllAdjustments, adjustment)
 					order.OrderItems[i].Adjustments = append(order.OrderItems[i].Adjustments, adjustment)
 					order.OrderItems[i].AdjustmentAmount += adjustment.Amount
-					order.OrderItems[i].TotalAmount += adjustment.Amount
+					order.OrderItems[i].TotalAmount = order.OrderItems[i].ProductAmount + adjustment.Amount
 					order.AdjustmentAmount += adjustment.Amount
 					break
 				}
@@ -241,13 +247,24 @@ func (order *Order) setLatestPaymentTime(tx *gorm.DB) {
 	return
 }
 
+func (order *Order) currentCoupon() (coupon Coupon, err error) {
+	if order.CouponID != 0 {
+		coupon.ID = order.CouponID
+		err = Find(&coupon, Options{})
+	} else {
+		err = errors.New("not have coupon")
+	}
+	return
+}
+
 func (order *Order) lockCoupon(tx *gorm.DB) (err error) {
 	log.Println("========lock coupon id ======", order.CouponID)
-	if order.CouponID != 0 {
-		if order.Coupon.State != "actived" {
-			err = errors.New("invalid coupon")
+	coupon, err := order.currentCoupon()
+	if err == nil {
+		if coupon.State != "actived" {
+			err = errors.New("优惠券已失效！")
 		} else {
-			tx.Model(order.Coupon).Updates(Coupon{State: "lock"})
+			tx.Model(coupon).Updates(Coupon{State: "lock"})
 		}
 	}
 	return
@@ -275,15 +292,15 @@ func (order *Order) setPayAmount() {
 func (order *Order) setProductAmount() {
 	var productAmount float64
 	for i, _ := range order.OrderItems {
-		order.OrderItems[i].CaculateTotalAmount()
-		productAmount += order.OrderItems[i].TotalAmount
+		order.OrderItems[i].CaculateProductAmount()
+		productAmount += order.OrderItems[i].ProductAmount
 	}
 	order.ProductAmount = productAmount
 }
 
 // 可用的优惠券列表
-func (order *Order) AvaliableCoupons() []Coupon {
-	var avaliableCoupons []Coupon
+func (order Order) AvaliableCoupons() []Coupon {
+	avaliableCoupons := []Coupon{}
 	corder := order.prepareCouponOrder()
 	coupons := order.User.GetActivedCoupons()
 	for _, coupon := range coupons {
@@ -296,8 +313,9 @@ func (order *Order) AvaliableCoupons() []Coupon {
 }
 
 // 找优惠力度最大的优惠券
-func (order *Order) BiggestDiscountCoupons() (maxDiscountCoupon Coupon) {
+func (order *Order) biggestDiscountCoupons() *Coupon {
 	var maxReduceAmount float64
+	var maxDiscountCoupon Coupon
 	corder := order.prepareCouponOrder()
 	coupons := order.User.GetActivedCoupons()
 	for _, coupon := range coupons {
@@ -308,7 +326,7 @@ func (order *Order) BiggestDiscountCoupons() (maxDiscountCoupon Coupon) {
 			maxReduceAmount = reduceTotal
 		}
 	}
-	return
+	return &maxDiscountCoupon
 }
 
 // 前提条件
