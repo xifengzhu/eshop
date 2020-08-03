@@ -44,6 +44,7 @@ func InitAppAPI(r *gin.Engine) {
 	// product router
 	{
 		apiv1.GET("/products", v1.GetProducts)
+		apiv1.GET("/recommend_products", v1.GetRecommendProducts)
 		apiv1.GET("/batch_products", v1.BatchProducts)
 		apiv1.GET("/products/:id", v1.GetProduct)
 	}

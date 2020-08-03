@@ -21,15 +21,17 @@ func (category Category) IsParent() bool {
 	return category.ParentID == 0
 }
 
-// TODO: 支持分页
 func (category Category) GetCategoryProducts(pagination *utils.Pagination) (products []Product) {
+	offset := (pagination.Page - 1) * pagination.PerPage
+	var categoryIDs []int
 	if category.IsParent() {
-		var categories []Category
-		db.Model(&category).Association("Children").Find(&categories)
-		db.Model(&categories).Related(&products, "Products")
+		db.Model(&Category{}).Where("parent_id = ?", category.ID).Pluck("id", &categoryIDs)
 	} else {
-		db.Model(&category).Related(&products, "Products")
+		categoryIDs = append(categoryIDs, category.ID)
 	}
+	joinQuery := db.Table("product").Joins("INNER JOIN product_categories ON product.id = product_categories.product_id AND product_categories.category_id IN (?)", categoryIDs)
+	joinQuery.Select("count(distinct(id))").Count(&pagination.Total)
+	joinQuery.Limit(pagination.PerPage).Offset(offset).Scan(&products)
 	return
 }
 
