@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"github.com/xifengzhu/eshop/helpers/utils"
-	// "log"
 	"reflect"
 	"strconv"
 	"strings"
@@ -161,7 +160,6 @@ func queryConditionTranslator(q map[string]string) []interface{} {
 		conditions = append(conditions, []interface{}{column, operator, value})
 		// }
 	}
-	fmt.Println("=====search conditions=======", conditions)
 	return conditions
 }
 

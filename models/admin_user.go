@@ -13,8 +13,8 @@ type AdminUser struct {
 	Status   string `gorm:"type: varchar(10);" json:"status"`
 	Password string `gorm:"type: varchar(120); not null" json:"-"`
 
-	Roles       []string `gorm:"-" json:roles`
-	Permissions []string `gorm:"-" json:permissions`
+	Roles       []string `gorm:"-" json:"roles"`
+	Permissions []string `gorm:"-" json:"permissions"`
 }
 
 func HashPassword(password string) (string, error) {

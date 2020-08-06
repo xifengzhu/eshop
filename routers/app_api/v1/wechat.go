@@ -8,30 +8,23 @@ import (
 	"github.com/xifengzhu/eshop/helpers/e"
 	"github.com/xifengzhu/eshop/initializers/setting"
 	"github.com/xifengzhu/eshop/initializers/wechat"
-	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+	. "github.com/xifengzhu/eshop/routers/app_api/params"
+	. "github.com/xifengzhu/eshop/routers/helpers"
 	"io/ioutil"
 	"net/http"
 	"os"
 )
 
-type QrCodeParams struct {
-	Page      string `form:"page"`
-	Scene     string `form:"scene"`
-	Width     int    `form:"width" `
-	IsHyaline bool   `form:"is_hyaline" `
-	Binary    bool   `form:"binary" `
-}
-
 // @Summary 获取微信二维码
 // @Produce  json
 // @Tags 微信接口
-// @Param params query QrCodeParams true "二维码参数"
-// @Success 200 {object} apiHelpers.Response
+// @Param params query params.QrCodeParams true "二维码参数"
+// @Success 200 {object} helpers.Response
 // @Router /app_api/v1/wechat/wxacode [get]
 func GetWxaCode(c *gin.Context) {
 
 	var params QrCodeParams
-	if err := apiHelpers.ValidateParams(c, &params, "query"); err != nil {
+	if err := ValidateParams(c, &params, "query"); err != nil {
 		return
 	}
 
@@ -47,7 +40,7 @@ func GetWxaCode(c *gin.Context) {
 
 	_, ok := errResp["errcode"]
 	if err != nil || ok {
-		apiHelpers.ResponseError(c, e.WECHAT_QRCCODE_ERROR, "生成二维码失败！")
+		ResponseError(c, e.WECHAT_QRCCODE_ERROR, "生成二维码失败！")
 		return
 	}
 
@@ -63,10 +56,10 @@ func GetWxaCode(c *gin.Context) {
 		defer f.Close()
 		f.Write(wechatResp)
 		resp := map[string]string{"path": getQrcodeFullUrl(fileName)}
-		apiHelpers.ResponseSuccess(c, resp)
+		ResponseSuccess(c, resp)
 		return
 	}
-	apiHelpers.ResponseError(c, e.WECHAT_QRCCODE_ERROR, "生成二维码失败！")
+	ResponseError(c, e.WECHAT_QRCCODE_ERROR, "生成二维码失败！")
 }
 
 func getQrcodeFullUrl(name string) string {

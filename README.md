@@ -30,7 +30,7 @@
 │   └── wechat.go
 ├── log
 ├── main.go
-├── middleware
+├── middlewares
 │   ├── ip_filter
 │   ├── jwt
 │   ├── logger
@@ -85,5 +85,5 @@ swag init
 - [x] 集成swagger API document
 - [x] background job&schedule job
 - [x] air 监听代码变化自动编译
-- [ ] 优惠券
+- [v] 优惠券(折扣券，满减券)
 - [ ] 营销模块

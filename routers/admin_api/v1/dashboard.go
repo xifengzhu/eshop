@@ -3,7 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	// "github.com/xifengzhu/eshop/models"
-	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+	apiHelpers "github.com/xifengzhu/eshop/routers/helpers"
 )
 
 // @Summary dashboard

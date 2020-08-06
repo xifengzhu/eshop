@@ -9,51 +9,34 @@ import (
 	"github.com/xifengzhu/eshop/helpers/utils"
 	"github.com/xifengzhu/eshop/initializers/wechat"
 	"github.com/xifengzhu/eshop/models"
-	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+	. "github.com/xifengzhu/eshop/routers/app_api/params"
+	. "github.com/xifengzhu/eshop/routers/helpers"
 	"strconv"
 )
-
-// Binding from JSON
-type Login struct {
-	Username string `json:"username" validate:"required"`
-	Password string `json:"password" validate:"required"`
-}
-
-type AuthParams struct {
-	Code          string `json:"code" validate:"required"`
-	EncryptedData string `json:"encrypted_data" validate:"required"`
-	IV            string `json:"iv" validate:"required"`
-}
-
-type UserInfo struct {
-	Username string `json:"nickname"`
-	Avatar   string `json:"avatar"`
-	Gender   int    `json:"gender"`
-}
 
 // @Summary 通过当前登录用户信息
 // @Produce  json
 // @Tags 用户
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /app_api/v1/users/mine [get]
 // @Security ApiKeyAuth
 func GetUser(c *gin.Context) {
 	currentUser, _ := c.Get("resource")
-	apiHelpers.ResponseSuccess(c, currentUser)
+	ResponseSuccess(c, currentUser)
 }
 
 // @Summary 编辑用户
 // @Produce  json
 // @Tags 用户
-// @Param params body UserInfo true "user info"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.UserInfo true "user info"
+// @Success 200 {object} helpers.Response
 // @Router /app_api/v1/users/mine [put]
 // @Security ApiKeyAuth
 func EditUser(c *gin.Context) {
 	var userInfo UserInfo
 	currentUser, _ := c.Get("resource")
 	user := currentUser.(models.User)
-	if err := apiHelpers.ValidateParams(c, &userInfo, "json"); err != nil {
+	if err := ValidateParams(c, &userInfo, "json"); err != nil {
 		return
 	}
 
@@ -62,7 +45,7 @@ func EditUser(c *gin.Context) {
 
 	models.Update(&user, &changedAttrs)
 
-	apiHelpers.ResponseSuccess(c, user)
+	ResponseSuccess(c, user)
 }
 
 // @Summary 用户通过微信的code获取auth token
@@ -70,16 +53,16 @@ func EditUser(c *gin.Context) {
 // @Description 用户获取token
 // @Accept  json
 // @Produce  json
-// @Param params body AuthParams true "wechat auth params"
+// @Param params body params.AuthParams true "wechat auth params"
 // @Param code query string true "wechat code"
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Failure 400 {object} utils.HTTPError
 // @Failure 404 {object} utils.HTTPError
 // @Failure 500 {object} utils.HTTPError
 // @Router /app_api/v1/user/auth [post]
 func AuthWithWechat(c *gin.Context) {
 	var auth AuthParams
-	if err := apiHelpers.ValidateParams(c, &auth, "json"); err != nil {
+	if err := ValidateParams(c, &auth, "json"); err != nil {
 		return
 	}
 
@@ -98,9 +81,9 @@ func AuthWithWechat(c *gin.Context) {
 		} else {
 			data = result
 		}
-		apiHelpers.ResponseSuccess(c, data)
+		ResponseSuccess(c, data)
 	} else {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 	}
 }
 
@@ -111,7 +94,7 @@ func AuthWithWechat(c *gin.Context) {
 // @Produce  json
 // @Param resource_id query integer true "resource id"
 // @Param resource_type query string true "resource type"
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Failure 400 {object} utils.HTTPError
 // @Failure 404 {object} utils.HTTPError
 // @Failure 500 {object} utils.HTTPError
@@ -122,14 +105,14 @@ func GetToken(c *gin.Context) {
 	params["id"] = userID
 	params["resource"] = c.Query("resource_type")
 	token := utils.Encode(params)
-	apiHelpers.ResponseSuccess(c, token)
+	ResponseSuccess(c, token)
 }
 
 // @Summary 用户解码token/仅限测试使用
 // @Produce  json
 // @Tags 用户
 // @Param token query string true "Token"
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Failure 400 {object} utils.HTTPError
 // @Failure 404 {object} utils.HTTPError
 // @Failure 500 {object} utils.HTTPError
@@ -141,6 +124,6 @@ func VerifyToken(c *gin.Context) {
 	if err != nil {
 		fmt.Println("err", err)
 	} else {
-		apiHelpers.ResponseSuccess(c, result)
+		ResponseSuccess(c, result)
 	}
 }

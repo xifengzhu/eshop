@@ -3,8 +3,7 @@ package admin_api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/xifengzhu/eshop/helpers/export"
-	"github.com/xifengzhu/eshop/middleware/jwt"
-	// "github.com/xifengzhu/eshop/middleware/role"
+	. "github.com/xifengzhu/eshop/middlewares"
 	"github.com/xifengzhu/eshop/routers/admin_api/v1"
 	"net/http"
 )
@@ -12,7 +11,7 @@ import (
 func InitAdminAPI(r *gin.Engine) {
 
 	admin_export := r.Group("/public")
-	admin_export.Use(jwt.JWTAuth())
+	admin_export.Use(JWTAuth())
 	admin_export.StaticFS("/export", http.Dir(export.GetExcelFullPath()))
 
 	admin_apiv1 := r.Group("/admin_api/v1")
@@ -20,8 +19,8 @@ func InitAdminAPI(r *gin.Engine) {
 	admin_apiv1.POST("/sessions/forget_password", v1.ForgetPassword)
 	admin_apiv1.PUT("/sessions/reset_password", v1.ResetPassword)
 	admin_apiv1.GET("/get_captcha", v1.GetCaptcha)
-	// admin_apiv1.Use(jwt.JWTAuth())
-	// admin_apiv1.Use(role.AuthCheckRole())
+	admin_apiv1.Use(JWTAuth())
+	// admin_apiv1.Use(AuthCheckRole())
 	{
 		admin_apiv1.GET("/orders", v1.GetOrders)
 		admin_apiv1.GET("/orders/:id", v1.GetOrder)

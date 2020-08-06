@@ -2,47 +2,42 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/xifengzhu/eshop/helpers/utils"
-	"github.com/xifengzhu/eshop/models"
-	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+	. "github.com/xifengzhu/eshop/models"
+	_ "github.com/xifengzhu/eshop/routers/app_api/params"
+	. "github.com/xifengzhu/eshop/routers/helpers"
 	"strconv"
 )
-
-type CategoryProductQueryParams struct {
-	utils.Pagination
-	CategoryID string `json:"cagegory_id"`
-}
 
 // @Summary 获取分类列表
 // @Produce  json
 // @Tags 分类
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /app_api/v1/categories [get]
 func GetCategories(c *gin.Context) {
-	var categories []models.Category
-	models.All(&categories, Query{Preloads: []string{"Children"}})
-	apiHelpers.ResponseSuccess(c, categories)
+	var categories []Category
+	All(&categories, Options{Preloads: []string{"Children"}})
+	ResponseSuccess(c, categories)
 }
 
 // @Summary 获取分类商品列表
 // @Produce  json
 // @Tags 分类
-// @Param params query CategoryProductQueryParams true "query params"
-// @Success 200 {object} apiHelpers.Response
+// @Param params query params.CategoryProductQueryParams true "query params"
+// @Success 200 {object} helpers.Response
 // @Router /app_api/v1/categories/{id}/products [get]
 func GetCategoryProducts(c *gin.Context) {
-	pagination := apiHelpers.SetDefaultPagination(c)
+	pagination := SetDefaultPagination(c)
 
-	var category models.Category
+	var category Category
 	id, _ := strconv.Atoi(c.Param("id"))
 	category.ID = id
 
-	models.Find(&category, Query{})
+	Find(&category, Options{})
 
 	products := category.GetCategoryProducts(pagination)
 
 	result := transferProductToEntity(products)
-	response := apiHelpers.Collection{Pagination: pagination, List: result}
+	response := Collection{Pagination: pagination, List: result}
 
-	apiHelpers.ResponseSuccess(c, response)
+	ResponseSuccess(c, response)
 }

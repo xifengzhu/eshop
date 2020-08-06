@@ -5,131 +5,100 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
-	"github.com/xifengzhu/eshop/helpers/utils"
-	"github.com/xifengzhu/eshop/models"
-	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+	. "github.com/xifengzhu/eshop/models"
+	. "github.com/xifengzhu/eshop/routers/admin_api/params"
+	. "github.com/xifengzhu/eshop/routers/helpers"
 	"strconv"
-	"time"
 )
-
-type QueryCouponTemplateParams struct {
-	utils.Pagination
-	Name string `json:"q[name_cont]"`
-}
-
-type Config struct {
-	MinAmount    float64    `json:"min_amount" validate:"required,gte=0"`
-	ResourceType string     `json:"resource_type,omitempty"`
-	Resources    []int      `json:"resources,omitempty" validate:"required_with=ResourceType"`
-	DateType     string     `json:"date_type" validate:"required,oneof='fix_term' 'time_range'"`
-	FixTerm      int        `json:"fix_term,omitempty" validate:"rfe=DateType:fix_term"`
-	StartAt      *time.Time `json:"start_at,omitempty" validate:"required_with=EndAt,rfe=DateType:time_range"`
-	EndAt        *time.Time `json:"end_at,omitempty" validate:"required_with=StartAt,rfe=DateType:time_range""`
-
-	ReduceAmount float64 `json:"reduce_amount,omitempty" validate:"required_without=Percentage"`
-	Percentage   int     `json:"percentage,omitempty" validate:"required_without=ReduceAmount"`
-}
-
-type CouponTemplateParams struct {
-	Code       string     `json:"code"`
-	Name       string     `json:"name" validate:"required"`
-	Kind       string     `json:"kind" validate:"required,oneof='fixed_amount' 'percentage'"`
-	Creator    string     `json:"creator"`
-	Stock      int        `json:"stock" validate:"required"`
-	CatchLimit int        `json:"catch_limit" validate:"required"`
-	StartAt    *time.Time `json:"start_at" validate:"required"`
-	EndAt      *time.Time `json:"end_at" validate:"required,gtfield=StartAt"`
-	Configs    Config     `json:"configs" validate:"required,dive"`
-}
 
 // @Summary 添加优惠券模板
 // @Produce  json
 // @Tags 后台优惠券模板管理
-// @Param params body CouponTemplateParams true "coupon template params"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.CouponTemplateParams true "coupon template params"
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/coupon_templates [post]
 // @Security ApiKeyAuth
 func AddCouponTemplate(c *gin.Context) {
 	var err error
 	var templateParams CouponTemplateParams
-	if err := apiHelpers.ValidateParams(c, &templateParams, "json"); err != nil {
+	if err := ValidateParams(c, &templateParams, "json"); err != nil {
 		return
 	}
 
-	var template models.CouponTemplate
+	var template CouponTemplate
 	copier.Copy(&template, &templateParams)
 	jsonConfigs, _ := json.Marshal(templateParams.Configs)
 	template.Configs = []byte(jsonConfigs)
-	err = models.Save(&template)
+	err = Save(&template)
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
-	apiHelpers.ResponseSuccess(c, template)
+	ResponseSuccess(c, template)
 }
 
 // @Summary 删除优惠券模板
 // @Produce  json
 // @Tags 后台优惠券模板管理
 // @Param id path int true "template id"
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/coupon_templates/{id} [delete]
 // @Security ApiKeyAuth
 func DeleteCouponTemplate(c *gin.Context) {
-	var template models.CouponTemplate
+	var template CouponTemplate
 	id, _ := strconv.Atoi(c.Param("id"))
 	template.ID = id
 
-	err := models.DestroyWithCallbacks(&template, Query{})
+	err := DestroyWithCallbacks(&template, Options{})
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
-	apiHelpers.ResponseSuccess(c, nil)
+	ResponseSuccess(c, nil)
 }
 
 // @Summary 优惠券模板详情
 // @Produce  json
 // @Tags 后台优惠券模板管理
 // @Param id path int true "template id"
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/coupon_templates/{id} [get]
 // @Security ApiKeyAuth
 func GetCouponTemplate(c *gin.Context) {
-	var template models.CouponTemplate
+	var template CouponTemplate
 	id, _ := strconv.Atoi(c.Param("id"))
 	template.ID = int(id)
 
-	err := models.Find(&template, Query{Preloads: []string{"Coupons"}})
+	err := Find(&template, Options{Preloads: []string{"Coupons"}})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
+		ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
-	apiHelpers.ResponseSuccess(c, template)
+	ResponseSuccess(c, template)
 }
 
 // @Summary 优惠券模板列表
 // @Produce  json
 // @Tags 后台优惠券模板管理
-// @Param params query QueryCouponTemplateParams true "query params"
-// @Success 200 {object} apiHelpers.Response
+// @Param params query params.QueryCouponTemplateParams true "query params"
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/coupon_templates [get]
 // @Security ApiKeyAuth
 func GetCouponTemplates(c *gin.Context) {
 
-	pagination := apiHelpers.SetDefaultPagination(c)
+	pagination := SetDefaultPagination(c)
 
-	var model models.CouponTemplate
-	result := &[]models.CouponTemplate{}
+	var model CouponTemplate
+	result := &[]CouponTemplate{}
 
-	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q")}, &result)
+	Search(&model, &SearchParams{Pagination: pagination, Conditions: c.QueryMap("q")}, &result)
 
-	response := apiHelpers.Collection{Pagination: pagination, List: result}
+	response := Collection{Pagination: pagination, List: result}
 
-	apiHelpers.ResponseSuccess(c, response)
+	ResponseSuccess(c, response)
 
 }
 
@@ -137,37 +106,37 @@ func GetCouponTemplates(c *gin.Context) {
 // @Produce  json
 // @Tags 后台优惠券模板管理
 // @Param id path int true "id"
-// @Param params body CouponTemplateParams true "template params"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.CouponTemplateParams true "template params"
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/coupon_templates/{id} [put]
 // @Security ApiKeyAuth
 func UpdateCouponTemplate(c *gin.Context) {
 	if c.Param("id") == "" {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "id 不能为空")
+		ResponseError(c, e.INVALID_PARAMS, "id 不能为空")
 	}
 	var err error
 	var params CouponTemplateParams
-	if err = apiHelpers.ValidateParams(c, &params, "json"); err != nil {
+	if err = ValidateParams(c, &params, "json"); err != nil {
 		return
 	}
 
-	var template models.CouponTemplate
+	var template CouponTemplate
 	template.ID, _ = strconv.Atoi(c.Param("id"))
-	err = models.Find(&template, Query{})
+	err = Find(&template, Options{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
+		ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
-	changedAttrs := models.CouponTemplate{}
+	changedAttrs := CouponTemplate{}
 	copier.Copy(&changedAttrs, &params)
-	err = models.Update(&template, &changedAttrs)
+	err = Update(&template, &changedAttrs)
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
-	apiHelpers.ResponseSuccess(c, template)
+	ResponseSuccess(c, template)
 }
 
 // @Summary 创建优惠券
@@ -175,7 +144,7 @@ func UpdateCouponTemplate(c *gin.Context) {
 // @Tags 后台优惠券模板管理
 // @Param id path int true "id"
 // @Param qty query int true "quantity"
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/coupon_templates/{id}/generate_coupons [post]
 // @Security ApiKeyAuth
 func GenerateCoupons(c *gin.Context) {
@@ -189,19 +158,19 @@ func GenerateCoupons(c *gin.Context) {
 	}
 
 	if errMsg != "" {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, errMsg)
+		ResponseError(c, e.INVALID_PARAMS, errMsg)
 	}
 
-	var template models.CouponTemplate
+	var template CouponTemplate
 	template.ID, _ = strconv.Atoi(c.Param("id"))
-	err := models.Find(&template, Query{})
+	err := Find(&template, Options{})
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
+		ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 	}
 
 	qty, _ := strconv.Atoi(c.Query("qty"))
 	template.GenerateCoupon(qty)
 
-	apiHelpers.ResponseOK(c)
+	ResponseOK(c)
 }

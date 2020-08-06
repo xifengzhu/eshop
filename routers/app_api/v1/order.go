@@ -4,111 +4,94 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
-	"github.com/xifengzhu/eshop/helpers/utils"
-	"github.com/xifengzhu/eshop/models"
-	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
-	appApiHelper "github.com/xifengzhu/eshop/routers/app_api/api_helpers"
-	"github.com/xifengzhu/eshop/routers/app_api/entities"
+	. "github.com/xifengzhu/eshop/models"
+	. "github.com/xifengzhu/eshop/routers/app_api/helpers"
+	. "github.com/xifengzhu/eshop/routers/app_api/params"
+	. "github.com/xifengzhu/eshop/routers/app_api/present"
+	. "github.com/xifengzhu/eshop/routers/helpers"
 	"log"
 	"strconv"
 	"time"
 )
 
-type QueryOrderParams struct {
-	utils.Pagination
-	state string `json:"q[state]"`
-}
-
-type OrderParams struct {
-	AddressID    int    `json:"address_id"`
-	ExpressID    int    `json:"express_id"`
-	CouponID     int    `json:"coupon_id"`
-	BuyerMessage string `json:"buyer_message"`
-	IsPreview    *bool  `json:"is_preview" validate:"required"`
-}
-
-type OrderIDParams struct {
-	OrderID int `json:"order_id" validate:"required"`
-}
-
 // @Summary 获取订单列表
 // @Produce  json
 // @Tags 订单
-// @Param params query QueryOrderParams true "query params"
-// @Success 200 {object} apiHelpers.Response
+// @Param params query params.QueryOrderParams true "query params"
+// @Success 200 {object} helpers.Response
 // @Router /app_api/v1/orders [get]
 // @Security ApiKeyAuth
 func GetOrders(c *gin.Context) {
-	user := appApiHelper.CurrentUser(c)
+	user := CurrentUser(c)
 
-	pagination := apiHelpers.SetDefaultPagination(c)
+	pagination := SetDefaultPagination(c)
 
-	var model models.Order
-	orders := &[]models.Order{}
+	var model Order
+	orders := &[]Order{}
 
 	condition := c.QueryMap("q")
 	condition["user_id"] = strconv.Itoa(user.ID)
 
-	models.Search(&model, &Search{Pagination: pagination, Conditions: condition, Preloads: []string{"OrderItems"}}, orders)
+	Search(&model, &SearchParams{Pagination: pagination, Conditions: condition, Preloads: []string{"OrderItems"}}, orders)
 
 	orderEntities := transferOrdersToEntity(*orders)
 
-	response := apiHelpers.Collection{Pagination: pagination, List: orderEntities}
+	response := Collection{Pagination: pagination, List: orderEntities}
 
-	apiHelpers.ResponseSuccess(c, response)
+	ResponseSuccess(c, response)
 }
 
 // @Summary 获取订单详情
 // @Produce  json
 // @Tags 订单
 // @Param id path int true "order id"
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /app_api/v1/orders/{id} [get]
 // @Security ApiKeyAuth
 func GetOrder(c *gin.Context) {
-	user := appApiHelper.CurrentUser(c)
+	user := CurrentUser(c)
 	orderID, _ := strconv.Atoi(c.Param("id"))
 
 	order, err := user.GetOrder(orderID)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
+		ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
 	orderEntity := transferOrderToEntity(order)
 
-	apiHelpers.ResponseSuccess(c, orderEntity)
+	ResponseSuccess(c, orderEntity)
 }
 
 // @Summary 创建订单
 // @Produce  json
 // @Tags 订单
-// @Param params body OrderParams true "订单参数"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.OrderParams true "订单参数"
+// @Success 200 {object} helpers.Response
 // @Router /app_api/v1/orders [post]
 // @Security ApiKeyAuth
 func CreateOrder(c *gin.Context) {
-	user := appApiHelper.CurrentUser(c)
+	user := CurrentUser(c)
 	var err error
 	var orderParams OrderParams
 
-	if err = apiHelpers.ValidateParams(c, &orderParams, "json"); err != nil {
+	if err = ValidateParams(c, &orderParams, "json"); err != nil {
 		return
 	}
 
-	var orderItems []models.OrderItem
+	var orderItems []OrderItem
 
 	carItems, _ := user.GetCheckedShoppingCartItems()
 
 	for _, item := range carItems {
-		var goods models.Goods
+		var goods Goods
 		goods.ID = item.GoodsID
-		err = models.Find(&goods, Query{})
+		err = Find(&goods, Options{})
 		if err != nil {
-			apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, "商品不存在或被下架")
+			ResponseError(c, e.ERROR_NOT_EXIST, "商品不存在或被下架")
 			return
 		}
-		orderItem := models.OrderItem{
+		orderItem := OrderItem{
 			GoodsName:       goods.Name,
 			GoodsPrice:      goods.Price,
 			LinePrice:       goods.LinePrice,
@@ -122,7 +105,7 @@ func CreateOrder(c *gin.Context) {
 		orderItems = append(orderItems, orderItem)
 	}
 
-	order := models.Order{
+	order := Order{
 		WxappId:      "001",
 		UserID:       user.ID,
 		User:         &user,
@@ -131,7 +114,7 @@ func CreateOrder(c *gin.Context) {
 		OrderItems:   orderItems,
 	}
 
-	var address models.Address
+	var address Address
 	if orderParams.AddressID != 0 {
 		address, _ = user.GetAddressByID(orderParams.AddressID)
 		receiverProperties := address.DisplayString()
@@ -140,12 +123,12 @@ func CreateOrder(c *gin.Context) {
 	}
 
 	// 检查coupon
-	var coupon models.Coupon
+	var coupon Coupon
 	if orderParams.CouponID != 0 {
 		coupon.ID = orderParams.CouponID
-		err = models.Find(&coupon, Query{})
+		err = Find(&coupon, Options{})
 		if err != nil || coupon.State != "actived" {
-			apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, "invalid coupon")
+			ResponseError(c, e.ERROR_NOT_EXIST, "invalid coupon")
 			return
 		}
 		order.CouponID = coupon.ID
@@ -162,87 +145,87 @@ func CreateOrder(c *gin.Context) {
 		log.Println("======avaliable coupons:===", coupons)
 		orderEntity.Coupons = coupons
 
-		apiHelpers.ResponseSuccess(c, orderEntity)
+		ResponseSuccess(c, orderEntity)
 	} else {
 		if order.AddressID == 0 {
-			apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, "地址不能为空")
+			ResponseError(c, e.ERROR_NOT_EXIST, "地址不能为空")
 			return
 		}
 
-		err = models.Create(&order)
+		err = Create(&order)
 		if err != nil {
-			apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+			ResponseError(c, e.INVALID_PARAMS, err.Error())
 			return
 		}
-		apiHelpers.ResponseSuccess(c, entities.OrderIDEntity{ID: order.ID})
+		ResponseSuccess(c, OrderIDEntity{ID: order.ID})
 	}
 }
 
 // @Summary 请求支付参数
 // @Produce  json
 // @Tags 订单
-// @Param params body OrderIDParams true "订单ID"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.OrderIDParams true "订单ID"
+// @Success 200 {object} helpers.Response
 // @Router /app_api/v1/orders/request_payment [post]
 // @Security ApiKeyAuth
 func RequestPayment(c *gin.Context) {
-	user := appApiHelper.CurrentUser(c)
+	user := CurrentUser(c)
 	var params OrderIDParams
-	if err := apiHelpers.ValidateParams(c, &params, "json"); err != nil {
+	if err := ValidateParams(c, &params, "json"); err != nil {
 		return
 	}
 
 	order, err := user.GetOrder(params.OrderID)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, "订单不存在或已过期")
+		ResponseError(c, e.ERROR_NOT_EXIST, "订单不存在或已过期")
 		return
 	}
 	paymentParams, err := order.RequestPayment(c.ClientIP())
 	if err != nil {
-		apiHelpers.ResponseError(c, e.WECHAT_PAY_ERROR, err.Error())
+		ResponseError(c, e.WECHAT_PAY_ERROR, err.Error())
 		return
 	}
-	apiHelpers.ResponseSuccess(c, paymentParams)
+	ResponseSuccess(c, paymentParams)
 }
 
 // @Summary 删除订单
 // @Produce  json
 // @Tags 订单
 // @Param id path integer true "订单id"
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /app_api/v1/orders/{id} [delete]
 // @Security ApiKeyAuth
 func DeleteOrder(c *gin.Context) {
-	user := appApiHelper.CurrentUser(c)
+	user := CurrentUser(c)
 	orderID, _ := strconv.Atoi(c.Param("id"))
 
-	var order models.Order
+	var order Order
 	parmMap := map[string]interface{}{"id": orderID, "user_id": user.ID}
-	err := models.Find(&order, Query{Conditions: parmMap})
+	err := Find(&order, Options{Conditions: parmMap})
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, "资源不存在")
+		ResponseError(c, e.ERROR_NOT_EXIST, "资源不存在")
 		return
 	}
 
-	models.DestroyWithCallbacks(&order, Query{Callbacks: []func(){order.DestroyOrderItems}})
+	DestroyWithCallbacks(&order, Options{Callbacks: []func(){order.DestroyOrderItems}})
 
-	models.Destroy(order)
-	apiHelpers.ResponseOK(c)
+	Destroy(order)
+	ResponseOK(c)
 }
 
 // @Summary 取消订单
 // @Produce  json
 // @Tags 订单
-// @Param params body OrderIDParams true "订单id"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.OrderIDParams true "订单id"
+// @Success 200 {object} helpers.Response
 // @Router /app_api/v1/orders/close [post]
 // @Security ApiKeyAuth
 func CloseOrder(c *gin.Context) {
-	user := appApiHelper.CurrentUser(c)
+	user := CurrentUser(c)
 
 	var params OrderIDParams
-	if err := apiHelpers.ValidateParams(c, &params, "json"); err != nil {
+	if err := ValidateParams(c, &params, "json"); err != nil {
 		return
 	}
 
@@ -251,17 +234,17 @@ func CloseOrder(c *gin.Context) {
 	err = order.Close()
 
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 
-	apiHelpers.ResponseOK(c)
+	ResponseOK(c)
 }
 
 // @Summary 订单支付结果通知
 // @Produce  json
 // @Tags 微信回调通知
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /app_api/v1/orders/pay_notify [post]
 func PayNotify(c *gin.Context) {
 	params, _ := c.GetRawData()
@@ -278,23 +261,23 @@ func PayNotify(c *gin.Context) {
 // @Summary 订单退款结果通知
 // @Produce  json
 // @Tags 微信回调通知
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /app_api/v1/orders/refund_notify [post]
 func RefundNotify(c *gin.Context) {
 	params, _ := c.GetRawData()
 	log.Println("refund notify params:", params)
 }
 
-func transferOrdersToEntity(orders []models.Order) (orderEntities []entities.OrderEntity) {
+func transferOrdersToEntity(orders []Order) (orderEntities []OrderEntity) {
 	for _, d_order := range orders {
-		var orderEntity entities.OrderEntity
+		var orderEntity OrderEntity
 		copier.Copy(&orderEntity, &d_order)
 		orderEntities = append(orderEntities, orderEntity)
 	}
 	return
 }
 
-func transferOrderToEntity(order models.Order) (orderEntity entities.OrderDetailEntity) {
+func transferOrderToEntity(order Order) (orderEntity OrderDetailEntity) {
 	copier.Copy(&orderEntity, &order)
 	return
 }

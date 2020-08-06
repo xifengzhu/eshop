@@ -4,151 +4,143 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
-	"github.com/xifengzhu/eshop/helpers/utils"
-	"github.com/xifengzhu/eshop/models"
-	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+	. "github.com/xifengzhu/eshop/models"
+	. "github.com/xifengzhu/eshop/routers/admin_api/params"
+	. "github.com/xifengzhu/eshop/routers/helpers"
 	"strconv"
-	"time"
 )
-
-type CategoryParams struct {
-	Name     string `json:"name" validate:"required" `
-	Position int    `json:"position"`
-	ParentID int    `json:"parent_id"`
-	Image    string `json:"image"`
-}
-
-type QueryCategoryParams struct {
-	utils.Pagination
-	Name            string    `json:"q[name]"`
-	Created_at_gteq time.Time `json:"q[created_at_gteq]" time_format:"2006-01-02T15:04:05Z07:00"`
-	Created_at_lteq time.Time `json:"q[created_at_lteq]" time_format:"2006-01-02T15:04:05Z07:00"`
-	ParentID        int       `json:"q[parent_id_eq]"`
-}
 
 // @Summary 添加分类
 // @Produce  json
 // @Tags 后台分类管理
-// @Param params body CategoryParams true "query params"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.CategoryParams true "query params"
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/categories [post]
 // @Security ApiKeyAuth
 func AddCategory(c *gin.Context) {
 	var err error
 	var categoryParams CategoryParams
-	if err := apiHelpers.ValidateParams(c, &categoryParams, "json"); err != nil {
+	if err := ValidateParams(c, &categoryParams, "json"); err != nil {
 		return
 	}
 
-	var category models.Category
+	var category Category
 	copier.Copy(&category, &categoryParams)
 
-	err = models.Save(&category)
+	err = Save(&category)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
-	apiHelpers.ResponseSuccess(c, category)
+	ResponseSuccess(c, category)
 }
 
 // @Summary 删除分类
 // @Produce  json
 // @Tags 后台分类管理
 // @Param id path int true "category id"
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/categories/{id} [delete]
 // @Security ApiKeyAuth
 func DeleteCategory(c *gin.Context) {
-	var category models.Category
+	var category Category
 	id, _ := strconv.Atoi(c.Param("id"))
 	category.ID = id
 
 	var callbacks []func()
 	callbacks = append(callbacks, category.RemoveChildrenRefer)
-	err := models.DestroyWithCallbacks(&category, Query{Callbacks: callbacks})
+	err := DestroyWithCallbacks(&category, Options{Callbacks: callbacks})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
-	apiHelpers.ResponseSuccess(c, nil)
+	ResponseSuccess(c, nil)
 }
 
 // @Summary 分类详情
 // @Produce  json
 // @Tags 后台分类管理
 // @Param id path int true "category id"
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/categories/{id} [get]
 // @Security ApiKeyAuth
 func GetCategory(c *gin.Context) {
-	var category models.Category
+	var category Category
 	id, _ := strconv.Atoi(c.Param("id"))
 	category.ID = id
-	err := models.Find(&category, Query{Preloads: []string{"Parent", "Children"}})
+	err := Find(&category, Options{
+		Preloads: []string{"Parent", "Children"},
+	})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
+		ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
-	apiHelpers.ResponseSuccess(c, category)
+	ResponseSuccess(c, category)
 }
 
 // @Summary 分类列表
 // @Produce  json
 // @Tags 后台分类管理
-// @Param params query QueryCategoryParams true "query params"
-// @Success 200 {object} apiHelpers.Response
+// @Param params query params.QueryCategoryParams true "query params"
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/categories [get]
 // @Security ApiKeyAuth
 func GetCategories(c *gin.Context) {
 
-	pagination := apiHelpers.SetDefaultPagination(c)
+	pagination := SetDefaultPagination(c)
 
-	var model models.Category
-	result := &[]models.Category{}
+	var model Category
+	result := &[]Category{}
 
-	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q")}, &result)
+	Search(&model, &SearchParams{
+		Pagination: pagination,
+		Conditions: c.QueryMap("q"),
+	}, &result)
 
-	response := apiHelpers.Collection{Pagination: pagination, List: result}
+	response := Collection{
+		Pagination: pagination,
+		List:       result,
+	}
 
-	apiHelpers.ResponseSuccess(c, response)
+	ResponseSuccess(c, response)
 }
 
 // @Summary 更新分类
 // @Produce  json
 // @Tags 后台分类管理
 // @Param id path int true "category id"
-// @Param params body CategoryParams true "category params"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.CategoryParams true "category params"
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/categories/{id} [put]
 // @Security ApiKeyAuth
 func UpdateCategory(c *gin.Context) {
 	if c.Param("id") == "" {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "id 不能为空")
+		ResponseError(c, e.INVALID_PARAMS, "id 不能为空")
 		return
 	}
 	var err error
 	var categoryParams CategoryParams
 
-	if err := apiHelpers.ValidateParams(c, &categoryParams, "json"); err != nil {
+	if err := ValidateParams(c, &categoryParams, "json"); err != nil {
 		return
 	}
 
-	var category models.Category
+	var category Category
 	id, _ := strconv.Atoi(c.Param("id"))
 	category.ID = id
-	err = models.Find(&category, Query{})
+	err = Find(&category, Options{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
+		ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
 	copier.Copy(&category, &categoryParams)
 
-	err = models.Save(&category)
+	err = Save(&category)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
-	apiHelpers.ResponseSuccess(c, category)
+	ResponseSuccess(c, category)
 }

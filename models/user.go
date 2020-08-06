@@ -19,11 +19,6 @@ type User struct {
 	Orders    []Order   `json:"orders"`
 }
 
-func GetUsers(pageNum int, pageSize int, maps interface{}) (users []User) {
-	db.Where(maps).Offset(pageNum).Limit(pageSize).Find(&users)
-	return
-}
-
 func FindOrCreateUserByOpenId(openId string) (user User) {
 	db.FirstOrCreate(&user, User{OpenId: openId})
 	return
@@ -64,12 +59,6 @@ func ExistUserByID(id int) bool {
 	}
 
 	return false
-}
-
-func EditUser(id int, data map[string]interface{}) bool {
-	db.Model(&User{}).Where("id = ?", id).Updates(data)
-
-	return true
 }
 
 func AddUser(username string, avatar string, open_id string) User {

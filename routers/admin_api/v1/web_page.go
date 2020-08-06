@@ -4,135 +4,130 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
-	"github.com/xifengzhu/eshop/models"
-	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+	. "github.com/xifengzhu/eshop/models"
+	. "github.com/xifengzhu/eshop/routers/admin_api/params"
+	. "github.com/xifengzhu/eshop/routers/helpers"
 	"strconv"
 )
-
-type WebPageParams struct {
-	Title   string `json:"title" validate:"required"`
-	Cover   string `json:"cover"`
-	Content string `json:"content" validate:"required"`
-}
 
 // @Summary 添加webview
 // @Produce  json
 // @Tags 后台webview管理
-// @Param params body WebPageParams true "query params"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.WebPageParams true "query params"
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/web_pages [post]
 // @Security ApiKeyAuth
 func AddWebPage(c *gin.Context) {
 	var err error
 	var wpParams WebPageParams
-	if err = apiHelpers.ValidateParams(c, &wpParams, "json"); err != nil {
+	if err = ValidateParams(c, &wpParams, "json"); err != nil {
 		return
 	}
 
-	var webPage models.WebPage
+	var webPage WebPage
 	copier.Copy(&webPage, &wpParams)
 
-	err = models.Save(&webPage)
+	err = Save(&webPage)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
-	apiHelpers.ResponseSuccess(c, webPage)
+	ResponseSuccess(c, webPage)
 }
 
 // @Summary 删除webview
 // @Produce  json
 // @Tags 后台webview管理
 // @Param id path int true "web_page id"
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/web_pages/{id} [delete]
 // @Security ApiKeyAuth
 func DeleteWebPage(c *gin.Context) {
-	var webPage models.WebPage
+	var webPage WebPage
 	id, _ := strconv.Atoi(c.Param("id"))
 	webPage.ID = id
 
-	err := models.Destroy(&webPage)
+	err := Destroy(&webPage)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
-	apiHelpers.ResponseSuccess(c, nil)
+	ResponseSuccess(c, nil)
 }
 
 // @Summary webview详情
 // @Produce  json
 // @Tags 后台webview管理
 // @Param id path int true "web_page id"
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/web_pages/{id} [get]
 // @Security ApiKeyAuth
 func GetWebPage(c *gin.Context) {
-	var webPage models.WebPage
+	var webPage WebPage
 	id, _ := strconv.Atoi(c.Param("id"))
 	webPage.ID = id
-	err := models.Find(&webPage, Query{})
+	err := Find(&webPage, Options{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
+		ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
-	apiHelpers.ResponseSuccess(c, webPage)
+	ResponseSuccess(c, webPage)
 }
 
 // @Summary webview列表
 // @Produce  json
 // @Tags 后台webview管理
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/web_pages [get]
 // @Security ApiKeyAuth
 func GetWebPages(c *gin.Context) {
-	pagination := apiHelpers.SetDefaultPagination(c)
+	pagination := SetDefaultPagination(c)
 
-	var model models.WebPage
-	result := &[]models.WebPage{}
+	var model WebPage
+	result := &[]WebPage{}
 
-	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q")}, &result)
+	Search(&model, &SearchParams{Pagination: pagination, Conditions: c.QueryMap("q")}, &result)
 
-	response := apiHelpers.Collection{Pagination: pagination, List: result}
+	response := Collection{Pagination: pagination, List: result}
 
-	apiHelpers.ResponseSuccess(c, response)
+	ResponseSuccess(c, response)
 }
 
 // @Summary 更新webview
 // @Produce  json
 // @Tags 后台webview管理
 // @Param id path int true "id"
-// @Param params body WebPageParams true "web_page params"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.WebPageParams true "web_page params"
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/web_pages/{id} [put]
 // @Security ApiKeyAuth
 func UpdateWebPage(c *gin.Context) {
 	if c.Param("id") == "" {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "id 不能为空")
+		ResponseError(c, e.INVALID_PARAMS, "id 不能为空")
 		return
 	}
 	var err error
 	var webPageParams WebPageParams
-	if err := apiHelpers.ValidateParams(c, &webPageParams, "json"); err != nil {
+	if err := ValidateParams(c, &webPageParams, "json"); err != nil {
 		return
 	}
 
-	var webPage models.WebPage
+	var webPage WebPage
 	id, _ := strconv.Atoi(c.Param("id"))
 	webPage.ID = id
-	err = models.Find(&webPage, Query{})
+	err = Find(&webPage, Options{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
+		ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
 	copier.Copy(&webPage, &webPageParams)
 
-	err = models.Save(&webPage)
+	err = Save(&webPage)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
-	apiHelpers.ResponseSuccess(c, webPage)
+	ResponseSuccess(c, webPage)
 }

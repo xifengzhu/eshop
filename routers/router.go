@@ -17,7 +17,7 @@ import (
 	"os"
 	"runtime/debug"
 	"strings"
-	// "github.com/xifengzhu/eshop/middleware/logger"
+	// "github.com/xifengzhu/eshop/middlewares/logger"
 )
 
 type Response struct {

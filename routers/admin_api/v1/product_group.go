@@ -1,153 +1,137 @@
 package v1
 
 import (
-	// "fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
-	"github.com/xifengzhu/eshop/helpers/utils"
-	"github.com/xifengzhu/eshop/models"
-	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+	. "github.com/xifengzhu/eshop/models"
+	. "github.com/xifengzhu/eshop/routers/admin_api/params"
+	. "github.com/xifengzhu/eshop/routers/helpers"
 	"strconv"
-	"time"
 )
-
-type ProductGroupParams struct {
-	Name       string      `json:"name"`
-	Remark     string      `json:"remark"`
-	ProductIDs models.JSON `json:"product_ids"`
-	Key        string      `json:"key"`
-}
-
-type QueryProductGroupParams struct {
-	utils.Pagination
-	Name            string    `json:"q[name]"`
-	Created_at_gteq time.Time `json:"q[created_at_gteq]" time_format:"2006-01-02T15:04:05Z07:00"`
-	Created_at_lteq time.Time `json:"q[created_at_lteq]" time_format:"2006-01-02T15:04:05Z07:00"`
-}
 
 // @Summary 添加主题产品
 // @Produce  json
 // @Tags 后台主题产品管理
-// @Param params body ProductGroupParams true "query params"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.ProductGroupParams true "query params"
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/product_groups [post]
 // @Security ApiKeyAuth
 func AddProductGroup(c *gin.Context) {
 	var err error
 	var productGroupParams ProductGroupParams
-	if err = apiHelpers.ValidateParams(c, &productGroupParams, "json"); err != nil {
+	if err = ValidateParams(c, &productGroupParams, "json"); err != nil {
 		return
 	}
 
-	var productGroup models.ProductGroup
+	var productGroup ProductGroup
 	copier.Copy(&productGroup, &productGroupParams)
 
-	err = models.Save(&productGroup)
+	err = Save(&productGroup)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
-	apiHelpers.ResponseSuccess(c, productGroup)
+	ResponseSuccess(c, productGroup)
 }
 
 // @Summary 删除主题产品
 // @Produce  json
 // @Tags 后台主题产品管理
 // @Param id path int true "productGroup id"
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/product_groups/{id} [delete]
 // @Security ApiKeyAuth
 func DeleteProductGroup(c *gin.Context) {
-	var productGroup models.ProductGroup
+	var productGroup ProductGroup
 	id, _ := strconv.Atoi(c.Param("id"))
 	productGroup.ID = id
 
-	err := models.Destroy(&productGroup)
+	err := Destroy(&productGroup)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
-	apiHelpers.ResponseSuccess(c, nil)
+	ResponseSuccess(c, nil)
 }
 
 // @Summary 主题产品详情
 // @Produce  json
 // @Tags 后台主题产品管理
 // @Param id path int true "productGroup id"
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/product_groups/{id} [get]
 // @Security ApiKeyAuth
 func GetProductGroup(c *gin.Context) {
-	var productGroup models.ProductGroup
+	var productGroup ProductGroup
 	id, _ := strconv.Atoi(c.Param("id"))
 	productGroup.ID = id
-	err := models.Find(&productGroup, Query{})
+	err := Find(&productGroup, Options{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
+		ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
 	productGroup.Products = productGroup.GetProducts()
 
-	apiHelpers.ResponseSuccess(c, productGroup)
+	ResponseSuccess(c, productGroup)
 }
 
 // @Summary 主题产品列表
 // @Produce  json
 // @Tags 后台主题产品管理
-// @Param params query QueryProductGroupParams true "query params"
-// @Success 200 {object} apiHelpers.Response
+// @Param params query params.QueryProductGroupParams true "query params"
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/product_groups [get]
 // @Security ApiKeyAuth
 func GetProductGroups(c *gin.Context) {
 
-	pagination := apiHelpers.SetDefaultPagination(c)
+	pagination := SetDefaultPagination(c)
 
-	var model models.ProductGroup
-	result := &[]models.ProductGroup{}
+	var model ProductGroup
+	result := &[]ProductGroup{}
 
-	models.Search(&model, &Search{Pagination: pagination, Conditions: c.QueryMap("q")}, &result)
+	Search(&model, &SearchParams{Pagination: pagination, Conditions: c.QueryMap("q")}, &result)
 
-	response := apiHelpers.Collection{Pagination: pagination, List: result}
+	response := Collection{Pagination: pagination, List: result}
 
-	apiHelpers.ResponseSuccess(c, response)
+	ResponseSuccess(c, response)
 }
 
 // @Summary 更新主题产品
 // @Produce  json
 // @Tags 后台主题产品管理
 // @Param id path int true "productGroup id"
-// @Param params body ProductGroupParams true "productGroup params"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.ProductGroupParams true "productGroup params"
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/product_groups/{id} [put]
 // @Security ApiKeyAuth
 func UpdateProductGroup(c *gin.Context) {
 	if c.Param("id") == "" {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "id 不能为空")
+		ResponseError(c, e.INVALID_PARAMS, "id 不能为空")
 		return
 	}
 	var err error
 	var productGroupParams ProductGroupParams
-	if err = apiHelpers.ValidateParams(c, &productGroupParams, "json"); err != nil {
+	if err = ValidateParams(c, &productGroupParams, "json"); err != nil {
 		return
 	}
 
-	var productGroup models.ProductGroup
+	var productGroup ProductGroup
 	id, _ := strconv.Atoi(c.Param("id"))
 	productGroup.ID = id
-	err = models.Find(&productGroup, Query{})
+	err = Find(&productGroup, Options{})
 	if err != nil {
-		apiHelpers.ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
+		ResponseError(c, e.ERROR_NOT_EXIST, err.Error())
 		return
 	}
 
 	copier.Copy(&productGroup, &productGroupParams)
 
-	err = models.Save(&productGroup)
+	err = Save(&productGroup)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
-	apiHelpers.ResponseSuccess(c, productGroup)
+	ResponseSuccess(c, productGroup)
 }

@@ -3,7 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	config "github.com/xifengzhu/eshop/initializers"
-	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+	apiHelpers "github.com/xifengzhu/eshop/routers/helpers"
 )
 
 // @Summary 七牛上传凭证

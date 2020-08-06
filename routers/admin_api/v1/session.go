@@ -6,97 +6,78 @@ import (
 	"github.com/xifengzhu/eshop/helpers/utils"
 	config "github.com/xifengzhu/eshop/initializers"
 	"github.com/xifengzhu/eshop/models"
-	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+	. "github.com/xifengzhu/eshop/routers/admin_api/params"
+	. "github.com/xifengzhu/eshop/routers/helpers"
 )
-
-type CaptchaParam struct {
-	CaptchaID    string `json:"captcha_id" validate:"required"`
-	CaptchaValue string `json:"captcha_value" validate:"required"`
-}
-
-type LoginParams struct {
-	CaptchaParam
-	Email    string `json:"email"  validate:"required,email"`
-	Password string `json:"password"  validate:"required"`
-}
-
-type ForgetPasswordParams struct {
-	CaptchaParam
-	Email string `json:"email"  validate:"required,email"`
-}
-
-type ResetPasswordParams struct {
-	Password string `json:"password"  validate:"required,gte=6,lt=12"`
-}
 
 // @Summary 管理员登录
 // @Produce  json
 // @Tags 后台管理员
-// @Param params body LoginParams true "邮箱密码"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.LoginParams true "邮箱密码"
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/sessions/login [post]
 func Login(c *gin.Context) {
 	var login LoginParams
 
-	if err := apiHelpers.ValidateParams(c, &login, "json"); err != nil {
+	if err := ValidateParams(c, &login, "json"); err != nil {
 		return
 	}
 
 	valid := config.CaptchaVerify(login.CaptchaID, login.CaptchaValue)
 	if !valid {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "验证码错误")
+		ResponseError(c, e.INVALID_PARAMS, "验证码错误")
 		return
 	}
 
 	var admin models.AdminUser
 	err := admin.GetAdminUserByEmail(login.Email)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "账号不存在")
+		ResponseError(c, e.INVALID_PARAMS, "账号不存在")
 		return
 	}
 
 	if admin.Authenticate(login.Password) {
 		var params = map[string]interface{}{"id": admin.ID, "resource": "admin"}
 		token := utils.Encode(params)
-		apiHelpers.ResponseSuccess(c, token)
+		ResponseSuccess(c, token)
 		return
 	}
-	apiHelpers.ResponseError(c, e.INVALID_PARAMS, "密码错误")
+	ResponseError(c, e.INVALID_PARAMS, "密码错误")
 }
 
 // @Summary 当前管理员
 // @Produce  json
 // @Tags 后台管理员
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/sessions/mine [get]
 // @Security ApiKeyAuth
 func GetCurrentAdminUser(c *gin.Context) {
 	admin, _ := c.Get("resource")
-	apiHelpers.ResponseSuccess(c, admin.(models.AdminUser))
+	ResponseSuccess(c, admin.(models.AdminUser))
 }
 
 // @Summary 管理员忘记密码
 // @Produce  json
 // @Tags 后台管理员
-// @Param params body ForgetPasswordParams true "重置密码"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.ForgetPasswordParams true "重置密码"
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/sessions/forget_password [post]
 func ForgetPassword(c *gin.Context) {
 	var resetParam ForgetPasswordParams
-	if err := apiHelpers.ValidateParams(c, &resetParam, "json"); err != nil {
+	if err := ValidateParams(c, &resetParam, "json"); err != nil {
 		return
 	}
 
 	valid := config.CaptchaVerify(resetParam.CaptchaID, resetParam.CaptchaValue)
 	if !valid {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "验证码错误")
+		ResponseError(c, e.INVALID_PARAMS, "验证码错误")
 		return
 	}
 
 	var admin models.AdminUser
 	err := admin.GetAdminUserByEmail(resetParam.Email)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, "账号不存在")
+		ResponseError(c, e.INVALID_PARAMS, "账号不存在")
 		return
 	}
 	// TODO: send email
@@ -107,8 +88,8 @@ func ForgetPassword(c *gin.Context) {
 // @Produce  json
 // @Tags 后台管理员
 // @Param reset_password_token path string true "充值密码token"
-// @Param params body ResetPasswordParams true "重置密码"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.ResetPasswordParams true "重置密码"
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/sessions/reset_password [put]
 func ResetPassword(c *gin.Context) {
 

@@ -3,8 +3,7 @@ package app_api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/xifengzhu/eshop/initializers/setting"
-	"github.com/xifengzhu/eshop/middleware/ip_filter"
-	"github.com/xifengzhu/eshop/middleware/jwt"
+	. "github.com/xifengzhu/eshop/middlewares"
 	"github.com/xifengzhu/eshop/routers/app_api/v1"
 	"net/http"
 )
@@ -15,7 +14,7 @@ func InitAppAPI(r *gin.Engine) {
 	api_public.StaticFS("/qrcode", http.Dir(qrcodePath()))
 
 	apiv1 := r.Group("/app_api/v1")
-	apiv1.Use(ip_filter.IPFilter())
+	apiv1.Use(IPFilter())
 	// get address data
 	{
 		apiv1.GET("/provinces", v1.GetProvinces)
@@ -55,7 +54,7 @@ func InitAppAPI(r *gin.Engine) {
 		apiv1.GET("/categories/:id/products", v1.GetCategoryProducts)
 	}
 
-	apiv1.Use(jwt.JWTAuth())
+	apiv1.Use(JWTAuth())
 	// user router
 	{
 		apiv1.GET("/users/mine", v1.GetUser)

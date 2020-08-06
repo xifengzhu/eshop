@@ -32,7 +32,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -56,7 +56,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -79,6 +79,21 @@
                 "parameters": [
                     {
                         "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q[email_cont]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "q[created_at_gteq]",
                         "in": "query"
                     },
@@ -97,11 +112,6 @@
                     },
                     {
                         "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "page",
                         "in": "query"
                     },
@@ -109,23 +119,13 @@
                         "type": "integer",
                         "name": "per_page",
                         "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[email_cont]",
-                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -150,7 +150,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.AddAdminUserParams"
+                            "$ref": "#/definitions/params.AddAdminUserParams"
                         }
                     }
                 ],
@@ -158,7 +158,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -191,7 +191,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -223,7 +223,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.UpdateAdminUserParams"
+                            "$ref": "#/definitions/params.UpdateAdminUserParams"
                         }
                     }
                 ],
@@ -231,7 +231,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -262,7 +262,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -289,7 +289,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.AddRolesParams"
+                            "$ref": "#/definitions/params.AddRolesParams"
                         }
                     },
                     {
@@ -304,7 +304,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -395,6 +395,11 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "page",
                         "in": "query"
                     },
@@ -427,18 +432,13 @@
                         "type": "string",
                         "name": "sort",
                         "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -463,7 +463,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CategoryParams"
+                            "$ref": "#/definitions/params.CategoryParams"
                         }
                     }
                 ],
@@ -471,7 +471,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -504,7 +504,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -536,7 +536,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CategoryParams"
+                            "$ref": "#/definitions/params.CategoryParams"
                         }
                     }
                 ],
@@ -544,7 +544,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -575,7 +575,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -603,7 +603,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -626,6 +626,11 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
@@ -643,18 +648,13 @@
                         "type": "string",
                         "name": "q[name_cont]",
                         "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -679,7 +679,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CouponTemplateParams"
+                            "$ref": "#/definitions/params.CouponTemplateParams"
                         }
                     }
                 ],
@@ -687,7 +687,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -720,7 +720,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -752,7 +752,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CouponTemplateParams"
+                            "$ref": "#/definitions/params.CouponTemplateParams"
                         }
                     }
                 ],
@@ -760,7 +760,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -791,7 +791,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -831,7 +831,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -872,18 +872,8 @@
                 "summary": "运费模板列表",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -893,7 +883,17 @@
                     },
                     {
                         "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
                         "in": "query"
                     }
                 ],
@@ -901,7 +901,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -926,7 +926,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.DeliveryParams"
+                            "$ref": "#/definitions/params.DeliveryParams"
                         }
                     }
                 ],
@@ -934,7 +934,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -967,7 +967,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -999,7 +999,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.DeliveryParams"
+                            "$ref": "#/definitions/params.DeliveryParams"
                         }
                     }
                 ],
@@ -1007,7 +1007,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1038,7 +1038,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1060,13 +1060,13 @@
                 "summary": "快递列表",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "q[name_cont]",
+                        "type": "integer",
+                        "name": "total",
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "name": "q[code_cont]",
+                        "type": "integer",
+                        "name": "page",
                         "in": "query"
                     },
                     {
@@ -1080,13 +1080,13 @@
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "name": "total",
+                        "type": "string",
+                        "name": "q[name_cont]",
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "name": "page",
+                        "type": "string",
+                        "name": "q[code_cont]",
                         "in": "query"
                     }
                 ],
@@ -1094,7 +1094,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1119,7 +1119,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.ExpressParams"
+                            "$ref": "#/definitions/params.ExpressParams"
                         }
                     }
                 ],
@@ -1127,7 +1127,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1160,7 +1160,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1192,7 +1192,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.ExpressParams"
+                            "$ref": "#/definitions/params.ExpressParams"
                         }
                     }
                 ],
@@ -1200,7 +1200,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1231,7 +1231,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1250,7 +1250,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1287,6 +1287,11 @@
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "q[express_company_cont]",
                         "in": "query"
@@ -1295,18 +1300,13 @@
                         "type": "string",
                         "name": "q[express_no_cont]",
                         "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1339,7 +1339,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1362,22 +1362,22 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
                         "in": "query"
                     },
                     {
@@ -1390,7 +1390,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1423,7 +1423,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1456,7 +1456,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1490,7 +1490,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.ShipOrderParams"
+                            "$ref": "#/definitions/params.ShipOrderParams"
                         }
                     }
                 ],
@@ -1498,7 +1498,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1522,7 +1522,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1559,6 +1559,11 @@
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "q[name]",
                         "in": "query"
@@ -1572,18 +1577,13 @@
                         "type": "string",
                         "name": "q[created_at_lteq]",
                         "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1608,7 +1608,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.ProductGroupParams"
+                            "$ref": "#/definitions/params.ProductGroupParams"
                         }
                     }
                 ],
@@ -1616,7 +1616,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1649,7 +1649,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1681,7 +1681,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.ProductGroupParams"
+                            "$ref": "#/definitions/params.ProductGroupParams"
                         }
                     }
                 ],
@@ -1689,7 +1689,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1720,7 +1720,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1742,21 +1742,6 @@
                 "summary": "产品列表",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "q[is_online_eq]",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "q[name_cont]",
                         "in": "query"
@@ -1773,6 +1758,16 @@
                     },
                     {
                         "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "total",
                         "in": "query"
                     },
@@ -1780,13 +1775,18 @@
                         "type": "integer",
                         "name": "page",
                         "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "q[is_online_eq]",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1811,7 +1811,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.ProductParams"
+                            "$ref": "#/definitions/params.ProductParams"
                         }
                     }
                 ],
@@ -1819,7 +1819,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1852,7 +1852,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1884,7 +1884,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.ProductParams"
+                            "$ref": "#/definitions/params.ProductParams"
                         }
                     }
                 ],
@@ -1892,7 +1892,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1923,7 +1923,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1956,7 +1956,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -1980,7 +1980,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2005,7 +2005,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.PropertyParams"
+                            "$ref": "#/definitions/params.PropertyParams"
                         }
                     }
                 ],
@@ -2013,7 +2013,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2046,7 +2046,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2078,7 +2078,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.PropertyParams"
+                            "$ref": "#/definitions/params.PropertyParams"
                         }
                     }
                 ],
@@ -2086,7 +2086,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2117,7 +2117,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2144,7 +2144,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.PropertyValueParams"
+                            "$ref": "#/definitions/params.PropertyValueParams"
                         }
                     }
                 ],
@@ -2152,7 +2152,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2185,7 +2185,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2204,7 +2204,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2256,7 +2256,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2280,7 +2280,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2313,7 +2313,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2347,7 +2347,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.AddPermisisonsParams"
+                            "$ref": "#/definitions/params.AddPermisisonsParams"
                         }
                     }
                 ],
@@ -2355,7 +2355,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2498,16 +2498,6 @@
                 "summary": "获取用户列表",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "q[open_id_eq]",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "q[username_cont]",
                         "in": "query"
@@ -2523,6 +2513,16 @@
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "sort",
                         "in": "query"
@@ -2533,8 +2533,8 @@
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "name": "page",
+                        "type": "string",
+                        "name": "q[open_id_eq]",
                         "in": "query"
                     }
                 ],
@@ -2542,7 +2542,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2575,7 +2575,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2599,7 +2599,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2624,7 +2624,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.WebPageParams"
+                            "$ref": "#/definitions/params.WebPageParams"
                         }
                     }
                 ],
@@ -2632,7 +2632,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2665,7 +2665,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2697,7 +2697,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.WebPageParams"
+                            "$ref": "#/definitions/params.WebPageParams"
                         }
                     }
                 ],
@@ -2705,7 +2705,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2736,7 +2736,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2760,7 +2760,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2785,7 +2785,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.WxAppPageParams"
+                            "$ref": "#/definitions/params.WxAppPageParams"
                         }
                     }
                 ],
@@ -2793,7 +2793,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2826,7 +2826,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2858,7 +2858,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.WxAppPageParams"
+                            "$ref": "#/definitions/params.WxAppPageParams"
                         }
                     }
                 ],
@@ -2866,7 +2866,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2897,7 +2897,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2921,7 +2921,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2946,7 +2946,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.WxpaySettingParams"
+                            "$ref": "#/definitions/params.WxpaySettingParams"
                         }
                     }
                 ],
@@ -2954,7 +2954,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -2990,7 +2990,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3012,20 +3012,31 @@
                 "summary": "获取用户的收获地址",
                 "parameters": [
                     {
-                        "description": "address pagination",
-                        "name": "params",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.AddressQueryParams"
-                        }
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3050,7 +3061,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.AddressParams"
+                            "$ref": "#/definitions/params.AddressParams"
                         }
                     }
                 ],
@@ -3058,7 +3069,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3091,7 +3102,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3123,7 +3134,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.AddressParams"
+                            "$ref": "#/definitions/params.AddressParams"
                         }
                     }
                 ],
@@ -3131,7 +3142,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3162,7 +3173,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3193,7 +3204,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3212,7 +3223,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3229,11 +3240,6 @@
                 "summary": "获取分类商品列表",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "name": "per_page",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "sort",
                         "in": "query"
@@ -3244,13 +3250,18 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "cagegory_id",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "page",
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "name": "cagegory_id",
+                        "type": "integer",
+                        "name": "per_page",
                         "in": "query"
                     }
                 ],
@@ -3258,7 +3269,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3297,7 +3308,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3330,7 +3341,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3353,6 +3364,11 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "per_page",
                         "in": "query"
                     },
@@ -3367,11 +3383,6 @@
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "q[state]",
                         "in": "query"
@@ -3381,7 +3392,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3406,7 +3417,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.OrderParams"
+                            "$ref": "#/definitions/params.OrderParams"
                         }
                     }
                 ],
@@ -3414,7 +3425,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3441,7 +3452,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.OrderIDParams"
+                            "$ref": "#/definitions/params.OrderIDParams"
                         }
                     }
                 ],
@@ -3449,7 +3460,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3468,7 +3479,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3487,7 +3498,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3514,7 +3525,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.OrderIDParams"
+                            "$ref": "#/definitions/params.OrderIDParams"
                         }
                     }
                 ],
@@ -3522,7 +3533,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3555,7 +3566,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3586,7 +3597,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3603,6 +3614,21 @@
                 "summary": "获取产品列表",
                 "parameters": [
                     {
+                        "type": "string",
+                        "name": "categoryName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "page",
                         "in": "query"
@@ -3616,28 +3642,13 @@
                         "type": "string",
                         "name": "sort",
                         "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "total",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "categoryName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "keyword",
-                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3665,7 +3676,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3684,7 +3695,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3703,7 +3714,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3730,7 +3741,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CartItemParams"
+                            "$ref": "#/definitions/params.CartItemParams"
                         }
                     }
                 ],
@@ -3738,7 +3749,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3765,7 +3776,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CartItemIDParams"
+                            "$ref": "#/definitions/params.CartItemIDParams"
                         }
                     }
                 ],
@@ -3773,7 +3784,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3800,7 +3811,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CartItemIDParams"
+                            "$ref": "#/definitions/params.CartItemIDParams"
                         }
                     }
                 ],
@@ -3808,7 +3819,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3832,7 +3843,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3859,7 +3870,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CartItemQtyParams"
+                            "$ref": "#/definitions/params.CartItemQtyParams"
                         }
                     }
                 ],
@@ -3867,7 +3878,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3894,7 +3905,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CartItemIDParams"
+                            "$ref": "#/definitions/params.CartItemIDParams"
                         }
                     }
                 ],
@@ -3902,7 +3913,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -3928,7 +3939,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.AuthParams"
+                            "$ref": "#/definitions/params.AuthParams"
                         }
                     },
                     {
@@ -3943,7 +3954,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     },
                     "400": {
@@ -4000,7 +4011,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     },
                     "400": {
@@ -4051,7 +4062,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     },
                     "400": {
@@ -4093,7 +4104,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -4118,7 +4129,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.UserInfo"
+                            "$ref": "#/definitions/params.UserInfo"
                         }
                     }
                 ],
@@ -4126,7 +4137,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -4154,7 +4165,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -4170,11 +4181,6 @@
                 ],
                 "summary": "获取微信二维码",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "name": "scene",
-                        "in": "query"
-                    },
                     {
                         "type": "integer",
                         "name": "width",
@@ -4194,13 +4200,18 @@
                         "type": "string",
                         "name": "page",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "scene",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -4228,7 +4239,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apiHelpers.Response"
+                            "$ref": "#/definitions/helpers.Response"
                         }
                     }
                 }
@@ -4250,28 +4261,16 @@
                 }
             }
         },
-        "entities.WxpaySettingParams": {
+        "helpers.Response": {
             "type": "object",
             "properties": {
-                "api_client_cert": {
-                    "type": "string"
+                "code": {
+                    "type": "integer"
                 },
-                "apikey": {
-                    "type": "string"
+                "data": {
+                    "type": "object"
                 },
-                "app_name": {
-                    "type": "string"
-                },
-                "app_secret": {
-                    "type": "string"
-                },
-                "mchid": {
-                    "type": "string"
-                },
-                "notify_url": {
-                    "type": "string"
-                },
-                "wxapp_id": {
+                "msg": {
                     "type": "string"
                 }
             }
@@ -4282,20 +4281,7 @@
                 "type": "integer"
             }
         },
-        "utils.HTTPError": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 400
-                },
-                "message": {
-                    "type": "string",
-                    "example": "status bad request"
-                }
-            }
-        },
-        "v1.AddAdminUserParams": {
+        "params.AddAdminUserParams": {
             "type": "object",
             "required": [
                 "email",
@@ -4314,7 +4300,7 @@
                 }
             }
         },
-        "v1.AddPermisisonsParams": {
+        "params.AddPermisisonsParams": {
             "type": "object",
             "properties": {
                 "permissions": {
@@ -4325,7 +4311,7 @@
                 }
             }
         },
-        "v1.AddRolesParams": {
+        "params.AddRolesParams": {
             "type": "object",
             "properties": {
                 "role_ids": {
@@ -4336,7 +4322,7 @@
                 }
             }
         },
-        "v1.AddressParams": {
+        "params.AddressParams": {
             "type": "object",
             "required": [
                 "city",
@@ -4374,7 +4360,7 @@
                 }
             }
         },
-        "v1.AddressQueryParams": {
+        "params.AddressQueryParams": {
             "type": "object",
             "properties": {
                 "page": {
@@ -4391,7 +4377,7 @@
                 }
             }
         },
-        "v1.AuthParams": {
+        "params.AuthParams": {
             "type": "object",
             "required": [
                 "code",
@@ -4410,7 +4396,7 @@
                 }
             }
         },
-        "v1.CartItemIDParams": {
+        "params.CartItemIDParams": {
             "type": "object",
             "required": [
                 "item_ids"
@@ -4424,7 +4410,7 @@
                 }
             }
         },
-        "v1.CartItemParams": {
+        "params.CartItemParams": {
             "type": "object",
             "required": [
                 "goods_id",
@@ -4439,7 +4425,7 @@
                 }
             }
         },
-        "v1.CartItemQtyParams": {
+        "params.CartItemQtyParams": {
             "type": "object",
             "required": [
                 "item_id",
@@ -4454,7 +4440,7 @@
                 }
             }
         },
-        "v1.CategoryParams": {
+        "params.CategoryParams": {
             "type": "object",
             "required": [
                 "name"
@@ -4474,7 +4460,7 @@
                 }
             }
         },
-        "v1.CategoryProductQueryParams": {
+        "params.CategoryProductQueryParams": {
             "type": "object",
             "properties": {
                 "cagegory_id": {
@@ -4494,7 +4480,7 @@
                 }
             }
         },
-        "v1.Config": {
+        "params.Config": {
             "type": "object",
             "required": [
                 "date_type",
@@ -4533,7 +4519,7 @@
                 }
             }
         },
-        "v1.CouponTemplateParams": {
+        "params.CouponTemplateParams": {
             "type": "object",
             "required": [
                 "catch_limit",
@@ -4553,7 +4539,7 @@
                 },
                 "configs": {
                     "type": "object",
-                    "$ref": "#/definitions/v1.Config"
+                    "$ref": "#/definitions/params.Config"
                 },
                 "creator": {
                     "type": "string"
@@ -4575,7 +4561,7 @@
                 }
             }
         },
-        "v1.DeliveryParams": {
+        "params.DeliveryParams": {
             "type": "object",
             "required": [
                 "delivery_rules",
@@ -4586,7 +4572,7 @@
                 "delivery_rules": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/v1.DeliveryRuleParams"
+                        "$ref": "#/definitions/params.DeliveryRuleParams"
                     }
                 },
                 "id": {
@@ -4601,7 +4587,7 @@
                 }
             }
         },
-        "v1.DeliveryRuleParams": {
+        "params.DeliveryRuleParams": {
             "type": "object",
             "properties": {
                 "_destroy": {
@@ -4635,7 +4621,7 @@
                 }
             }
         },
-        "v1.ExpressParams": {
+        "params.ExpressParams": {
             "type": "object",
             "properties": {
                 "code": {
@@ -4646,26 +4632,7 @@
                 }
             }
         },
-        "v1.ForgetPasswordParams": {
-            "type": "object",
-            "required": [
-                "captcha_id",
-                "captcha_value",
-                "email"
-            ],
-            "properties": {
-                "captcha_id": {
-                    "type": "string"
-                },
-                "captcha_value": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.GoodsParams": {
+        "params.GoodsParams": {
             "type": "object",
             "properties": {
                 "_destroy": {
@@ -4703,30 +4670,7 @@
                 }
             }
         },
-        "v1.LoginParams": {
-            "type": "object",
-            "required": [
-                "captcha_id",
-                "captcha_value",
-                "email",
-                "password"
-            ],
-            "properties": {
-                "captcha_id": {
-                    "type": "string"
-                },
-                "captcha_value": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.OrderIDParams": {
+        "params.OrderIDParams": {
             "type": "object",
             "required": [
                 "order_id"
@@ -4737,7 +4681,7 @@
                 }
             }
         },
-        "v1.OrderParams": {
+        "params.OrderParams": {
             "type": "object",
             "required": [
                 "is_preview"
@@ -4760,21 +4704,7 @@
                 }
             }
         },
-        "v1.PolicyRuleParams": {
-            "type": "object",
-            "properties": {
-                "method": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "rolename": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.ProductGroupParams": {
+        "params.ProductGroupParams": {
             "type": "object",
             "properties": {
                 "key": {
@@ -4792,7 +4722,7 @@
                 }
             }
         },
-        "v1.ProductParams": {
+        "params.ProductParams": {
             "type": "object",
             "properties": {
                 "category_ids": {
@@ -4813,7 +4743,7 @@
                 "goodses": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/v1.GoodsParams"
+                        "$ref": "#/definitions/params.GoodsParams"
                     }
                 },
                 "is_online": {
@@ -4846,7 +4776,7 @@
                 }
             }
         },
-        "v1.ProductQueryParams": {
+        "params.ProductQueryParams": {
             "type": "object",
             "properties": {
                 "categoryName": {
@@ -4869,7 +4799,7 @@
                 }
             }
         },
-        "v1.PropertyParams": {
+        "params.PropertyParams": {
             "type": "object",
             "required": [
                 "name"
@@ -4884,12 +4814,12 @@
                 "property_values": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/v1.PropertyValueParams"
+                        "$ref": "#/definitions/params.PropertyValueParams"
                     }
                 }
             }
         },
-        "v1.PropertyValueParams": {
+        "params.PropertyValueParams": {
             "type": "object",
             "required": [
                 "property_name_id",
@@ -4910,7 +4840,7 @@
                 }
             }
         },
-        "v1.QrCodeParams": {
+        "params.QrCodeParams": {
             "type": "object",
             "properties": {
                 "binary": {
@@ -4930,7 +4860,7 @@
                 }
             }
         },
-        "v1.QueryAdminUserParams": {
+        "params.QueryAdminUserParams": {
             "type": "object",
             "properties": {
                 "page": {
@@ -4962,7 +4892,7 @@
                 }
             }
         },
-        "v1.QueryCategoryParams": {
+        "params.QueryCategoryParams": {
             "type": "object",
             "properties": {
                 "page": {
@@ -4991,7 +4921,7 @@
                 }
             }
         },
-        "v1.QueryCouponTemplateParams": {
+        "params.QueryCouponTemplateParams": {
             "type": "object",
             "properties": {
                 "page": {
@@ -5011,7 +4941,7 @@
                 }
             }
         },
-        "v1.QueryDeliveryParams": {
+        "params.QueryDeliveryParams": {
             "type": "object",
             "properties": {
                 "page": {
@@ -5031,7 +4961,7 @@
                 }
             }
         },
-        "v1.QueryExpressParams": {
+        "params.QueryExpressParams": {
             "type": "object",
             "properties": {
                 "page": {
@@ -5054,7 +4984,7 @@
                 }
             }
         },
-        "v1.QueryLogisticParams": {
+        "params.QueryLogisticParams": {
             "type": "object",
             "properties": {
                 "page": {
@@ -5077,7 +5007,7 @@
                 }
             }
         },
-        "v1.QueryOrderParams": {
+        "params.QueryOrderParams": {
             "type": "object",
             "properties": {
                 "page": {
@@ -5097,7 +5027,7 @@
                 }
             }
         },
-        "v1.QueryProductGroupParams": {
+        "params.QueryProductGroupParams": {
             "type": "object",
             "properties": {
                 "page": {
@@ -5123,7 +5053,7 @@
                 }
             }
         },
-        "v1.QueryProductParams": {
+        "params.QueryProductParams": {
             "type": "object",
             "properties": {
                 "page": {
@@ -5152,7 +5082,7 @@
                 }
             }
         },
-        "v1.QueryUserParams": {
+        "params.QueryUserParams": {
             "type": "object",
             "properties": {
                 "page": {
@@ -5181,18 +5111,7 @@
                 }
             }
         },
-        "v1.ResetPasswordParams": {
-            "type": "object",
-            "required": [
-                "password"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.ShipOrderParams": {
+        "params.ShipOrderParams": {
             "type": "object",
             "properties": {
                 "express_company": {
@@ -5203,7 +5122,7 @@
                 }
             }
         },
-        "v1.UpdateAdminUserParams": {
+        "params.UpdateAdminUserParams": {
             "type": "object",
             "properties": {
                 "password": {
@@ -5217,7 +5136,7 @@
                 }
             }
         },
-        "v1.UserInfo": {
+        "params.UserInfo": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -5231,7 +5150,7 @@
                 }
             }
         },
-        "v1.WebPageParams": {
+        "params.WebPageParams": {
             "type": "object",
             "required": [
                 "content",
@@ -5249,7 +5168,7 @@
                 }
             }
         },
-        "v1.WxAppPageParams": {
+        "params.WxAppPageParams": {
             "type": "object",
             "properties": {
                 "key": {
@@ -5269,6 +5188,112 @@
                     "type": "string"
                 },
                 "share_sentence": {
+                    "type": "string"
+                }
+            }
+        },
+        "params.WxpaySettingParams": {
+            "type": "object",
+            "properties": {
+                "api_client_cert": {
+                    "type": "string"
+                },
+                "apikey": {
+                    "type": "string"
+                },
+                "app_name": {
+                    "type": "string"
+                },
+                "app_secret": {
+                    "type": "string"
+                },
+                "mchid": {
+                    "type": "string"
+                },
+                "notify_url": {
+                    "type": "string"
+                },
+                "wxapp_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "utils.HTTPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "status bad request"
+                }
+            }
+        },
+        "v1.ForgetPasswordParams": {
+            "type": "object",
+            "required": [
+                "captcha_id",
+                "captcha_value",
+                "email"
+            ],
+            "properties": {
+                "captcha_id": {
+                    "type": "string"
+                },
+                "captcha_value": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.LoginParams": {
+            "type": "object",
+            "required": [
+                "captcha_id",
+                "captcha_value",
+                "email",
+                "password"
+            ],
+            "properties": {
+                "captcha_id": {
+                    "type": "string"
+                },
+                "captcha_value": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.PolicyRuleParams": {
+            "type": "object",
+            "properties": {
+                "method": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "rolename": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.ResetPasswordParams": {
+            "type": "object",
+            "required": [
+                "password"
+            ],
+            "properties": {
+                "password": {
                     "type": "string"
                 }
             }

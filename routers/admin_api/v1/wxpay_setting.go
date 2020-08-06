@@ -5,8 +5,9 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/xifengzhu/eshop/helpers/e"
 	"github.com/xifengzhu/eshop/models"
-	"github.com/xifengzhu/eshop/routers/admin_api/entities"
-	apiHelpers "github.com/xifengzhu/eshop/routers/api_helpers"
+	. "github.com/xifengzhu/eshop/routers/admin_api/params"
+	. "github.com/xifengzhu/eshop/routers/admin_api/present"
+	. "github.com/xifengzhu/eshop/routers/helpers"
 	"io"
 	"os"
 	"path/filepath"
@@ -15,7 +16,7 @@ import (
 // @Summary 微信支付配置详情
 // @Produce  json
 // @Tags 后台配置管理
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/wxpay_setting [get]
 // @Security ApiKeyAuth
 func GetWxpaySetting(c *gin.Context) {
@@ -23,23 +24,23 @@ func GetWxpaySetting(c *gin.Context) {
 
 	setting.Current()
 
-	var settingEntity entities.WxpaySettingEntity
+	var settingEntity WxpaySettingEntity
 	copier.Copy(&settingEntity, &setting)
 
-	apiHelpers.ResponseSuccess(c, settingEntity)
+	ResponseSuccess(c, settingEntity)
 }
 
 // @Summary 更新微信支付配置微信支付
 // @Produce  json
 // @Tags 后台配置管理
-// @Param params body entities.WxpaySettingParams true "wxpay_setting params"
-// @Success 200 {object} apiHelpers.Response
+// @Param params body params.WxpaySettingParams true "wxpay_setting params"
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/wxpay_setting [put]
 // @Security ApiKeyAuth
 func UpdateWxpaySetting(c *gin.Context) {
 	var err error
-	var settingParams entities.WxpaySettingParams
-	if err := apiHelpers.ValidateParams(c, &settingParams, "json"); err != nil {
+	var settingParams WxpaySettingParams
+	if err := ValidateParams(c, &settingParams, "json"); err != nil {
 		return
 	}
 
@@ -49,10 +50,10 @@ func UpdateWxpaySetting(c *gin.Context) {
 
 	err = setting.CreateOrUpdate()
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
-	apiHelpers.ResponseSuccess(c, setting)
+	ResponseSuccess(c, setting)
 }
 
 // @Summary 更新微信支付证书
@@ -60,7 +61,7 @@ func UpdateWxpaySetting(c *gin.Context) {
 // @Tags 后台配置管理
 // @Accept  multipart/form-data
 // @Param api_client_cert formData file true "wechat pay certification"
-// @Success 200 {object} apiHelpers.Response
+// @Success 200 {object} helpers.Response
 // @Router /admin_api/v1/wxpay_setting/cert [post]
 // @Security ApiKeyAuth
 func UpdateWechatCert(c *gin.Context) {
@@ -78,7 +79,7 @@ func UpdateWechatCert(c *gin.Context) {
 	filename := filepath.Join(uploadDir, certName)
 	out, err := os.Create(filename)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
 
@@ -87,8 +88,8 @@ func UpdateWechatCert(c *gin.Context) {
 	// 将file的内容拷贝到out
 	_, err = io.Copy(out, file)
 	if err != nil {
-		apiHelpers.ResponseError(c, e.INVALID_PARAMS, err.Error())
+		ResponseError(c, e.INVALID_PARAMS, err.Error())
 		return
 	}
-	apiHelpers.ResponseOK(c)
+	ResponseOK(c)
 }

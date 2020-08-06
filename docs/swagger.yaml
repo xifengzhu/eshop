@@ -9,37 +9,20 @@ definitions:
       msg:
         type: string
     type: object
-  entities.WxpaySettingParams:
+  helpers.Response:
     properties:
-      api_client_cert:
-        type: string
-      apikey:
-        type: string
-      app_name:
-        type: string
-      app_secret:
-        type: string
-      mchid:
-        type: string
-      notify_url:
-        type: string
-      wxapp_id:
+      code:
+        type: integer
+      data:
+        type: object
+      msg:
         type: string
     type: object
   models.JSON:
     items:
       type: integer
     type: array
-  utils.HTTPError:
-    properties:
-      code:
-        example: 400
-        type: integer
-      message:
-        example: status bad request
-        type: string
-    type: object
-  v1.AddAdminUserParams:
+  params.AddAdminUserParams:
     properties:
       email:
         type: string
@@ -52,21 +35,21 @@ definitions:
     - password
     - role
     type: object
-  v1.AddPermisisonsParams:
+  params.AddPermisisonsParams:
     properties:
       permissions:
         items:
           type: string
         type: array
     type: object
-  v1.AddRolesParams:
+  params.AddRolesParams:
     properties:
       role_ids:
         items:
           type: integer
         type: array
     type: object
-  v1.AddressParams:
+  params.AddressParams:
     properties:
       city:
         type: string
@@ -93,7 +76,7 @@ definitions:
     - receiver
     - region
     type: object
-  v1.AddressQueryParams:
+  params.AddressQueryParams:
     properties:
       page:
         type: integer
@@ -104,7 +87,7 @@ definitions:
       total:
         type: integer
     type: object
-  v1.AuthParams:
+  params.AuthParams:
     properties:
       code:
         type: string
@@ -117,7 +100,7 @@ definitions:
     - encrypted_data
     - iv
     type: object
-  v1.CartItemIDParams:
+  params.CartItemIDParams:
     properties:
       item_ids:
         items:
@@ -126,7 +109,7 @@ definitions:
     required:
     - item_ids
     type: object
-  v1.CartItemParams:
+  params.CartItemParams:
     properties:
       goods_id:
         type: integer
@@ -136,7 +119,7 @@ definitions:
     - goods_id
     - quantity
     type: object
-  v1.CartItemQtyParams:
+  params.CartItemQtyParams:
     properties:
       item_id:
         type: integer
@@ -146,7 +129,7 @@ definitions:
     - item_id
     - quantity
     type: object
-  v1.CategoryParams:
+  params.CategoryParams:
     properties:
       image:
         type: string
@@ -159,7 +142,7 @@ definitions:
     required:
     - name
     type: object
-  v1.CategoryProductQueryParams:
+  params.CategoryProductQueryParams:
     properties:
       cagegory_id:
         type: string
@@ -172,7 +155,7 @@ definitions:
       total:
         type: integer
     type: object
-  v1.Config:
+  params.Config:
     properties:
       date_type:
         type: string
@@ -198,14 +181,14 @@ definitions:
     - date_type
     - min_amount
     type: object
-  v1.CouponTemplateParams:
+  params.CouponTemplateParams:
     properties:
       catch_limit:
         type: integer
       code:
         type: string
       configs:
-        $ref: '#/definitions/v1.Config'
+        $ref: '#/definitions/params.Config'
         type: object
       creator:
         type: string
@@ -228,11 +211,11 @@ definitions:
     - start_at
     - stock
     type: object
-  v1.DeliveryParams:
+  params.DeliveryParams:
     properties:
       delivery_rules:
         items:
-          $ref: '#/definitions/v1.DeliveryRuleParams'
+          $ref: '#/definitions/params.DeliveryRuleParams'
         type: array
       id:
         type: integer
@@ -246,7 +229,7 @@ definitions:
     - name
     - way
     type: object
-  v1.DeliveryRuleParams:
+  params.DeliveryRuleParams:
     properties:
       _destroy:
         type: boolean
@@ -270,27 +253,14 @@ definitions:
         description: 可配送区域(省id集)
         type: object
     type: object
-  v1.ExpressParams:
+  params.ExpressParams:
     properties:
       code:
         type: string
       name:
         type: string
     type: object
-  v1.ForgetPasswordParams:
-    properties:
-      captcha_id:
-        type: string
-      captcha_value:
-        type: string
-      email:
-        type: string
-    required:
-    - captcha_id
-    - captcha_value
-    - email
-    type: object
-  v1.GoodsParams:
+  params.GoodsParams:
     properties:
       _destroy:
         type: boolean
@@ -315,30 +285,14 @@ definitions:
       weight:
         type: number
     type: object
-  v1.LoginParams:
-    properties:
-      captcha_id:
-        type: string
-      captcha_value:
-        type: string
-      email:
-        type: string
-      password:
-        type: string
-    required:
-    - captcha_id
-    - captcha_value
-    - email
-    - password
-    type: object
-  v1.OrderIDParams:
+  params.OrderIDParams:
     properties:
       order_id:
         type: integer
     required:
     - order_id
     type: object
-  v1.OrderParams:
+  params.OrderParams:
     properties:
       address_id:
         type: integer
@@ -353,16 +307,7 @@ definitions:
     required:
     - is_preview
     type: object
-  v1.PolicyRuleParams:
-    properties:
-      method:
-        type: string
-      path:
-        type: string
-      rolename:
-        type: string
-    type: object
-  v1.ProductGroupParams:
+  params.ProductGroupParams:
     properties:
       key:
         type: string
@@ -374,7 +319,7 @@ definitions:
       remark:
         type: string
     type: object
-  v1.ProductParams:
+  params.ProductParams:
     properties:
       category_ids:
         items:
@@ -388,7 +333,7 @@ definitions:
         type: integer
       goodses:
         items:
-          $ref: '#/definitions/v1.GoodsParams'
+          $ref: '#/definitions/params.GoodsParams'
         type: array
       is_online:
         type: boolean
@@ -410,7 +355,7 @@ definitions:
       share_desc:
         type: string
     type: object
-  v1.ProductQueryParams:
+  params.ProductQueryParams:
     properties:
       categoryName:
         type: string
@@ -425,7 +370,7 @@ definitions:
       total:
         type: integer
     type: object
-  v1.PropertyParams:
+  params.PropertyParams:
     properties:
       id:
         type: integer
@@ -433,12 +378,12 @@ definitions:
         type: string
       property_values:
         items:
-          $ref: '#/definitions/v1.PropertyValueParams'
+          $ref: '#/definitions/params.PropertyValueParams'
         type: array
     required:
     - name
     type: object
-  v1.PropertyValueParams:
+  params.PropertyValueParams:
     properties:
       _destroy:
         type: boolean
@@ -452,7 +397,7 @@ definitions:
     - property_name_id
     - value
     type: object
-  v1.QrCodeParams:
+  params.QrCodeParams:
     properties:
       binary:
         type: boolean
@@ -465,7 +410,7 @@ definitions:
       width:
         type: integer
     type: object
-  v1.QueryAdminUserParams:
+  params.QueryAdminUserParams:
     properties:
       page:
         type: integer
@@ -486,7 +431,7 @@ definitions:
       total:
         type: integer
     type: object
-  v1.QueryCategoryParams:
+  params.QueryCategoryParams:
     properties:
       page:
         type: integer
@@ -505,7 +450,7 @@ definitions:
       total:
         type: integer
     type: object
-  v1.QueryCouponTemplateParams:
+  params.QueryCouponTemplateParams:
     properties:
       page:
         type: integer
@@ -518,7 +463,7 @@ definitions:
       total:
         type: integer
     type: object
-  v1.QueryDeliveryParams:
+  params.QueryDeliveryParams:
     properties:
       page:
         type: integer
@@ -531,7 +476,7 @@ definitions:
       total:
         type: integer
     type: object
-  v1.QueryExpressParams:
+  params.QueryExpressParams:
     properties:
       page:
         type: integer
@@ -546,7 +491,7 @@ definitions:
       total:
         type: integer
     type: object
-  v1.QueryLogisticParams:
+  params.QueryLogisticParams:
     properties:
       page:
         type: integer
@@ -561,7 +506,7 @@ definitions:
       total:
         type: integer
     type: object
-  v1.QueryOrderParams:
+  params.QueryOrderParams:
     properties:
       page:
         type: integer
@@ -574,7 +519,7 @@ definitions:
       total:
         type: integer
     type: object
-  v1.QueryProductGroupParams:
+  params.QueryProductGroupParams:
     properties:
       page:
         type: integer
@@ -591,7 +536,7 @@ definitions:
       total:
         type: integer
     type: object
-  v1.QueryProductParams:
+  params.QueryProductParams:
     properties:
       page:
         type: integer
@@ -610,7 +555,7 @@ definitions:
       total:
         type: integer
     type: object
-  v1.QueryUserParams:
+  params.QueryUserParams:
     properties:
       page:
         type: integer
@@ -629,21 +574,14 @@ definitions:
       total:
         type: integer
     type: object
-  v1.ResetPasswordParams:
-    properties:
-      password:
-        type: string
-    required:
-    - password
-    type: object
-  v1.ShipOrderParams:
+  params.ShipOrderParams:
     properties:
       express_company:
         type: string
       express_no:
         type: string
     type: object
-  v1.UpdateAdminUserParams:
+  params.UpdateAdminUserParams:
     properties:
       password:
         type: string
@@ -652,7 +590,7 @@ definitions:
       status:
         type: string
     type: object
-  v1.UserInfo:
+  params.UserInfo:
     properties:
       avatar:
         type: string
@@ -661,7 +599,7 @@ definitions:
       nickname:
         type: string
     type: object
-  v1.WebPageParams:
+  params.WebPageParams:
     properties:
       content:
         type: string
@@ -673,7 +611,7 @@ definitions:
     - content
     - title
     type: object
-  v1.WxAppPageParams:
+  params.WxAppPageParams:
     properties:
       key:
         type: string
@@ -688,6 +626,77 @@ definitions:
         type: string
       share_sentence:
         type: string
+    type: object
+  params.WxpaySettingParams:
+    properties:
+      api_client_cert:
+        type: string
+      apikey:
+        type: string
+      app_name:
+        type: string
+      app_secret:
+        type: string
+      mchid:
+        type: string
+      notify_url:
+        type: string
+      wxapp_id:
+        type: string
+    type: object
+  utils.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: status bad request
+        type: string
+    type: object
+  v1.ForgetPasswordParams:
+    properties:
+      captcha_id:
+        type: string
+      captcha_value:
+        type: string
+      email:
+        type: string
+    required:
+    - captcha_id
+    - captcha_value
+    - email
+    type: object
+  v1.LoginParams:
+    properties:
+      captcha_id:
+        type: string
+      captcha_value:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - captcha_id
+    - captcha_value
+    - email
+    - password
+    type: object
+  v1.PolicyRuleParams:
+    properties:
+      method:
+        type: string
+      path:
+        type: string
+      rolename:
+        type: string
+    type: object
+  v1.ResetPasswordParams:
+    properties:
+      password:
+        type: string
+    required:
+    - password
     type: object
 host: 127.0.0.1:8000
 info:
@@ -711,7 +720,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 获取用户收货地址
       tags:
       - 后台管理地址
@@ -723,7 +732,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 当前管理员权限
@@ -732,6 +741,15 @@ paths:
   /admin_api/v1/admin_users:
     get:
       parameters:
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
+        name: q[email_cont]
+        type: string
       - in: query
         name: q[created_at_gteq]
         type: string
@@ -744,27 +762,18 @@ paths:
         name: q[status_in]
         type: array
       - in: query
-        name: total
-        type: integer
-      - in: query
         name: page
         type: integer
       - in: query
         name: per_page
         type: integer
-      - in: query
-        name: sort
-        type: string
-      - in: query
-        name: q[email_cont]
-        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 管理员列表
@@ -777,14 +786,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.AddAdminUserParams'
+          $ref: '#/definitions/params.AddAdminUserParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 添加管理员
@@ -804,7 +813,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 删除管理员
@@ -823,7 +832,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 管理员详情
@@ -841,14 +850,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.UpdateAdminUserParams'
+          $ref: '#/definitions/params.UpdateAdminUserParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 更新管理员
@@ -862,7 +871,7 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.AddRolesParams'
+          $ref: '#/definitions/params.AddRolesParams'
       - description: 管理员id
         in: path
         name: id
@@ -874,7 +883,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 分配角色给用户
@@ -925,6 +934,9 @@ paths:
     get:
       parameters:
       - in: query
+        name: total
+        type: integer
+      - in: query
         name: page
         type: integer
       - in: query
@@ -945,16 +957,13 @@ paths:
       - in: query
         name: sort
         type: string
-      - in: query
-        name: total
-        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 分类列表
@@ -967,14 +976,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.CategoryParams'
+          $ref: '#/definitions/params.CategoryParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 添加分类
@@ -994,7 +1003,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 删除分类
@@ -1013,7 +1022,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 分类详情
@@ -1031,14 +1040,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.CategoryParams'
+          $ref: '#/definitions/params.CategoryParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 更新分类
@@ -1058,13 +1067,16 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 根据省ID获取城市列表信息
       tags:
       - 后台管理地址
   /admin_api/v1/coupon_templates:
     get:
       parameters:
+      - in: query
+        name: page
+        type: integer
       - in: query
         name: per_page
         type: integer
@@ -1077,16 +1089,13 @@ paths:
       - in: query
         name: q[name_cont]
         type: string
-      - in: query
-        name: page
-        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 优惠券模板列表
@@ -1099,14 +1108,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.CouponTemplateParams'
+          $ref: '#/definitions/params.CouponTemplateParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 添加优惠券模板
@@ -1126,7 +1135,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 删除优惠券模板
@@ -1145,7 +1154,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 优惠券模板详情
@@ -1163,14 +1172,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.CouponTemplateParams'
+          $ref: '#/definitions/params.CouponTemplateParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 更新优惠券模板
@@ -1195,7 +1204,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 创建优惠券
@@ -1217,19 +1226,19 @@ paths:
     get:
       parameters:
       - in: query
-        name: per_page
-        type: integer
-      - in: query
         name: sort
+        type: string
+      - in: query
+        name: q[name_cont]
         type: string
       - in: query
         name: total
         type: integer
       - in: query
-        name: q[name_cont]
-        type: string
-      - in: query
         name: page
+        type: integer
+      - in: query
+        name: per_page
         type: integer
       produces:
       - application/json
@@ -1237,7 +1246,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 运费模板列表
@@ -1250,14 +1259,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.DeliveryParams'
+          $ref: '#/definitions/params.DeliveryParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 添加运费模板
@@ -1277,7 +1286,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 删除运费模板
@@ -1296,7 +1305,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 运费模板详情
@@ -1314,14 +1323,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.DeliveryParams'
+          $ref: '#/definitions/params.DeliveryParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 更新运费模板
@@ -1331,11 +1340,11 @@ paths:
     get:
       parameters:
       - in: query
-        name: q[name_cont]
-        type: string
+        name: total
+        type: integer
       - in: query
-        name: q[code_cont]
-        type: string
+        name: page
+        type: integer
       - in: query
         name: per_page
         type: integer
@@ -1343,18 +1352,18 @@ paths:
         name: sort
         type: string
       - in: query
-        name: total
-        type: integer
+        name: q[name_cont]
+        type: string
       - in: query
-        name: page
-        type: integer
+        name: q[code_cont]
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 快递列表
@@ -1367,14 +1376,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.ExpressParams'
+          $ref: '#/definitions/params.ExpressParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 添加快递
@@ -1394,7 +1403,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 删除快递
@@ -1413,7 +1422,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 快递详情
@@ -1431,14 +1440,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.ExpressParams'
+          $ref: '#/definitions/params.ExpressParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 更新快递
@@ -1452,7 +1461,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 获取图形验证码
       tags:
       - 后台图形验证码
@@ -1469,21 +1478,21 @@ paths:
         name: total
         type: integer
       - in: query
+        name: page
+        type: integer
+      - in: query
         name: q[express_company_cont]
         type: string
       - in: query
         name: q[express_no_cont]
         type: string
-      - in: query
-        name: page
-        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 物流列表
@@ -1503,7 +1512,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 物流详情
@@ -1513,17 +1522,17 @@ paths:
     get:
       parameters:
       - in: query
-        name: total
-        type: integer
-      - in: query
-        name: page
-        type: integer
-      - in: query
         name: per_page
         type: integer
       - in: query
         name: sort
         type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
+        name: page
+        type: integer
       - in: query
         name: q[state]
         type: string
@@ -1533,7 +1542,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 获取订单列表
@@ -1553,7 +1562,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 获取订单详情
@@ -1573,7 +1582,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 后台支付订单
@@ -1592,14 +1601,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.ShipOrderParams'
+          $ref: '#/definitions/params.ShipOrderParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 订单发货
@@ -1613,7 +1622,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 获得所有权限列表
@@ -1632,6 +1641,9 @@ paths:
         name: total
         type: integer
       - in: query
+        name: page
+        type: integer
+      - in: query
         name: q[name]
         type: string
       - in: query
@@ -1640,16 +1652,13 @@ paths:
       - in: query
         name: q[created_at_lteq]
         type: string
-      - in: query
-        name: page
-        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 主题产品列表
@@ -1662,14 +1671,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.ProductGroupParams'
+          $ref: '#/definitions/params.ProductGroupParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 添加主题产品
@@ -1689,7 +1698,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 删除主题产品
@@ -1708,7 +1717,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 主题产品详情
@@ -1726,14 +1735,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.ProductGroupParams'
+          $ref: '#/definitions/params.ProductGroupParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 更新主题产品
@@ -1742,15 +1751,6 @@ paths:
   /admin_api/v1/products:
     get:
       parameters:
-      - in: query
-        name: per_page
-        type: integer
-      - in: query
-        name: sort
-        type: string
-      - in: query
-        name: q[is_online_eq]
-        type: boolean
       - in: query
         name: q[name_cont]
         type: string
@@ -1761,18 +1761,27 @@ paths:
         name: q[price_lteq]
         type: number
       - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
         name: total
         type: integer
       - in: query
         name: page
         type: integer
+      - in: query
+        name: q[is_online_eq]
+        type: boolean
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 产品列表
@@ -1785,14 +1794,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.ProductParams'
+          $ref: '#/definitions/params.ProductParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 添加产品
@@ -1812,7 +1821,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 删除产品
@@ -1831,7 +1840,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 产品详情
@@ -1849,14 +1858,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.ProductParams'
+          $ref: '#/definitions/params.ProductParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 更新产品
@@ -1876,7 +1885,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: SKU列表
@@ -1890,7 +1899,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 规格列表
@@ -1903,14 +1912,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.PropertyParams'
+          $ref: '#/definitions/params.PropertyParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 添加规格名
@@ -1930,7 +1939,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 删除规格名
@@ -1949,7 +1958,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 规格名详情
@@ -1967,14 +1976,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.PropertyParams'
+          $ref: '#/definitions/params.PropertyParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 更新规格名
@@ -1988,14 +1997,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.PropertyValueParams'
+          $ref: '#/definitions/params.PropertyValueParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 添加规格值
@@ -2015,7 +2024,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 删除规格值
@@ -2029,7 +2038,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 获取所有的省份信息
       tags:
       - 后台管理地址
@@ -2061,7 +2070,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 根据市ID获取下级城市列表信息
       tags:
       - 后台管理地址
@@ -2073,7 +2082,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 获得所有角色
@@ -2093,7 +2102,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 角色详情
@@ -2112,14 +2121,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.AddPermisisonsParams'
+          $ref: '#/definitions/params.AddPermisisonsParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 添加权限给角色
@@ -2205,12 +2214,6 @@ paths:
     get:
       parameters:
       - in: query
-        name: per_page
-        type: integer
-      - in: query
-        name: q[open_id_eq]
-        type: string
-      - in: query
         name: q[username_cont]
         type: string
       - in: query
@@ -2220,21 +2223,27 @@ paths:
         name: q[created_at_lteq]
         type: string
       - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
         name: sort
         type: string
       - in: query
         name: total
         type: integer
       - in: query
-        name: page
-        type: integer
+        name: q[open_id_eq]
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 获取用户列表
@@ -2254,7 +2263,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 获取用户详情
@@ -2268,7 +2277,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: webview列表
@@ -2281,14 +2290,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.WebPageParams'
+          $ref: '#/definitions/params.WebPageParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 添加webview
@@ -2308,7 +2317,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 删除webview
@@ -2327,7 +2336,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: webview详情
@@ -2345,14 +2354,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.WebPageParams'
+          $ref: '#/definitions/params.WebPageParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 更新webview
@@ -2366,7 +2375,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 自定义页面列表
@@ -2379,14 +2388,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.WxAppPageParams'
+          $ref: '#/definitions/params.WxAppPageParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 添加自定义页面
@@ -2406,7 +2415,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 删除自定义页面
@@ -2425,7 +2434,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 自定义页面详情
@@ -2443,14 +2452,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.WxAppPageParams'
+          $ref: '#/definitions/params.WxAppPageParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 更新自定义页面
@@ -2464,7 +2473,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 微信支付配置详情
@@ -2477,14 +2486,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/entities.WxpaySettingParams'
+          $ref: '#/definitions/params.WxpaySettingParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 更新微信支付配置微信支付
@@ -2506,7 +2515,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 更新微信支付证书
@@ -2515,19 +2524,25 @@ paths:
   /app_api/v1/addresses:
     get:
       parameters:
-      - description: address pagination
-        in: body
-        name: params
-        required: true
-        schema:
-          $ref: '#/definitions/v1.AddressQueryParams'
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: per_page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: total
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 获取用户的收获地址
@@ -2540,14 +2555,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.AddressParams'
+          $ref: '#/definitions/params.AddressParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 新增地址
@@ -2567,7 +2582,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 删除地址
@@ -2586,7 +2601,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 通过id获取地址
@@ -2604,14 +2619,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.AddressParams'
+          $ref: '#/definitions/params.AddressParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 编辑地址
@@ -2633,7 +2648,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 批量获取产品
       tags:
       - 产品
@@ -2645,7 +2660,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 获取分类列表
       tags:
       - 分类
@@ -2653,27 +2668,27 @@ paths:
     get:
       parameters:
       - in: query
-        name: per_page
-        type: integer
-      - in: query
         name: sort
         type: string
       - in: query
         name: total
         type: integer
       - in: query
+        name: cagegory_id
+        type: string
+      - in: query
         name: page
         type: integer
       - in: query
-        name: cagegory_id
-        type: string
+        name: per_page
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 获取分类商品列表
       tags:
       - 分类
@@ -2696,7 +2711,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 获取用户的优惠券
@@ -2716,7 +2731,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 领取优惠券
@@ -2725,6 +2740,9 @@ paths:
   /app_api/v1/orders:
     get:
       parameters:
+      - in: query
+        name: page
+        type: integer
       - in: query
         name: per_page
         type: integer
@@ -2735,9 +2753,6 @@ paths:
         name: total
         type: integer
       - in: query
-        name: page
-        type: integer
-      - in: query
         name: q[state]
         type: string
       produces:
@@ -2746,7 +2761,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 获取订单列表
@@ -2759,14 +2774,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.OrderParams'
+          $ref: '#/definitions/params.OrderParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 创建订单
@@ -2786,7 +2801,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 删除订单
@@ -2805,7 +2820,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 获取订单详情
@@ -2819,14 +2834,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.OrderIDParams'
+          $ref: '#/definitions/params.OrderIDParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 取消订单
@@ -2840,7 +2855,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 订单支付结果通知
       tags:
       - 微信回调通知
@@ -2852,7 +2867,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 订单退款结果通知
       tags:
       - 微信回调通知
@@ -2864,14 +2879,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.OrderIDParams'
+          $ref: '#/definitions/params.OrderIDParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 请求支付参数
@@ -2881,6 +2896,15 @@ paths:
     get:
       parameters:
       - in: query
+        name: categoryName
+        type: string
+      - in: query
+        name: keyword
+        type: string
+      - in: query
+        name: total
+        type: integer
+      - in: query
         name: page
         type: integer
       - in: query
@@ -2889,22 +2913,13 @@ paths:
       - in: query
         name: sort
         type: string
-      - in: query
-        name: total
-        type: integer
-      - in: query
-        name: categoryName
-        type: string
-      - in: query
-        name: keyword
-        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 获取产品列表
       tags:
       - 产品
@@ -2922,7 +2937,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 获取产品详情
       tags:
       - 产品
@@ -2934,7 +2949,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 获取所有的省份信息
       tags:
       - 地址
@@ -2946,7 +2961,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 获取推荐列表
       tags:
       - 产品
@@ -2958,14 +2973,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.CartItemParams'
+          $ref: '#/definitions/params.CartItemParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 添加商品到获取购物车
@@ -2979,14 +2994,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.CartItemIDParams'
+          $ref: '#/definitions/params.CartItemIDParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 勾选购物车项
@@ -3000,14 +3015,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.CartItemIDParams'
+          $ref: '#/definitions/params.CartItemIDParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 删除商品
@@ -3021,7 +3036,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 获取购物车列表
@@ -3035,14 +3050,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.CartItemQtyParams'
+          $ref: '#/definitions/params.CartItemQtyParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 更新商品数量
@@ -3056,14 +3071,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.CartItemIDParams'
+          $ref: '#/definitions/params.CartItemIDParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 取消购物车项
@@ -3080,7 +3095,7 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.AuthParams'
+          $ref: '#/definitions/params.AuthParams'
       - description: wechat code
         in: query
         name: code
@@ -3092,7 +3107,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
         "400":
           description: Bad Request
           schema:
@@ -3130,7 +3145,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
         "400":
           description: Bad Request
           schema:
@@ -3160,7 +3175,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
         "400":
           description: Bad Request
           schema:
@@ -3186,7 +3201,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 通过当前登录用户信息
@@ -3199,14 +3214,14 @@ paths:
         name: params
         required: true
         schema:
-          $ref: '#/definitions/v1.UserInfo'
+          $ref: '#/definitions/params.UserInfo'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       security:
       - ApiKeyAuth: []
       summary: 编辑用户
@@ -3226,16 +3241,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 获取webview页面
       tags:
       - 微信页面
   /app_api/v1/wechat/wxacode:
     get:
       parameters:
-      - in: query
-        name: scene
-        type: string
       - in: query
         name: width
         type: integer
@@ -3248,13 +3260,16 @@ paths:
       - in: query
         name: page
         type: string
+      - in: query
+        name: scene
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 获取微信二维码
       tags:
       - 微信接口
@@ -3272,7 +3287,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apiHelpers.Response'
+            $ref: '#/definitions/helpers.Response'
       summary: 获取微信自定义页面
       tags:
       - 微信页面
