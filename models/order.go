@@ -50,6 +50,7 @@ var (
 	WxpayClient *wxpay.Client
 	OrderFSM    = transition.New(&Order{})
 	RemainTime  = time.Minute * 2
+	PaidStates  = []string{"wait_seller_send_goods", "wait_buyer_confirm_goods", "buyer_confirm_goods", "trade_finished", "refunding", "refunded"}
 )
 
 func init() {
@@ -121,13 +122,6 @@ func defineState() {
 	OrderFSM.Event("drawback").To("refunded").From("refunding")
 	OrderFSM.Event("close").To("trade_closed").From("wait_buyer_pay")
 
-}
-
-// Scope
-func StateScope(status []string) func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where("status in (?)", status)
-	}
 }
 
 // Callbacks
