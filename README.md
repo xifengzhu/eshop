@@ -11,11 +11,6 @@
 │   ├── docs.go
 │   ├── swagger.json
 │   └── swagger.yaml
-├── eshop
-├── export
-├── gin-bin
-├── go.mod
-├── go.sum
 ├── helpers
 │   ├── e
 │   ├── export
@@ -40,10 +35,14 @@
 │   ├── admin_user.go
 │   ├── base_models.go
 │   ├── ...
+├── public
+│   ├── export
+│   └── qrcode
 ├── routers
 │   ├── admin_api/
-│   ├── api_helpers/
 │   ├── app_api/
+│   ├── helpers/
+│   ├── validators/
 │   └── router.go
 ├── seeds
 │   └── data
@@ -51,11 +50,13 @@
 │   ├── air_errors.log
 │   └── main
 ├── uploads
-└── workers
-    ├── export_job.go
-    ├── order_job.go
-    ├── refresh_wechat_token_job.go
-    └── worker.go
+├── workers
+│   ├── export_job.go
+│   ├── order_job.go
+│   ├── refresh_wechat_token_job.go
+│   └── worker.go
+├── go.mod
+└── go.sum
 ```
 
 ### Start project
@@ -76,14 +77,3 @@ visit: http://127.0.0.1:8000/swagger/index.html
 ```
 swag init
 ```
-
-### Points
-- [x] 鉴权jwt
-- [x] CRUD
-- [x] pagination
-- [x] 嵌套保存方案
-- [x] 集成swagger API document
-- [x] background job&schedule job
-- [x] air 监听代码变化自动编译
-- [v] 优惠券(折扣券，满减券)
-- [ ] 营销模块
