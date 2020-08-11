@@ -7,7 +7,6 @@ import (
 type AddressPresent struct {
 	ID         int    `json:"id"`
 	UserID     int    `json:"user_id"`
-	WxappId    string `json:"wxapp_id"`
 	RegionID   int    `json:"region_id"`
 	ProvinceID int    `json:"province_id"`
 	CityID     int    `json:"city_id"`

@@ -7,7 +7,6 @@ import (
 type Category struct {
 	BaseModel
 
-	WxappId  string     `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	Name     string     `gorm:"type: varchar(50); not null" json:"name"`
 	Position int        `gorm:"type: int; " json:"position"`
 	ParentID int        `gorm:"type: int; DEFAULT: 0" json:"parent_id"`

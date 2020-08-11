@@ -7,7 +7,6 @@ package models
 type OrderItem struct {
 	BaseModel
 
-	WxappId          string        `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	GoodsName        string        `gorm:"type: varchar(255); not null" json:"goods_name"`
 	Cover            string        `gorm:"type: varchar(255); not null" json:"cover"`
 	GoodsPrice       float64       `gorm:"type: decimal(10,2);" json:"goods_price"`

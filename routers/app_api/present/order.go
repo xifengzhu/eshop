@@ -17,7 +17,6 @@ type OrderDetailEntity struct {
 
 type OrderEntity struct {
 	ID                int                `json:"id"`
-	WxappId           string             `json:"wxapp_id"`
 	OrderNo           string             `json:"order_no"`
 	State             string             `json:"state"`
 	ExpressFee        float64            `json:"express_fee"`

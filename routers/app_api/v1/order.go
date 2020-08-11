@@ -106,7 +106,6 @@ func CreateOrder(c *gin.Context) {
 	}
 
 	order := Order{
-		WxappId:      "001",
 		UserID:       user.ID,
 		User:         &user,
 		ExpressID:    orderParams.ExpressID,

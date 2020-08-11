@@ -8,7 +8,6 @@ import (
 type AdminUser struct {
 	BaseModel
 
-	WxappId  string `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	Email    string `gorm:"type: varchar(100); not null" json:"email"`
 	Status   string `gorm:"type: varchar(10);" json:"status"`
 	Password string `gorm:"type: varchar(120); not null" json:"-"`

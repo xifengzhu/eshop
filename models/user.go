@@ -9,7 +9,6 @@ import (
 type User struct {
 	BaseModel
 
-	WxappId   string    `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	Username  string    `json:"username"`
 	Gender    int       `json:"gender"`
 	Avatar    string    `json:"avatar"`
@@ -63,7 +62,6 @@ func ExistUserByID(id int) bool {
 
 func AddUser(username string, avatar string, open_id string) User {
 	user := &User{
-		WxappId:  "eshop1",
 		Username: username,
 		Avatar:   avatar,
 		OpenId:   open_id,

@@ -2,7 +2,6 @@ package models
 
 type GlobalSetting struct {
 	BaseModel
-	WxappId              string  `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	DeductStockType      int     `gorm:"type: tinyint; not null" json:"deduct_stock_type"`
 	FreeFreightAmount    float64 `gorm:"type: decimal(10,2);" json:"free_freight_amount"`
 	FreeFreightRegion    float64 `sql:"type: json;" json:"region,omitempty"`

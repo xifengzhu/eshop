@@ -8,7 +8,6 @@ import (
 type ProductGroup struct {
 	BaseModel
 
-	WxappId    string    `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	Name       string    `gorm:"type: varchar(50); not null" json:"name"`
 	Remark     string    `gorm:"type: varchar(100); not null" json:"remark"`
 	ProductIDs JSON      `gorm:"type: json; " json:"product_ids"`

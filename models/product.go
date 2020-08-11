@@ -11,7 +11,6 @@ import (
 type Product struct {
 	BaseModel
 
-	WxappId        string          `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	Name           string          `gorm:"type: varchar(50); not null" json:"name"`
 	SerialNo       string          `gorm:"type: varchar(15); not null; unique_index" json:"serial_no"`
 	Cover          string          `gorm:"type: varchar(250);" json:"cover"`

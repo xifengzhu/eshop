@@ -20,7 +20,6 @@ import (
 type Order struct {
 	BaseModel
 
-	WxappId            string     `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	OrderNo            string     `gorm:"type: varchar(50); not null; unique_index" json:"order_no"`
 	AddressID          int        `gorm:"-" json:"address_id"`
 	ReceiverProperties string     `gorm:"type: varchar(250); " json:"receiver_properties"`

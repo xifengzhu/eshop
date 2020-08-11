@@ -9,7 +9,6 @@ import (
 type DeliveryRule struct {
 	BaseModel
 
-	WxappId       string    `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	First         float64   `gorm:"type: decimal(10,2); " json:"first"` // 首件/首重
 	FirstFee      float64   `gorm:"type: decimal(10,2); " json:"first_fee"`
 	Additional    float64   `gorm:"type: decimal(10,2);" json:"additional"`     // 续件/续重

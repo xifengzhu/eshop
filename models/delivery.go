@@ -7,8 +7,7 @@ import (
 type Delivery struct {
 	BaseModel
 
-	WxappId string `gorm:"type: varchar(50); not null" json:"wxapp_id"`
-	Name    string `gorm:"type: varchar(255); not null" json:"name"`
+	Name string `gorm:"type: varchar(255); not null" json:"name"`
 	// 1 为按件计费 2 按重量计费
 	Way           int            `gorm:"type: tinyint; " json:"way"`
 	DeliveryRules []DeliveryRule `json:"delivery_rules,omitempty"`

@@ -7,7 +7,6 @@ import (
 
 type ProductDetailEntity struct {
 	ID              int                    `json:"id"`
-	WxappId         string                 `json:"wxapp_id"`
 	Cover           string                 `json:"cover"`
 	MainPictures    models.JSON            `json:"main_pictures"`
 	Name            string                 `json:"name"`
@@ -29,7 +28,6 @@ type ProductEntity struct {
 	ID    int    `json:"id"`
 	Cover string `json:"cover"`
 	// MainPictures models.JSON `json:"main_pictures"`
-	WxappId      string     `json:"wxapp_id"`
 	Name         string     `json:"name"`
 	Content      string     `json:"content"`
 	SalesInitial int        `json:"sales_initial"`

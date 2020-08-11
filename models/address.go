@@ -8,7 +8,6 @@ type Address struct {
 	BaseModel
 	UserID    int    `gorm:"type:int; not null" json:"user_id"`
 	User      User   `gorm:"-" json:"-"`
-	WxappId   string `gorm:"type: varchar(50); not null" json:"wxapp_id"`
 	Region    string `gorm:"type: varchar(100); not null" json:"region"`
 	Province  string `gorm:"type: varchar(100); not null" json:"province"`
 	City      string `gorm:"type: varchar(100); not null" json:"city"`
