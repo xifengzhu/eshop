@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    ports:
+      - "3306:3306"
+    command: "--default-authentication-plugin=mysql_native_password --init-file /data/application/init.sql"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ./init.sql:/data/application/init.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: "xifengzhu"
+      MYSQL_USER: 'xifengzhu'
+      MYSQL_PASS: 'xifengzhu'
+  redis:
+    image: redis
+    command: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis:/data
+  app:
+    build: .
+    command: sh -c "./wait-for.sh db:3306 -- ./eshop"
+    volumes:
+      - .:/data/app
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+      - redis
